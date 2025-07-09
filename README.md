@@ -11,8 +11,9 @@ The team is actively building the app with a focus on community, sustainability,
 - Owen Kasule Muhereza
 - Godwin Obi Bassey
 - Braxton Marshall Goode
-- Teammate 4
-- Teammate 5
+- Desire Delmy Vargas Tinoco
+- Issah Akuffo
+-
 ...
 
 ## Project Repository:
