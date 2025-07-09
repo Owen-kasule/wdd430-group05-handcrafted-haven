@@ -10,8 +10,10 @@ The team is actively building the app with a focus on community, sustainability,
 ## Group Members:
 - Owen Kasule Muhereza
 - Godwin Obi Bassey
-- Teammate 2
-- Teammate 3
+- Braxton Marshall Goode
+- Teammate 4
+- Teammate 5
+...
 
 ## Project Repository:
 [Handcrafted Haven GitHub Repository](https://github.com/Owen-kasule/wdd430-group05-handcrafted-haven)
