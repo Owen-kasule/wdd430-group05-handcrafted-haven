@@ -1,0 +1,19 @@
+{
+  "name": "@handcrafted-haven/utils",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "../../node_modules/.bin/tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@handcrafted-haven/types": "file:../types"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

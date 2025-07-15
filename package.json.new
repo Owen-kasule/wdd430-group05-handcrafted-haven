@@ -16,12 +16,7 @@
     "clean": "turbo clean"
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "turbo": "^2.5.4"
   },
-  "packageManager": "npm@8.0.0",
-  "dependencies": {
-    "next": "^15.4.1"
-  }
+  "packageManager": "npm@8.0.0"
 }

@@ -1,0 +1,268 @@
+.product-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.product-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.product-images {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main-image {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.image-thumbnails img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.image-thumbnails img:hover,
+.image-thumbnails img.active {
+  opacity: 1;
+  border-color: #4b8f29;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.product-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #a52a2a;
+  margin: 0;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4b8f29;
+}
+
+.product-category {
+  background-color: #f4a300;
+  color: #a52a2a;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.seller-info {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #4b8f29;
+}
+
+.seller-link {
+  color: #a52a2a;
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.seller-link:hover {
+  text-decoration: underline;
+}
+
+.seller-location {
+  color: #666;
+  font-style: italic;
+}
+
+.seller-rating {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  color: #f4a300;
+}
+
+.product-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.product-specifications h3 {
+  color: #a52a2a;
+  margin-bottom: 1rem;
+}
+
+.product-specifications dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+}
+
+.spec-row {
+  display: contents;
+}
+
+.spec-row dt {
+  font-weight: bold;
+  color: #666;
+}
+
+.spec-row dd {
+  margin: 0;
+}
+
+.purchase-section {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.quantity-selector select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-to-cart-btn {
+  background-color: #4b8f29;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background-color: #3a6f1f;
+}
+
+.add-to-cart-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.reviews-section {
+  border-top: 1px solid #eee;
+  padding-top: 2rem;
+}
+
+.reviews-section h2 {
+  color: #a52a2a;
+  margin-bottom: 1.5rem;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.review {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #f4a300;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.reviewer-name {
+  font-weight: bold;
+  color: #a52a2a;
+}
+
+.review-date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.review-rating {
+  margin-bottom: 0.5rem;
+}
+
+.review-comment {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .product-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .product-title {
+    font-size: 2rem;
+  }
+
+  .product-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
