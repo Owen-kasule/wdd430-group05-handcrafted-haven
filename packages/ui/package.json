@@ -2,13 +2,13 @@
   "name": "@handcrafted-haven/ui",
   "version": "0.1.0",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "scripts": {
-    "build": "../../node_modules/.bin/tsc",
-    "dev": "tsc --watch",
+    "build": "echo 'UI package uses JavaScript - no build needed'",
+    "dev": "echo 'UI package uses JavaScript - no watch needed'",
     "lint": "eslint . --max-warnings 0",
-    "type-check": "tsc --noEmit"
+    "type-check": "echo 'UI package uses JavaScript - no type check needed'"
   },
   "dependencies": {
     "@handcrafted-haven/types": "file:../types",

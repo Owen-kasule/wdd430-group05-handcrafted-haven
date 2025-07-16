@@ -24,7 +24,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 3.5rem;
   font-weight: bold;
-  color: #a52a2a;
+  color: #A52A2A;
   line-height: 1.2;
   margin: 0;
 }
@@ -55,23 +55,23 @@
 }
 
 .cta-button.primary {
-  background-color: #4b8f29;
+  background-color: #4B8F29;
   color: white;
 }
 
 .cta-button.primary:hover {
-  background-color: #3a6f1f;
+  background-color: #3A6F1F;
   transform: translateY(-2px);
 }
 
 .cta-button.secondary {
   background-color: transparent;
-  color: #4b8f29;
-  border: 2px solid #4b8f29;
+  color: #4B8F29;
+  border: 2px solid #4B8F29;
 }
 
 .cta-button.secondary:hover {
-  background-color: #4b8f29;
+  background-color: #4B8F29;
   color: white;
   transform: translateY(-2px);
 }
@@ -124,7 +124,7 @@
 }
 
 .search-button {
-  background-color: #4b8f29;
+  background-color: #4B8F29;
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -134,7 +134,7 @@
 }
 
 .search-button:hover {
-  background-color: #3a6f1f;
+  background-color: #3A6F1F;
 }
 
 .filter-container {
@@ -154,7 +154,7 @@
 
 .category-filter:focus {
   outline: none;
-  border-color: #4b8f29;
+  border-color: #4B8F29;
 }
 
 /* Section Styling */
@@ -174,7 +174,7 @@
 .section-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
-  color: #a52a2a;
+  color: #A52A2A;
   margin: 0 0 1rem 0;
 }
 
@@ -238,7 +238,7 @@
 .category-overlay h3 {
   font-size: 1.5rem;
   margin: 0 0 0.5rem 0;
-  color: #f4a300;
+  color: #F4A300;
 }
 
 .category-overlay p {
@@ -277,7 +277,7 @@
 }
 
 .benefit-card h3 {
-  color: #a52a2a;
+  color: #A52A2A;
   margin: 0 0 1rem 0;
   font-size: 1.3rem;
 }
@@ -290,7 +290,7 @@
 
 /* Newsletter Section */
 .newsletter-section {
-  background: linear-gradient(135deg, #4b8f29, #3a6f1f);
+  background: linear-gradient(135deg, #4B8F29, #3A6F1F);
   color: white;
   padding: 4rem 2rem;
   text-align: center;
@@ -332,8 +332,8 @@
 }
 
 .newsletter-form button {
-  background-color: #f4a300;
-  color: #a52a2a;
+  background-color: #F4A300;
+  color: #A52A2A;
   border: none;
   padding: 1rem 1.5rem;
   font-weight: bold;
@@ -342,7 +342,7 @@
 }
 
 .newsletter-form button:hover {
-  background-color: #ffb84d;
+  background-color: #FFB84D;
 }
 
 /* Responsive Design */
@@ -353,54 +353,54 @@
     padding: 1rem;
     gap: 2rem;
   }
-
+  
   .hero-title {
     font-size: 2.5rem;
   }
-
+  
   .hero-subtitle {
     font-size: 1.1rem;
   }
-
+  
   .cta-button {
     min-width: 120px;
     padding: 0.8rem 1.5rem;
   }
-
+  
   .search-container {
     padding: 0 1rem;
   }
-
+  
   .search-bar {
     flex-direction: column;
     border-radius: 12px;
   }
-
+  
   .search-input {
     border-bottom: 1px solid #eee;
   }
-
+  
   .search-button {
     border-radius: 0 0 12px 12px;
   }
-
+  
   .categories-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .benefits-grid {
     grid-template-columns: 1fr;
   }
-
+  
   .newsletter-form {
     flex-direction: column;
     border-radius: 12px;
   }
-
+  
   .newsletter-form input {
     border-bottom: 1px solid #eee;
   }
-
+  
   .newsletter-form button {
     border-radius: 0 0 12px 12px;
   }

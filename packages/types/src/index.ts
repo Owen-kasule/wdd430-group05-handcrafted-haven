@@ -12,12 +12,15 @@ export interface Product {
   featured: boolean;
   category: string;
   inStock: boolean;
-  specifications: Record<string, string>;
+  specifications: {
+    [key: string]: string;
+  };
 }
 
 export interface Seller {
   id: string;
   name: string;
+  email: string;
   bio: string;
   profileImage: string;
   location: string;
@@ -26,6 +29,16 @@ export interface Seller {
   totalReviews: number;
   totalSales: number;
   specialties: string[];
+  story: string;
+  contact: {
+    email: string;
+    phone: string;
+    website: string;
+  };
+  socialMedia: {
+    instagram: string;
+    facebook: string;
+  };
 }
 
 export interface Review {
@@ -35,22 +48,16 @@ export interface Review {
   userName: string;
   rating: number;
   comment: string;
-  date: string;
-  verified: boolean;
-}
-
-export interface Category {
-  value: string;
-  label: string;
+  createdAt: Date;
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
-  address?: Address;
-  preferences?: UserPreferences;
+  profileImage?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Address {

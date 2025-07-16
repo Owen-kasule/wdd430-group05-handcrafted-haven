@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #4b8f29;
+  background-color: #4B8F29;
   padding: 1rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -23,7 +23,7 @@
 }
 
 .nav-logo:hover {
-  color: #f4a300;
+  color: #F4A300;
 }
 
 .nav-menu {
@@ -42,18 +42,18 @@
 }
 
 .nav-link:hover {
-  color: #f4a300;
+  color: #F4A300;
 }
 
 .nav-login {
-  background-color: #f4a300;
-  color: #a52a2a;
+  background-color: #F4A300;
+  color: #A52A2A;
   font-weight: bold;
 }
 
 .nav-login:hover {
-  background-color: #ffb84d;
-  color: #a52a2a;
+  background-color: #FFB84D;
+  color: #A52A2A;
 }
 
 @media (max-width: 768px) {
@@ -61,7 +61,7 @@
     flex-direction: column;
     gap: 1rem;
   }
-
+  
   .nav-menu {
     flex-wrap: wrap;
     justify-content: center;

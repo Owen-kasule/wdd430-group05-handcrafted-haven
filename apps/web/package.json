@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "../../node_modules/.bin/next dev",
+    "build": "../../node_modules/.bin/next build",
+    "start": "../../node_modules/.bin/next start",
+    "lint": "../../node_modules/.bin/next lint",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@handcrafted-haven/types": "file:../../packages/types",
     "@handcrafted-haven/ui": "file:../../packages/ui",
     "@handcrafted-haven/utils": "file:../../packages/utils",
-    "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

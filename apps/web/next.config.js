@@ -5,7 +5,7 @@ const nextConfig = {
   transpilePackages: [
     '@handcrafted-haven/ui',
     '@handcrafted-haven/types',
-    '@handcrafted-haven/utils',
+    '@handcrafted-haven/utils'
   ],
   // Enable experimental features if needed
   experimental: {
@@ -16,6 +16,6 @@ const nextConfig = {
     // Add any custom webpack configuration here
     return config;
   },
-};
+}
 
 module.exports = nextConfig;

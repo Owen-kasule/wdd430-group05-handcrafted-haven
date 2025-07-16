@@ -11,50 +11,48 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (!id) return;
-
+    
     // Mock product data - in real app, this would fetch from API
     const mockProduct = {
       id: id,
-      name: 'Handcrafted Ceramic Vase',
+      name: "Handcrafted Ceramic Vase",
       price: 89.99,
-      description:
-        'Beautiful handcrafted ceramic vase made with traditional techniques. Perfect for displaying fresh flowers or as a standalone decorative piece. Each piece is unique with subtle variations in color and texture.',
+      description: "Beautiful handcrafted ceramic vase made with traditional techniques. Perfect for displaying fresh flowers or as a standalone decorative piece. Each piece is unique with subtle variations in color and texture.",
       images: [
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500',
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500',
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500',
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500"
       ],
       seller: {
-        id: 'seller1',
-        name: 'Maria Rodriguez',
+        id: "seller1",
+        name: "Maria Rodriguez",
         rating: 4.8,
-        location: 'Santa Fe, NM',
+        location: "Santa Fe, NM"
       },
       specifications: {
-        Material: 'High-fired ceramic',
-        Dimensions: '12" H x 6" W',
-        Weight: '2.5 lbs',
-        Care: 'Hand wash only',
+        "Material": "High-fired ceramic",
+        "Dimensions": "12\" H x 6\" W",
+        "Weight": "2.5 lbs",
+        "Care": "Hand wash only"
       },
       reviews: [
         {
           id: 1,
-          user: 'Sarah Johnson',
+          user: "Sarah Johnson",
           rating: 5,
-          comment: 'Absolutely beautiful! The craftsmanship is exceptional.',
-          date: '2025-01-15',
+          comment: "Absolutely beautiful! The craftsmanship is exceptional.",
+          date: "2025-01-15"
         },
         {
           id: 2,
-          user: 'Michael Chen',
+          user: "Michael Chen",
           rating: 4,
-          comment:
-            'Great quality and fast shipping. Very happy with my purchase.',
-          date: '2025-01-10',
-        },
+          comment: "Great quality and fast shipping. Very happy with my purchase.",
+          date: "2025-01-10"
+        }
       ],
       inStock: true,
-      category: 'Home Decor',
+      category: "Home Decor"
     };
     setProduct(mockProduct);
   }, [id]);
@@ -89,7 +87,7 @@ export default function ProductPage() {
             <span className="product-price">${product.price}</span>
             <span className="product-category">{product.category}</span>
           </div>
-
+          
           <div className="seller-info">
             <Link href={`/seller/${product.seller.id}`} className="seller-link">
               <strong>Artisan:</strong> {product.seller.name}
@@ -121,12 +119,10 @@ export default function ProductPage() {
               <select
                 id="quantity"
                 value={quantity}
-                onChange={e => setQuantity(parseInt(e.target.value))}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
               >
                 {[1, 2, 3, 4, 5].map(num => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
+                  <option key={num} value={num}>{num}</option>
                 ))}
               </select>
             </div>
@@ -147,10 +143,7 @@ export default function ProductPage() {
                 <span className="review-date">{review.date}</span>
               </div>
               <div className="review-rating">
-                <span className="stars">
-                  {'★'.repeat(review.rating)}
-                  {'☆'.repeat(5 - review.rating)}
-                </span>
+                <span className="stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
               </div>
               <p className="review-comment">{review.comment}</p>
             </div>

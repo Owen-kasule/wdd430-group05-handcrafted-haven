@@ -7,29 +7,26 @@ const router: Router = Router();
 // Get all products
 router.get('/', (req: Request, res: Response) => {
   const { category, featured, limit } = req.query;
-
+  
   let filteredProducts = [...mockProducts];
-
+  
   // Filter by category
   if (category && category !== 'all') {
-    filteredProducts = filteredProducts.filter(
-      (product: Product) =>
-        product.category.toLowerCase() === category.toString().toLowerCase()
+    filteredProducts = filteredProducts.filter((product: Product) => 
+      product.category.toLowerCase() === category.toString().toLowerCase()
     );
   }
-
+  
   // Filter by featured
   if (featured === 'true') {
-    filteredProducts = filteredProducts.filter(
-      (product: Product) => product.featured
-    );
+    filteredProducts = filteredProducts.filter((product: Product) => product.featured);
   }
-
+  
   // Apply limit
   if (limit) {
     filteredProducts = filteredProducts.slice(0, parseInt(limit.toString()));
   }
-
+  
   res.json(filteredProducts);
 });
 
@@ -37,21 +34,19 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/:id', (req: Request, res: Response) => {
   const { id } = req.params;
   const product = mockProducts.find((p: Product) => p.id === id);
-
+  
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
-
+  
   res.json(product);
 });
 
 // Get reviews for a product
 router.get('/:id/reviews', (req: Request, res: Response) => {
   const { id } = req.params;
-  const productReviews = mockReviews.filter(
-    (review: any) => review.productId === id
-  );
-
+  const productReviews = mockReviews.filter((review: any) => review.productId === id);
+  
   res.json(productReviews);
 });
 

@@ -12,7 +12,14 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@handcrafted-haven/types": ["../../packages/types/src"],
+      "@handcrafted-haven/utils": ["../../packages/utils/src"],
+      "@handcrafted-haven/config": ["../../packages/config/src"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

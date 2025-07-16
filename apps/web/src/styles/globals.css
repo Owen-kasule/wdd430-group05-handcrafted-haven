@@ -17,8 +17,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
+html, body {
   height: 100%;
 }
 
@@ -35,12 +34,12 @@ body {
 
 /* Color Variables */
 :root {
-  --primary-green: #4b8f29;
-  --primary-brown: #a52a2a;
-  --accent-yellow: #f4a300;
-  --light-green: #6ba83a;
-  --dark-brown: #8b1e1e;
-  --light-yellow: #ffb84d;
+  --primary-green: #4B8F29;
+  --primary-brown: #A52A2A;
+  --accent-yellow: #F4A300;
+  --light-green: #6BA83A;
+  --dark-brown: #8B1E1E;
+  --light-yellow: #FFB84D;
 }
 
 /* Placeholder styles for unimplemented pages */
@@ -58,54 +57,24 @@ body {
 }
 
 /* Utility Classes */
-.text-center {
-  text-align: center;
-}
-.text-left {
-  text-align: left;
-}
-.text-right {
-  text-align: right;
-}
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
 
-.mt-1 {
-  margin-top: 0.5rem;
-}
-.mt-2 {
-  margin-top: 1rem;
-}
-.mt-3 {
-  margin-top: 1.5rem;
-}
-.mt-4 {
-  margin-top: 2rem;
-}
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
 
-.mb-1 {
-  margin-bottom: 0.5rem;
-}
-.mb-2 {
-  margin-bottom: 1rem;
-}
-.mb-3 {
-  margin-bottom: 1.5rem;
-}
-.mb-4 {
-  margin-bottom: 2rem;
-}
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
 
-.p-1 {
-  padding: 0.5rem;
-}
-.p-2 {
-  padding: 1rem;
-}
-.p-3 {
-  padding: 1.5rem;
-}
-.p-4 {
-  padding: 2rem;
-}
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+.p-4 { padding: 2rem; }
 
 /* Responsive breakpoints */
 @media (max-width: 768px) {
@@ -155,9 +124,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
@@ -193,6 +160,6 @@ body {
 }
 
 code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
