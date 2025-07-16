@@ -196,11 +196,6 @@ This project fulfills the following course requirements:
 ✅ **Responsive Design**: Mobile-first CSS design  
 ✅ **Modern Architecture**: Turborepo monorepo structure  
 
-## 👥 Contributors
-
-- **Owen Kasule** - Lead Developer
-- **WDD 430 Group 05** - Development Team
-
 ## 📄 License
 
 This project is licensed under the MIT License.
