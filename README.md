@@ -1,3 +1,41 @@
+# Handcrafted Haven - Group 05
+
+[Handcrafted Haven Logo](https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=800&h=200&fit=crop)
+
+## Project Summary
+Handcrafted Haven is a collaborative project by Group 05 for WDD 430: Web Full-Stack Development, Spring 2025. The platform enables artisans to showcase and sell their handmade items, connecting creators with customers who value unique, quality products.
+
+## Group Members:
+- Owen Kasule Muhereza
+- Godwin Obi Bassey
+- Braxton Marshall Goode
+- Desire Delmy Vargas Tinoco
+- Issah Akuffo
+
+## Project Repository:
+[Handcrafted Haven GitHub Repository](https://github.com/Owen-kasule/wdd430-group05-handcrafted-haven)
+
+## Live Demo:
+**[Deploy to Vercel](https://vercel.com/new/clone?repository-url=https://github.com/Owen-kasule/wdd430-group05-handcrafted-haven)**
+
+---
+
+## 🚀 Quick Start (3 Steps)
+
+### **IMPORTANT: You MUST install dependencies first!**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Owen-kasule/wdd430-group05-handcrafted-haven.git
+cd wdd430-group05-handcrafted-haven
+
+# 2. Install dependencies (REQUIRED - DON'T SKIP THIS!)
+npm install
+
+# 3. Start development servers
+npm run dev
+```
+
 # Handcrafted Haven - Monorepo
 
 A modern e-commerce platform connecting artisans with customers worldwide, built with React, Express, and TypeScript in a Turborepo monorepo architecture.
