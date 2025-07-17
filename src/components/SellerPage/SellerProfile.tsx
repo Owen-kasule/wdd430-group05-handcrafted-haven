@@ -1,19 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import ProductCard from './ProductCard';
+import ProductCard from '../ProductCard/ProductCard';
 import './SellerProfile.css';
 
-export default function SellerProfile() {
-  const { id } = useParams();
-  const [seller, setSeller] = useState(null);
-  const [products, setProducts] = useState([]);
+// Define types
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  sellerName: string;
+  reviewCount: number;
+  featured: boolean;
+}
+
+interface Contact {
+  email: string;
+  phone: string;
+  website: string;
+}
+
+interface SocialMedia {
+  instagram: string;
+  facebook: string;
+}
+
+interface Seller {
+  id: string;
+  name: string;
+  bio: string;
+  profileImage: string;
+  location: string;
+  joinDate: string;
+  rating: number;
+  totalReviews: number;
+  totalSales: number;
+  specialties: string[];
+  story: string;
+  contact: Contact;
+  socialMedia: SocialMedia;
+}
+
+const SellerProfile: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const [seller, setSeller] = useState<Seller | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    // Mock seller data - in real app, this would fetch from API
-    const mockSeller = {
-      id: id,
+    const mockSeller: Seller = {
+      id: id || '0',
       name: "Maria Rodriguez",
-      bio: "Passionate ceramic artist with over 15 years of experience creating unique, handcrafted pieces. I draw inspiration from traditional Mexican pottery techniques passed down through generations, combined with contemporary design elements.",
+      bio: "Passionate ceramic artist with over 15 years of experience...",
       profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400",
       location: "Santa Fe, New Mexico",
       joinDate: "March 2020",
@@ -21,7 +58,7 @@ export default function SellerProfile() {
       totalReviews: 247,
       totalSales: 1250,
       specialties: ["Ceramics", "Pottery", "Home Decor", "Garden Art"],
-      story: "My journey as an artisan began in my grandmother's workshop in Oaxaca, where I learned the ancient art of pottery making. Each piece I create tells a story, blending traditional techniques with modern aesthetics to create functional art that brings joy to everyday life.",
+      story: "My journey as an artisan began in my grandmother's workshop...",
       contact: {
         email: "maria@handcraftedhaven.com",
         phone: "(505) 123-4567",
@@ -33,7 +70,7 @@ export default function SellerProfile() {
       }
     };
 
-    const mockProducts = [
+    const mockProducts: Product[] = [
       {
         id: "1",
         name: "Ceramic Dinner Plate Set",
@@ -106,7 +143,7 @@ export default function SellerProfile() {
           <h2>About the Artisan</h2>
           <p className="seller-bio">{seller.bio}</p>
           <p className="seller-story-text">{seller.story}</p>
-          
+
           <div className="seller-specialties">
             <h3>Specialties</h3>
             <div className="specialty-tags">
@@ -129,7 +166,7 @@ export default function SellerProfile() {
                 <a href={`https://instagram.com/${seller.socialMedia.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer">
                   Instagram: {seller.socialMedia.instagram}
                 </a>
-                <a href={`https://facebook.com/${seller.socialMedia.facebook.replace(' ', '')}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://facebook.com/${seller.socialMedia.facebook.replace(/\s/g, '')}`} target="_blank" rel="noopener noreferrer">
                   Facebook: {seller.socialMedia.facebook}
                 </a>
               </div>
@@ -148,4 +185,6 @@ export default function SellerProfile() {
       </div>
     </div>
   );
-}
+};
+
+export default SellerProfile;

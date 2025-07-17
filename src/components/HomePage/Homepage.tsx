@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import ProductCard from '@/src/components/ProductCard/ProductCard';
-import '@/src/components/HomePage/Homepage.css';
+import ProductCard from '../ProductCard/ProductCard';
+import './Homepage.css';
 
 // Define a type for product
 interface Product {

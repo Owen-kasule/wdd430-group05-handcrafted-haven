@@ -1,36 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './ProductPage.css';
 
+interface Seller {
+  id: string;
+  name: string;
+  rating: number;
+  location: string;
+}
+
+interface Review {
+  id: number;
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+interface Product {
+  id: string | undefined;
+  name: string;
+  price: number;
+  description: string;
+  images: string[];
+  seller: Seller;
+  specifications: Record<string, string>;
+  reviews: Review[];
+  inStock: boolean;
+  category: string;
+}
+
 export default function ProductPage() {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
 
   useEffect(() => {
     // Mock product data - in real app, this would fetch from API
-    const mockProduct = {
+    const mockProduct: Product = {
       id: id,
       name: "Handcrafted Ceramic Vase",
       price: 89.99,
-      description: "Beautiful handcrafted ceramic vase made with traditional techniques. Perfect for displaying fresh flowers or as a standalone decorative piece. Each piece is unique with subtle variations in color and texture.",
+      description:
+        "Beautiful handcrafted ceramic vase made with traditional techniques. Perfect for displaying fresh flowers or as a standalone decorative piece. Each piece is unique with subtle variations in color and texture.",
       images: [
         "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
         "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500"
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
       ],
       seller: {
         id: "seller1",
         name: "Maria Rodriguez",
         rating: 4.8,
-        location: "Santa Fe, NM"
+        location: "Santa Fe, NM",
       },
       specifications: {
-        "Material": "High-fired ceramic",
-        "Dimensions": "12\" H x 6\" W",
-        "Weight": "2.5 lbs",
-        "Care": "Hand wash only"
+        Material: "High-fired ceramic",
+        Dimensions: '12" H x 6" W',
+        Weight: "2.5 lbs",
+        Care: "Hand wash only",
       },
       reviews: [
         {
@@ -38,25 +67,30 @@ export default function ProductPage() {
           user: "Sarah Johnson",
           rating: 5,
           comment: "Absolutely beautiful! The craftsmanship is exceptional.",
-          date: "2025-01-15"
+          date: "2025-01-15",
         },
         {
           id: 2,
           user: "Michael Chen",
           rating: 4,
           comment: "Great quality and fast shipping. Very happy with my purchase.",
-          date: "2025-01-10"
-        }
+          date: "2025-01-10",
+        },
       ],
       inStock: true,
-      category: "Home Decor"
+      category: "Home Decor",
     };
+
     setProduct(mockProduct);
   }, [id]);
 
   if (!product) {
     return <div className="loading">Loading...</div>;
   }
+
+  const handleQuantityChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setQuantity(parseInt(e.target.value, 10));
+  };
 
   return (
     <div className="product-page">
@@ -71,7 +105,7 @@ export default function ProductPage() {
                 key={index}
                 src={image}
                 alt={`${product.name} ${index + 1}`}
-                className={selectedImage === index ? 'active' : ''}
+                className={selectedImage === index ? "active" : ""}
                 onClick={() => setSelectedImage(index)}
               />
             ))}
@@ -84,7 +118,7 @@ export default function ProductPage() {
             <span className="product-price">${product.price}</span>
             <span className="product-category">{product.category}</span>
           </div>
-          
+
           <div className="seller-info">
             <Link to={`/seller/${product.seller.id}`} className="seller-link">
               <strong>Artisan:</strong> {product.seller.name}
@@ -116,15 +150,17 @@ export default function ProductPage() {
               <select
                 id="quantity"
                 value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                onChange={handleQuantityChange}
               >
-                {[1, 2, 3, 4, 5].map(num => (
-                  <option key={num} value={num}>{num}</option>
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </div>
             <button className="add-to-cart-btn" disabled={!product.inStock}>
-              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              {product.inStock ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
         </div>
@@ -133,14 +169,16 @@ export default function ProductPage() {
       <div className="reviews-section">
         <h2>Customer Reviews</h2>
         <div className="reviews-list">
-          {product.reviews.map(review => (
+          {product.reviews.map((review) => (
             <div key={review.id} className="review">
               <div className="review-header">
                 <span className="reviewer-name">{review.user}</span>
                 <span className="review-date">{review.date}</span>
               </div>
               <div className="review-rating">
-                <span className="stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                <span className="stars">
+                  {"★".repeat(review.rating) + "☆".repeat(5 - review.rating)}
+                </span>
               </div>
               <p className="review-comment">{review.comment}</p>
             </div>
