@@ -104,7 +104,23 @@ export default function Homepage() {
 
   return (
     <div className="homepage">
-      {/* ...same JSX code... */}
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-content">
+          <h1 className="hero-title">Discover Unique Handcrafted Treasures</h1>
+          <p className="hero-subtitle">
+            Connect with talented artisans and bring their beautiful, 
+            one-of-a-kind creations into your home
+          </p>
+          <div className="hero-cta">
+            <button className="cta-button primary">Shop Now</button>
+            <button className="cta-button secondary">Become a Seller</button>
+          </div>
+        </div>
+        <div className="hero-image">
+          <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600" alt="Handcrafted pottery" />
+        </div>
+      </section>
       {/* Replace search and filter inputs with typed handlers */}
       <section className="search-section">
         <div className="search-container">
