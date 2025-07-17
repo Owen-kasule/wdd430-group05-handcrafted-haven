@@ -1,62 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { mockProducts, mockReviews } from '../data/mockData';
 import './ProductPage.css';
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    comment: '',
+    userName: 'Anonymous User'
+  });
 
   useEffect(() => {
-    // Mock product data - in real app, this would fetch from API
-    const mockProduct = {
-      id: id,
-      name: "Handcrafted Ceramic Vase",
-      price: 89.99,
-      description: "Beautiful handcrafted ceramic vase made with traditional techniques. Perfect for displaying fresh flowers or as a standalone decorative piece. Each piece is unique with subtle variations in color and texture.",
-      images: [
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500"
-      ],
-      seller: {
-        id: "seller1",
-        name: "Maria Rodriguez",
-        rating: 4.8,
-        location: "Santa Fe, NM"
-      },
-      specifications: {
-        "Material": "High-fired ceramic",
-        "Dimensions": "12\" H x 6\" W",
-        "Weight": "2.5 lbs",
-        "Care": "Hand wash only"
-      },
-      reviews: [
-        {
-          id: 1,
-          user: "Sarah Johnson",
-          rating: 5,
-          comment: "Absolutely beautiful! The craftsmanship is exceptional.",
-          date: "2025-01-15"
-        },
-        {
-          id: 2,
-          user: "Michael Chen",
-          rating: 4,
-          comment: "Great quality and fast shipping. Very happy with my purchase.",
-          date: "2025-01-10"
-        }
-      ],
-      inStock: true,
-      category: "Home Decor"
-    };
-    setProduct(mockProduct);
+    // Find product by ID
+    const foundProduct = mockProducts.find(p => p.id === id);
+    if (foundProduct) {
+      setProduct(foundProduct);
+      // Get reviews for this product
+      const productReviews = mockReviews.filter(r => r.productId === id);
+      setReviews(productReviews);
+    }
   }, [id]);
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    const review = {
+      id: Date.now(),
+      productId: id,
+      userName: newReview.userName,
+      rating: newReview.rating,
+      comment: newReview.comment,
+      date: new Date().toISOString().split('T')[0],
+      verified: false
+    };
+    
+    setReviews([review, ...reviews]);
+    setNewReview({ rating: 5, comment: '', userName: 'Anonymous User' });
+    setShowReviewForm(false);
+  };
+
+  const calculateRatingBreakdown = () => {
+    if (reviews.length === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    
+    const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach(review => {
+      breakdown[review.rating]++;
+    });
+    
+    return breakdown;
+  };
+
+  const averageRating = reviews.length > 0 
+    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+    : 0;
 
   if (!product) {
     return <div className="loading">Loading...</div>;
   }
+
+  const ratingBreakdown = calculateRatingBreakdown();
 
   return (
     <div className="product-page">
@@ -85,14 +92,29 @@ export default function ProductPage() {
             <span className="product-category">{product.category}</span>
           </div>
           
+          <div className="product-rating">
+            <div className="rating-stars">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span 
+                  key={star} 
+                  className={star <= Math.round(averageRating) ? 'star filled' : 'star'}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="rating-text">
+              {averageRating} ({reviews.length} reviews)
+            </span>
+          </div>
+          
           <div className="seller-info">
-            <Link to={`/seller/${product.seller.id}`} className="seller-link">
-              <strong>Artisan:</strong> {product.seller.name}
+            <Link to={`/seller/${product.sellerId}`} className="seller-link">
+              <strong>Artisan:</strong> {product.sellerName}
             </Link>
-            <span className="seller-location">{product.seller.location}</span>
             <div className="seller-rating">
               <span className="stars">★★★★★</span>
-              <span>{product.seller.rating}/5</span>
+              <span>{product.rating}/5</span>
             </div>
           </div>
 
@@ -131,21 +153,138 @@ export default function ProductPage() {
       </div>
 
       <div className="reviews-section">
-        <h2>Customer Reviews</h2>
+        <div className="reviews-header">
+          <h2>Customer Reviews</h2>
+          <button 
+            className="write-review-btn"
+            onClick={() => setShowReviewForm(!showReviewForm)}
+          >
+            Write a Review
+          </button>
+        </div>
+
+        {/* Rating Summary */}
+        <div className="rating-summary">
+          <div className="overall-rating">
+            <div className="rating-number">{averageRating}</div>
+            <div className="rating-stars">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span 
+                  key={star} 
+                  className={star <= Math.round(averageRating) ? 'star filled' : 'star'}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <div className="rating-count">{reviews.length} reviews</div>
+          </div>
+          
+          <div className="rating-breakdown">
+            {[5, 4, 3, 2, 1].map(rating => (
+              <div key={rating} className="rating-row">
+                <span className="rating-label">{rating} stars</span>
+                <div className="rating-bar">
+                  <div 
+                    className="rating-fill" 
+                    style={{ 
+                      width: reviews.length > 0 
+                        ? `${(ratingBreakdown[rating] / reviews.length) * 100}%` 
+                        : '0%' 
+                    }}
+                  ></div>
+                </div>
+                <span className="rating-count">{ratingBreakdown[rating]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Review Form */}
+        {showReviewForm && (
+          <div className="review-form-container">
+            <h3>Write Your Review</h3>
+            <form onSubmit={handleReviewSubmit} className="review-form">
+              <div className="form-group">
+                <label htmlFor="reviewer-name">Name:</label>
+                <input
+                  type="text"
+                  id="reviewer-name"
+                  value={newReview.userName}
+                  onChange={(e) => setNewReview({...newReview, userName: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="rating">Rating:</label>
+                <select
+                  id="rating"
+                  value={newReview.rating}
+                  onChange={(e) => setNewReview({...newReview, rating: parseInt(e.target.value)})}
+                >
+                  {[5, 4, 3, 2, 1].map(num => (
+                    <option key={num} value={num}>{num} stars</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="comment">Review:</label>
+                <textarea
+                  id="comment"
+                  value={newReview.comment}
+                  onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+              
+              <div className="form-actions">
+                <button type="submit" className="submit-review-btn">Submit Review</button>
+                <button 
+                  type="button" 
+                  className="cancel-review-btn"
+                  onClick={() => setShowReviewForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Reviews List */}
         <div className="reviews-list">
-          {product.reviews.map(review => (
+          {reviews.map(review => (
             <div key={review.id} className="review">
               <div className="review-header">
-                <span className="reviewer-name">{review.user}</span>
+                <span className="reviewer-name">{review.userName}</span>
                 <span className="review-date">{review.date}</span>
+                {review.verified && <span className="verified-badge">Verified Purchase</span>}
               </div>
               <div className="review-rating">
-                <span className="stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+                <span className="stars">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span 
+                      key={star} 
+                      className={star <= review.rating ? 'star filled' : 'star'}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </span>
               </div>
               <p className="review-comment">{review.comment}</p>
             </div>
           ))}
         </div>
+
+        {reviews.length === 0 && (
+          <div className="no-reviews">
+            <p>No reviews yet. Be the first to review this product!</p>
+          </div>
+        )}
       </div>
     </div>
   );
