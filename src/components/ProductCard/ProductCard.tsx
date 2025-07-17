@@ -2,7 +2,23 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
-export default function ProductCard({ product }) {
+// Define the Product type
+export interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  sellerName: string;
+  reviewCount: number;
+  featured: boolean;
+}
+
+// Define props for the component
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="product-card">
       <div className="product-image-container">
@@ -23,4 +39,7 @@ export default function ProductCard({ product }) {
       </div>
     </div>
   );
-}
+};
+
+export default ProductCard;
+

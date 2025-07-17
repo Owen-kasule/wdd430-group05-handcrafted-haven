@@ -1,15 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import ProductCard from './ProductCard';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import ProductCard from '../ProductCard/ProductCard';
 import './Homepage.css';
 
+// Define a type for product
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  sellerName: string;
+  reviewCount: number;
+  featured: boolean;
+}
+
+// Define a type for category
+interface Category {
+  value: string;
+  label: string;
+}
+
 export default function Homepage() {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
-    // Mock featured products data
-    const mockProducts = [
+    const mockProducts: Product[] = [
       {
         id: "1",
         name: "Handwoven Wool Blanket",
@@ -22,7 +38,7 @@ export default function Homepage() {
       {
         id: "2",
         name: "Ceramic Dinner Plate Set",
-        price: 125.00,
+        price: 125.0,
         imageUrl: "https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=400",
         sellerName: "Maria Rodriguez",
         reviewCount: 45,
@@ -31,7 +47,7 @@ export default function Homepage() {
       {
         id: "3",
         name: "Hand-carved Wooden Bowl",
-        price: 67.50,
+        price: 67.5,
         imageUrl: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=400",
         sellerName: "David Chen",
         reviewCount: 89,
@@ -40,7 +56,7 @@ export default function Homepage() {
       {
         id: "4",
         name: "Macramé Wall Hanging",
-        price: 45.00,
+        price: 45.0,
         imageUrl: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
         sellerName: "Sarah Wilson",
         reviewCount: 34,
@@ -49,7 +65,7 @@ export default function Homepage() {
       {
         id: "5",
         name: "Glass Pendant Necklace",
-        price: 85.00,
+        price: 85.0,
         imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
         sellerName: "Emma Davis",
         reviewCount: 56,
@@ -58,17 +74,18 @@ export default function Homepage() {
       {
         id: "6",
         name: "Leather Journal Cover",
-        price: 78.00,
+        price: 78.0,
         imageUrl: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=400",
         sellerName: "Michael Brown",
         reviewCount: 23,
         featured: false
       }
     ];
+
     setFeaturedProducts(mockProducts);
   }, []);
 
-  const categories = [
+  const categories: Category[] = [
     { value: 'all', label: 'All Categories' },
     { value: 'home-decor', label: 'Home Decor' },
     { value: 'jewelry', label: 'Jewelry' },
@@ -76,6 +93,14 @@ export default function Homepage() {
     { value: 'ceramics', label: 'Ceramics' },
     { value: 'woodwork', label: 'Woodwork' }
   ];
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value);
+  };
 
   return (
     <div className="homepage">
@@ -96,8 +121,7 @@ export default function Homepage() {
           <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600" alt="Handcrafted pottery" />
         </div>
       </section>
-
-      {/* Search and Filter Section */}
+      {/* Replace search and filter inputs with typed handlers */}
       <section className="search-section">
         <div className="search-container">
           <div className="search-bar">
@@ -105,7 +129,7 @@ export default function Homepage() {
               type="text"
               placeholder="Search for handcrafted items..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="search-input"
             />
             <button className="search-button">🔍</button>
@@ -113,10 +137,10 @@ export default function Homepage() {
           <div className="filter-container">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={handleCategoryChange}
               className="category-filter"
             >
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.value} value={category.value}>
                   {category.label}
                 </option>
@@ -133,7 +157,7 @@ export default function Homepage() {
           <p className="section-subtitle">Curated selections from our most talented artisans</p>
         </div>
         <div className="products-grid">
-          {featuredProducts.slice(0, 4).map(product => (
+          {featuredProducts.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
