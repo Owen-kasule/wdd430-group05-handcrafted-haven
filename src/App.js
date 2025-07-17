@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Homepage from './components/Homepage';
 import ProductPage from './components/ProductPage';
+import ProductsPage from './components/ProductsPage';
 import SellerProfile from './components/SellerProfile';
+import SellersPage from './components/SellersPage';
 import AboutPage from './components/AboutPage';
 import './App.css';
 
@@ -16,9 +18,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/products" element={<ProductsPage />} />
             <Route path="/seller/:id" element={<SellerProfile />} />
-            <Route path="/products" element={<div className="placeholder">Products Page - Coming Soon</div>} />
-            <Route path="/sellers" element={<div className="placeholder">Sellers Page - Coming Soon</div>} />
+            <Route path="/sellers" element={<SellersPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<div className="placeholder">Login Page - Coming Soon</div>} />
           </Routes>
