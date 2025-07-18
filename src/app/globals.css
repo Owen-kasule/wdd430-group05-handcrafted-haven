@@ -26,6 +26,19 @@ body {
   background-color: var(--background-cream);
   color: var(--text-dark);
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px; /* Account for desktop navbar */
 }
 
 a {
@@ -71,4 +84,106 @@ button {
 
 .gap-4 {
   gap: 1rem;
+}
+
+/* Error Boundary Styles */
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--background-cream);
+}
+
+.error-content {
+  max-width: 600px;
+  text-align: center;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-content h1 {
+  color: var(--primary-brown);
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.error-message {
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.error-details {
+  margin: 1rem 0;
+  text-align: left;
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.error-details pre {
+  font-size: 0.9rem;
+  color: #666;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.retry-button, .home-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-button {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+
+.retry-button:hover {
+  background-color: #3e7322;
+}
+
+.home-button {
+  background-color: var(--primary-brown);
+  color: var(--white);
+}
+
+.home-button:hover {
+  background-color: #654321;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 0; /* Remove top padding on mobile */
+    padding-bottom: 80px; /* Add bottom padding for mobile navbar */
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-bottom: 85px; /* Slightly more padding on smaller screens */
+  }
+  
+  .container {
+    padding: 0 10px;
+  }
 }
