@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import { mockProducts } from '@/data/mockData';
-import type { Product } from '@/data/mockData';
+import type { Product } from '@/types/definitions';
 import './Homepage.css';
 
 export default function Homepage() {
@@ -21,7 +21,7 @@ export default function Homepage() {
     { value: 'jewelry', label: 'Jewelry' },
     { value: 'textiles', label: 'Textiles' },
     { value: 'ceramics', label: 'Ceramics' },
-    { value: 'woodwork', label: 'Woodwork' }
+    { value: 'woodwork', label: 'Woodwork' },
   ];
 
   return (
@@ -31,7 +31,7 @@ export default function Homepage() {
         <div className="hero-content">
           <h1 className="hero-title">Discover Unique Handcrafted Treasures</h1>
           <p className="hero-subtitle">
-            Connect with talented artisans and bring their beautiful, 
+            Connect with talented artisans and bring their beautiful,
             one-of-a-kind creations into your home
           </p>
           <div className="hero-cta">
@@ -40,7 +40,10 @@ export default function Homepage() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600" alt="Handcrafted pottery" />
+          <img
+            src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600"
+            alt="Handcrafted pottery"
+          />
         </div>
       </section>
 
@@ -52,7 +55,7 @@ export default function Homepage() {
               type="text"
               placeholder="Search for handcrafted items..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="search-input"
             />
             <button className="search-button">🔍</button>
@@ -60,7 +63,7 @@ export default function Homepage() {
           <div className="filter-container">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={e => setSelectedCategory(e.target.value)}
               className="category-filter"
               aria-label="Filter by category"
             >
@@ -78,7 +81,9 @@ export default function Homepage() {
       <section className="featured-section">
         <div className="section-header">
           <h2 className="section-title">Featured Products</h2>
-          <p className="section-subtitle">Curated selections from our most talented artisans</p>
+          <p className="section-subtitle">
+            Curated selections from our most talented artisans
+          </p>
         </div>
         <div className="products-grid">
           {featuredProducts.slice(0, 4).map(product => (
@@ -92,28 +97,40 @@ export default function Homepage() {
         <h2 className="section-title">Shop by Category</h2>
         <div className="categories-grid">
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300" alt="Ceramics" />
+            <img
+              src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300"
+              alt="Ceramics"
+            />
             <div className="category-overlay">
               <h3>Ceramics & Pottery</h3>
               <p>Beautiful handcrafted ceramic pieces</p>
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300" alt="Jewelry" />
+            <img
+              src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300"
+              alt="Jewelry"
+            />
             <div className="category-overlay">
               <h3>Jewelry</h3>
               <p>Unique handmade jewelry pieces</p>
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300" alt="Textiles" />
+            <img
+              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300"
+              alt="Textiles"
+            />
             <div className="category-overlay">
               <h3>Textiles</h3>
               <p>Handwoven fabrics and textiles</p>
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=300" alt="Woodwork" />
+            <img
+              src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=300"
+              alt="Woodwork"
+            />
             <div className="category-overlay">
               <h3>Woodwork</h3>
               <p>Expertly crafted wooden items</p>
@@ -129,22 +146,34 @@ export default function Homepage() {
           <div className="benefit-card">
             <div className="benefit-icon">🎨</div>
             <h3>Authentic Craftsmanship</h3>
-            <p>Every item is handmade by skilled artisans who pour their passion into each piece</p>
+            <p>
+              Every item is handmade by skilled artisans who pour their passion
+              into each piece
+            </p>
           </div>
           <div className="benefit-card">
             <div className="benefit-icon">🌍</div>
             <h3>Support Local Artists</h3>
-            <p>Directly support independent artisans and help preserve traditional crafts</p>
+            <p>
+              Directly support independent artisans and help preserve
+              traditional crafts
+            </p>
           </div>
           <div className="benefit-card">
             <div className="benefit-icon">✨</div>
             <h3>Unique & One-of-a-Kind</h3>
-            <p>Find truly unique pieces that can't be found in mass-produced stores</p>
+            <p>
+              Find truly unique pieces that can't be found in mass-produced
+              stores
+            </p>
           </div>
           <div className="benefit-card">
             <div className="benefit-icon">📦</div>
             <h3>Secure & Fast Shipping</h3>
-            <p>Your handcrafted treasures are carefully packaged and shipped with care</p>
+            <p>
+              Your handcrafted treasures are carefully packaged and shipped with
+              care
+            </p>
           </div>
         </div>
       </section>
@@ -153,7 +182,9 @@ export default function Homepage() {
       <section className="newsletter-section">
         <div className="newsletter-content">
           <h2>Stay Connected</h2>
-          <p>Get updates on new artisans, featured products, and exclusive offers</p>
+          <p>
+            Get updates on new artisans, featured products, and exclusive offers
+          </p>
           <div className="newsletter-form">
             <input type="email" placeholder="Enter your email address" />
             <button type="submit">Subscribe</button>
