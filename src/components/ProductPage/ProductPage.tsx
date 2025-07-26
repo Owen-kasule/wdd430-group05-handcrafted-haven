@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { mockProducts, mockReviews } from '@/data/mockData';
-import type { Product, Review } from '@/data/mockData';
+import type { Product, Review } from '@/types/definitions';
 import Loading from '@/components/Loading/Loading';
 import './ProductPage.css';
 
@@ -19,7 +19,7 @@ export default function ProductPage() {
   const [newReview, setNewReview] = useState({
     rating: 5,
     comment: '',
-    userName: 'Anonymous User'
+    userName: 'Anonymous User',
   });
 
   useEffect(() => {
@@ -44,9 +44,9 @@ export default function ProductPage() {
       comment: newReview.comment,
       createdAt: new Date(),
       date: new Date().toISOString().split('T')[0],
-      verified: false
+      verified: false,
     };
-    
+
     setReviews([review, ...reviews]);
     setNewReview({ rating: 5, comment: '', userName: 'Anonymous User' });
     setShowReviewForm(false);
@@ -54,18 +54,22 @@ export default function ProductPage() {
 
   const calculateRatingBreakdown = () => {
     if (reviews.length === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    
+
     const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     reviews.forEach(review => {
       breakdown[review.rating as keyof typeof breakdown]++;
     });
-    
+
     return breakdown;
   };
 
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
-    : '0';
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, review) => sum + review.rating, 0) /
+          reviews.length
+        ).toFixed(1)
+      : '0';
 
   if (!product) {
     return <Loading message="Loading product..." />;
@@ -99,13 +103,17 @@ export default function ProductPage() {
             <span className="product-price">${product.price}</span>
             <span className="product-category">{product.category}</span>
           </div>
-          
+
           <div className="product-rating">
             <div className="rating-stars">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span 
-                  key={star} 
-                  className={star <= Math.round(Number(averageRating)) ? 'star filled' : 'star'}
+              {[1, 2, 3, 4, 5].map(star => (
+                <span
+                  key={star}
+                  className={
+                    star <= Math.round(Number(averageRating))
+                      ? 'star filled'
+                      : 'star'
+                  }
                 >
                   ★
                 </span>
@@ -115,7 +123,7 @@ export default function ProductPage() {
               {averageRating} ({reviews.length} reviews)
             </span>
           </div>
-          
+
           <div className="seller-info">
             <Link href={`/seller/${product.sellerId}`} className="seller-link">
               <strong>Artisan:</strong> {product.sellerName}
@@ -146,10 +154,12 @@ export default function ProductPage() {
               <select
                 id="quantity"
                 value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                onChange={e => setQuantity(parseInt(e.target.value))}
               >
                 {[1, 2, 3, 4, 5].map(num => (
-                  <option key={num} value={num}>{num}</option>
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
                 ))}
               </select>
             </div>
@@ -163,7 +173,7 @@ export default function ProductPage() {
       <div className="reviews-section">
         <div className="reviews-header">
           <h2>Customer Reviews</h2>
-          <button 
+          <button
             className="write-review-btn"
             onClick={() => setShowReviewForm(!showReviewForm)}
           >
@@ -176,10 +186,14 @@ export default function ProductPage() {
           <div className="overall-rating">
             <div className="rating-number">{averageRating}</div>
             <div className="rating-stars">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span 
-                  key={star} 
-                  className={star <= Math.round(Number(averageRating)) ? 'star filled' : 'star'}
+              {[1, 2, 3, 4, 5].map(star => (
+                <span
+                  key={star}
+                  className={
+                    star <= Math.round(Number(averageRating))
+                      ? 'star filled'
+                      : 'star'
+                  }
                 >
                   ★
                 </span>
@@ -187,24 +201,33 @@ export default function ProductPage() {
             </div>
             <div className="rating-count">{reviews.length} reviews</div>
           </div>
-          
+
           <div className="rating-breakdown">
             {[5, 4, 3, 2, 1].map(rating => {
-              const percentage = reviews.length > 0 
-                ? (ratingBreakdown[rating as keyof typeof ratingBreakdown] / reviews.length) * 100 
-                : 0;
-              
+              const percentage =
+                reviews.length > 0
+                  ? (ratingBreakdown[rating as keyof typeof ratingBreakdown] /
+                      reviews.length) *
+                    100
+                  : 0;
+
               return (
                 <div key={rating} className="rating-row">
                   <span className="rating-label">{rating} stars</span>
                   <div className="rating-bar">
-                    <div 
-                      className="rating-fill" 
+                    <div
+                      className="rating-fill"
                       data-percentage={percentage}
-                      style={{'--rating-width': `${percentage}%`} as React.CSSProperties}
+                      style={
+                        {
+                          '--rating-width': `${percentage}%`,
+                        } as React.CSSProperties
+                      }
                     ></div>
                   </div>
-                  <span className="rating-count">{ratingBreakdown[rating as keyof typeof ratingBreakdown]}</span>
+                  <span className="rating-count">
+                    {ratingBreakdown[rating as keyof typeof ratingBreakdown]}
+                  </span>
                 </div>
               );
             })}
@@ -222,39 +245,52 @@ export default function ProductPage() {
                   type="text"
                   id="reviewer-name"
                   value={newReview.userName}
-                  onChange={(e) => setNewReview({...newReview, userName: e.target.value})}
+                  onChange={e =>
+                    setNewReview({ ...newReview, userName: e.target.value })
+                  }
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="rating">Rating:</label>
                 <select
                   id="rating"
                   value={newReview.rating}
-                  onChange={(e) => setNewReview({...newReview, rating: parseInt(e.target.value)})}
+                  onChange={e =>
+                    setNewReview({
+                      ...newReview,
+                      rating: parseInt(e.target.value),
+                    })
+                  }
                 >
                   {[5, 4, 3, 2, 1].map(num => (
-                    <option key={num} value={num}>{num} stars</option>
+                    <option key={num} value={num}>
+                      {num} stars
+                    </option>
                   ))}
                 </select>
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="comment">Review:</label>
                 <textarea
                   id="comment"
                   value={newReview.comment}
-                  onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
+                  onChange={e =>
+                    setNewReview({ ...newReview, comment: e.target.value })
+                  }
                   rows={4}
                   required
                 ></textarea>
               </div>
-              
+
               <div className="form-actions">
-                <button type="submit" className="submit-review-btn">Submit Review</button>
-                <button 
-                  type="button" 
+                <button type="submit" className="submit-review-btn">
+                  Submit Review
+                </button>
+                <button
+                  type="button"
                   className="cancel-review-btn"
                   onClick={() => setShowReviewForm(false)}
                 >
@@ -272,13 +308,15 @@ export default function ProductPage() {
               <div className="review-header">
                 <span className="reviewer-name">{review.userName}</span>
                 <span className="review-date">{review.date}</span>
-                {review.verified && <span className="verified-badge">Verified Purchase</span>}
+                {review.verified && (
+                  <span className="verified-badge">Verified Purchase</span>
+                )}
               </div>
               <div className="review-rating">
                 <span className="stars">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <span 
-                      key={star} 
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span
+                      key={star}
                       className={star <= review.rating ? 'star filled' : 'star'}
                     >
                       ★

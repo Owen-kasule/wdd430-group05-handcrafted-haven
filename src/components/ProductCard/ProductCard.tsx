@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import Link from 'next/link';
-import type { Product } from '@/data/mockData';
+import type { Product } from '@/types/definitions';
 import './ProductCard.css';
 
 interface ProductCardProps {

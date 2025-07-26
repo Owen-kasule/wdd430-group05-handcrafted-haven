@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { mockSellers } from '@/data/mockData';
-import type { Seller } from '@/data/mockData';
+import type { Seller } from '@/types/definitions';
 import './SellersPage.css';
 
 export default function SellersPage() {
@@ -23,20 +23,21 @@ export default function SellersPage() {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(seller =>
-        seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seller.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seller.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seller.specialties.some(specialty => 
-          specialty.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+      filtered = filtered.filter(
+        seller =>
+          seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          seller.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          seller.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          seller.specialties.some(specialty =>
+            specialty.toLowerCase().includes(searchTerm.toLowerCase())
+          )
       );
     }
 
     // Filter by specialty
     if (selectedSpecialty !== 'all') {
       filtered = filtered.filter(seller =>
-        seller.specialties.some(specialty => 
+        seller.specialties.some(specialty =>
           specialty.toLowerCase().includes(selectedSpecialty.toLowerCase())
         )
       );
@@ -50,7 +51,9 @@ export default function SellersPage() {
         case 'sales':
           return b.totalSales - a.totalSales;
         case 'newest':
-          return new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime();
+          return (
+            new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime()
+          );
         case 'alphabetical':
           return a.name.localeCompare(b.name);
         default:
@@ -69,7 +72,7 @@ export default function SellersPage() {
     { value: 'jewelry', label: 'Jewelry' },
     { value: 'leather', label: 'Leather Craft' },
     { value: 'glass', label: 'Glass Art' },
-    { value: 'fiber', label: 'Fiber Art' }
+    { value: 'fiber', label: 'Fiber Art' },
   ];
 
   return (
@@ -88,7 +91,7 @@ export default function SellersPage() {
               type="text"
               placeholder="Search artisans..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="search-input"
             />
           </div>
@@ -96,7 +99,7 @@ export default function SellersPage() {
           <div className="specialty-filter">
             <select
               value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value)}
+              onChange={e => setSelectedSpecialty(e.target.value)}
               className="filter-select"
               aria-label="Filter by specialty"
             >
@@ -111,7 +114,7 @@ export default function SellersPage() {
           <div className="sort-filter">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={e => setSortBy(e.target.value)}
               className="filter-select"
               aria-label="Sort sellers"
             >
@@ -141,12 +144,14 @@ export default function SellersPage() {
                 <h3 className="seller-name">{seller.name}</h3>
                 <p className="seller-location">📍 {seller.location}</p>
                 <p className="seller-bio">{seller.bio}</p>
-                
+
                 <div className="seller-stats">
                   <div className="stat">
                     <span className="stat-icon">⭐</span>
                     <span className="stat-value">{seller.rating}</span>
-                    <span className="stat-label">({seller.totalReviews} reviews)</span>
+                    <span className="stat-label">
+                      ({seller.totalReviews} reviews)
+                    </span>
                   </div>
                   <div className="stat">
                     <span className="stat-icon">📦</span>
