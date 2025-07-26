@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '../ProductCard/ProductCard';
 import { mockProducts, categories } from '@/data/mockData';
-import type { Product } from '@/data/mockData';
+import type { Product } from '@/types/definitions';
 import './ProductsPage.css';
 
 export default function ProductsPage() {
@@ -43,23 +43,28 @@ export default function ProductsPage() {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.sellerName.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        product =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          product.sellerName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product =>
-        product.category.toLowerCase() === selectedCategory.toLowerCase()
+      filtered = filtered.filter(
+        product =>
+          product.category.toLowerCase() === selectedCategory.toLowerCase()
       );
     }
 
     // Filter by price range
-    filtered = filtered.filter(product =>
-      product.price >= priceRange.min && product.price <= priceRange.max
+    filtered = filtered.filter(
+      product =>
+        product.price >= priceRange.min && product.price <= priceRange.max
     );
 
     // Sort products
@@ -72,7 +77,9 @@ export default function ProductsPage() {
         case 'rating':
           return b.rating - a.rating;
         case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         case 'featured':
         default:
           return Number(b.featured) - Number(a.featured);
@@ -88,7 +95,7 @@ export default function ProductsPage() {
     const params = new URLSearchParams();
     if (selectedCategory !== 'all') params.set('category', selectedCategory);
     if (searchTerm) params.set('search', searchTerm);
-    
+
     const newUrl = `/products${params.toString() ? `?${params.toString()}` : ''}`;
     router.replace(newUrl);
   }, [selectedCategory, searchTerm, router]);
@@ -96,7 +103,10 @@ export default function ProductsPage() {
   // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const handlePageChange = (pageNumber: number) => {
@@ -127,7 +137,7 @@ export default function ProductsPage() {
               type="text"
               placeholder="Search products..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="search-input"
             />
           </div>
@@ -135,7 +145,7 @@ export default function ProductsPage() {
           <div className="category-filter">
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              onChange={e => setSelectedCategory(e.target.value)}
               className="filter-select"
               aria-label="Filter by category"
             >
@@ -149,20 +159,32 @@ export default function ProductsPage() {
           </div>
 
           <div className="price-filter">
-            <label htmlFor="price-range">Price Range: ${priceRange.min} - ${priceRange.max}</label>
+            <label htmlFor="price-range">
+              Price Range: ${priceRange.min} - ${priceRange.max}
+            </label>
             <div className="price-inputs">
               <input
                 type="number"
                 placeholder="Min"
                 value={priceRange.min}
-                onChange={(e) => setPriceRange({...priceRange, min: parseInt(e.target.value) || 0})}
+                onChange={e =>
+                  setPriceRange({
+                    ...priceRange,
+                    min: parseInt(e.target.value) || 0,
+                  })
+                }
                 className="price-input"
               />
               <input
                 type="number"
                 placeholder="Max"
                 value={priceRange.max}
-                onChange={(e) => setPriceRange({...priceRange, max: parseInt(e.target.value) || 1000})}
+                onChange={e =>
+                  setPriceRange({
+                    ...priceRange,
+                    max: parseInt(e.target.value) || 1000,
+                  })
+                }
                 className="price-input"
               />
             </div>
@@ -171,7 +193,7 @@ export default function ProductsPage() {
           <div className="sort-filter">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={e => setSortBy(e.target.value)}
               className="filter-select"
               aria-label="Sort products"
             >
@@ -218,7 +240,7 @@ export default function ProductsPage() {
           >
             Previous
           </button>
-          
+
           {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
@@ -228,7 +250,7 @@ export default function ProductsPage() {
               {index + 1}
             </button>
           ))}
-          
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
