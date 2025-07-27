@@ -1,4 +1,4 @@
-'use client';
+'use client'; // This component uses client-side hooks like useState and usePathname.
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -7,6 +7,9 @@ import './Navbar.css';
 
 // CORRECT: Import the useCart hook (it's a function/value, so no 'type' keyword)
 import { useCart } from '@/hooks/useCart';
+
+// NEW: Import the BsCart4 icon from react-icons/bs
+import { BsCart4 } from 'react-icons/bs';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -67,13 +70,14 @@ export default function Navbar() {
             >
               About
             </Link>
-            {/* Add Cart Link to Desktop Navbar */}
+            {/* Add Cart Link to Desktop Navbar - NOW USING BsCart4 */}
             <Link
               href="/cart"
               className={`nav-link nav-cart ${pathname === '/cart' ? 'active' : ''}`}
               onClick={closeMenu}
             >
-              🛒 Cart ({totalItems}) - ${totalPrice.toFixed(2)}
+              <BsCart4 size={20} style={{ marginRight: '5px' }} /> {/* Icon with a little spacing */}
+              Cart ({totalItems}) - ${totalPrice.toFixed(2)}
             </Link>
             <Link
               href="/login"
@@ -110,13 +114,10 @@ export default function Navbar() {
             <span className="mobile-nav-label">Artisans</span>
           </Link>
 
-          {/* Add Cart Link to Mobile Navbar */}
-          <Link href="/cart" className={`mobile-nav-item ${pathname === '/cart' ? 'active' : ''}`}>
+          {/* Add Cart Link to Mobile Navbar - NOW USING BsCart4 */}
+          <Link href="/cart" className={`mobile-nav-item mobile-nav-cart ${pathname === '/cart' ? 'active' : ''}`}>
             <div className="mobile-nav-icon">
-              {/* You can use a dedicated cart icon SVG here if you have one, or a simple emoji */}
-              <img src="/icons/cart_icon.svg" alt="Cart" width="24" height="24" /> {/* Assuming you have cart_icon.svg */}
-              {/* Fallback to emoji if no SVG */}
-              {/* <span role="img" aria-label="Shopping Cart">🛒</span> */}
+              <BsCart4 size={24} /> {/* Use the React icon here */}
             </div>
             {/* Display total items. You might want to consider space limitations on mobile for totalPrice. */}
             <span className="mobile-nav-label">Cart ({totalItems})</span>
