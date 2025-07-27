@@ -1,3 +1,5 @@
+/* Navbar.css */
+
 :root {
   --primary-green: #4B8F29;
   --primary-yellow: #F4A300;
@@ -82,6 +84,43 @@
   border-radius: 2px;
 }
 
+/* --- New Cart Desktop Styles --- */
+.nav-link.nav-cart {
+  font-weight: 600;
+  color: var(--primary-yellow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--primary-yellow);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-link.nav-cart:hover {
+  background-color: rgba(244, 163, 0, 0.2);
+  color: var(--white); /* Text color might change on hover if it contrasts better */
+  border-color: var(--white); /* Or make border white on hover */
+}
+
+.nav-link.nav-cart.active {
+  background-color: var(--primary-yellow);
+  color: #2F2F2F; /* Dark text for yellow background */
+  border-color: var(--primary-yellow);
+}
+
+.nav-link.nav-cart.active::after {
+  display: none; /* Remove the active underline for the cart link if it has a background */
+}
+
+/* Adjustments for icons within nav-link if needed (e.g., for emoji) */
+.nav-link.nav-cart span[role="img"] {
+    font-size: 1.2rem; /* Adjust emoji size */
+    line-height: 1; /* Ensure it aligns well */
+}
+/* --- End New Cart Desktop Styles --- */
+
+
 .nav-login {
   background-color: var(--primary-yellow);
   color: #2F2F2F;
@@ -108,44 +147,6 @@
 .nav-login.active::after {
   display: none;
 }
-/* ... (Your existing .nav-link, .nav-link.active, .nav-login styles) ... */
-
-.nav-link.nav-cart {
-  /* New cart desktop styles go here */
-  font-weight: 600;
-  color: var(--primary-yellow);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border: 1px solid var(--primary-yellow);
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.nav-link.nav-cart:hover {
-  background-color: rgba(244, 163, 0, 0.2);
-  color: var(--white);
-  border-color: var(--white);
-}
-
-.nav-link.nav-cart.active {
-  background-color: var(--primary-yellow);
-  color: #2F2F2F;
-  border-color: var(--primary-yellow);
-}
-
-.nav-link.nav-cart.active::after {
-  display: none;
-}
-
-/* Adjustments for icons within nav-link if needed (e.g., for emoji) */
-.nav-link.nav-cart span[role="img"] {
-    font-size: 1.2rem;
-    line-height: 1;
-}
-
-
 
 /* Hamburger Menu */
 .hamburger {
@@ -245,6 +246,31 @@
   filter: brightness(0) invert(1); /* Makes images white by default */
 }
 
+/* --- New Cart Mobile Icon Styles --- */
+.mobile-nav-item.mobile-nav-cart .mobile-nav-icon img {
+  filter: brightness(0) invert(1); /* Default white for cart icon */
+}
+
+.mobile-nav-item.mobile-nav-cart.active .mobile-nav-icon img,
+.mobile-nav-item.mobile-nav-cart:hover .mobile-nav-icon img {
+  filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%) hue-rotate(15deg) brightness(100%) contrast(90%); /* Yellow for cart icon */
+}
+
+/* If you use an emoji for the mobile cart icon, style it directly */
+.mobile-nav-item .mobile-nav-icon .cart-emoji {
+    font-size: 1.5rem; /* Adjust as needed */
+    line-height: 1;
+    color: var(--white);
+    transition: color 0.3s ease;
+}
+
+.mobile-nav-item.active .mobile-nav-icon .cart-emoji,
+.mobile-nav-item:hover .mobile-nav-icon .cart-emoji {
+    color: var(--primary-yellow);
+}
+/* --- End New Cart Mobile Icon Styles --- */
+
+
 .mobile-nav-item.active .mobile-nav-icon img {
   filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%) hue-rotate(15deg) brightness(100%) contrast(90%); /* Makes images yellow when active */
 }
@@ -265,15 +291,15 @@
   .navbar.desktop-navbar {
     display: none;
   }
-  
+
   .mobile-bottom-navbar {
     display: block;
   }
-  
+
   .hamburger {
     display: flex;
   }
-  
+
   .nav-menu {
     position: fixed;
     top: 100%;
@@ -289,13 +315,13 @@
     transition: all 0.3s ease;
     z-index: 1000;
   }
-  
+
   .nav-menu.active {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
   }
-  
+
   .nav-link {
     padding: 1rem 2rem;
     width: 100%;
@@ -303,15 +329,15 @@
     border-radius: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-link:last-child {
     border-bottom: none;
   }
-  
+
   .nav-link.active::after {
     display: none;
   }
-  
+
   .nav-login {
     margin: 0.5rem 2rem;
     border-radius: 8px;
@@ -323,7 +349,7 @@
   .hamburger {
     display: none;
   }
-  
+
   .nav-menu {
     position: static;
     flex-direction: row;
@@ -339,25 +365,27 @@
   .nav-container {
     padding: 0 1rem;
   }
-  
+
   .nav-logo {
     font-size: 1.5rem;
   }
-  
+
   .nav-link {
     padding: 0.875rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .nav-login {
     margin: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .mobile-nav-label {
-    font-size: 0.7rem;
+    /* --- New Cart Mobile Label Adjustment --- */
+    font-size: 0.65rem; /* Slightly reduced for cart count */
+    /* --- End New Cart Mobile Label Adjustment --- */
   }
-  
+
   .mobile-nav-icon svg {
     width: 20px;
     height: 20px;
