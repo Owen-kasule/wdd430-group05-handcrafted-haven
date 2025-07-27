@@ -1,29 +1,39 @@
-// app/products/[id]/page.tsx
+// components/ProductPage/ProductPage.tsx
+'use client'; // Make sure this is present if ProductPage uses client-side hooks
 
-// Import your ProductPage component
-// Make sure this path is correct relative to your 'app' directory
-// If ProductPage is a client component, remember 'use client' at the top of ProductPage.tsx
-import ProductPage from '@/components/ProductPage/ProductPage';
+import React, { useState, useEffect } from 'react';
+// ... other imports you might have (like Link, mock data, types, useCart)
+import type { Product, Review } from '@/types/common'; // Important: use 'type' for type imports!
+import { useCart } from '@/hooks/useCart'; // Make sure this import is correct (no 'type' here, as useCart is a value/function)
 
-// Define the props interface correctly for dynamic routes
-// 'params' will be an object where keys match your dynamic segments ([id])
+// 1. Define the props interface for ProductPage
+//    This interface MUST define 'productId' as a string.
 interface ProductPageProps {
-  params: {
-    id: string; // The 'id' from [id] in the folder name will be a string
-  };
+  productId: string;
 }
 
-// Your page component (a Server Component by default)
-export default async function Product({ params }: ProductPageProps) {
-  const productId = params.id; // Access the id directly from the params object
+// 2. Use this interface in your component's function signature
+//    Destructure 'productId' from the props object, and apply the ProductPageProps type.
+export default function ProductPage({ productId }: ProductPageProps) {
+  // ... rest of your ProductPage component logic
 
-  // --- Example: Fetching product data based on productId ---
-  // In a real application, you would fetch data here
-  // const productData = await fetch(`https://your-api.com/products/${productId}`).then(res => res.json());
-  // console.log("Fetching product:", productId);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart(); // Access cart functions
 
-  // You can pass the productId to your ProductPage component
-  // Or, if ProductPage itself needs to be a Client Component and fetch data,
-  // ensure it uses `useEffect` for data fetching or receives props from here.
-  return <ProductPage productId={productId} />;
+  useEffect(() => {
+    setLoading(true);
+    // Ensure you are using the passed productId here
+    const foundProduct = mockProducts.find(p => p.id === productId);
+    if (foundProduct) {
+      setProduct(foundProduct);
+      setReviews(mockReviews.filter(r => r.productId === productId));
+    } else {
+      setProduct(null);
+    }
+    setLoading(false);
+  }, [productId]); // Ensure productId is a dependency
+
+  // ... rest of your component's JSX
 }
