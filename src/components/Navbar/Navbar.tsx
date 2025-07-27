@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import './Navbar.css';
 
-// Import the useCart hook
-import { useCart } from '@/hooks/useCart'; // Adjust path if your hooks folder is elsewhere, e.g., ../../hooks/useCart
+// CORRECT: Import the useCart hook (it's a function/value, so no 'type' keyword)
+import { useCart } from '@/hooks/useCart';
 
 export default function Navbar() {
   const pathname = usePathname();
