@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 // Import both CartItem and Product from your common types file
-import { CartItem, Product } from '@/types/common';
+import type { CartItem, Product } from '@/types/common';
 
 const CART_STORAGE_KEY = 'simple_nextjs_cart';
 

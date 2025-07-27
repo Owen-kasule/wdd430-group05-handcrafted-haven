@@ -12,8 +12,8 @@ import { mockProducts, mockReviews } from '@/data/mockData';
 import Loading from '@/components/Loading/Loading';
 import './ProductPage.css';
 
-// Import the useCart hook
-import { useCart } from '@/hooks/useCart'; //
+
+import { useCart } from '@/hooks/useCart';
 export default function ProductPage() {
   const params = useParams();
   const id = params.id as string;
