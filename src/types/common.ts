@@ -1,49 +1,38 @@
-// Utility types for the application
-export type ApiResponse<T> = {
-  data: T;
-  error?: string;
-  loading?: boolean;
-};
+// src/types/common.ts
 
-export type PaginatedResponse<T> = {
-  data: T[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
-  };
-};
-
-export type FilterOptions = {
-  category?: string;
-  priceRange?: { min: number; max: number };
-  searchTerm?: string;
-  sortBy?: 'featured' | 'price-low' | 'price-high' | 'rating' | 'newest';
-};
-
-export type FormErrors<T> = {
-  [K in keyof T]?: string;
-};
-
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-
-// Event handler types
-export type ChangeHandler<T = string> = (value: T) => void;
-export type SubmitHandler<T = unknown> = (data: T) => Promise<void> | void;
-
-// Common props
-export interface BaseComponentProps {
-  className?: string;
-  children?: React.ReactNode;
+// Product Type (from your mockData)
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  images: string[];
+  inStock: boolean;
+  sellerId: string;
+  sellerName: string;
+  rating: number; // Seller rating, not product rating
+  specifications: Record<string, string>;
 }
 
-export interface WithLoading {
-  loading?: boolean;
+// Review Type (from your mockData)
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+  date: string; // ISO string 'YYYY-MM-DD'
+  verified: boolean;
 }
 
-export interface WithError {
-  error?: string | null;
+// Cart Item Type (for your cart)
+export interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string; // Storing the image for cart display
 }
