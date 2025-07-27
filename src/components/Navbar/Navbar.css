@@ -108,6 +108,44 @@
 .nav-login.active::after {
   display: none;
 }
+/* ... (Your existing .nav-link, .nav-link.active, .nav-login styles) ... */
+
+.nav-link.nav-cart {
+  /* New cart desktop styles go here */
+  font-weight: 600;
+  color: var(--primary-yellow);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--primary-yellow);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-link.nav-cart:hover {
+  background-color: rgba(244, 163, 0, 0.2);
+  color: var(--white);
+  border-color: var(--white);
+}
+
+.nav-link.nav-cart.active {
+  background-color: var(--primary-yellow);
+  color: #2F2F2F;
+  border-color: var(--primary-yellow);
+}
+
+.nav-link.nav-cart.active::after {
+  display: none;
+}
+
+/* Adjustments for icons within nav-link if needed (e.g., for emoji) */
+.nav-link.nav-cart span[role="img"] {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+
 
 /* Hamburger Menu */
 .hamburger {
