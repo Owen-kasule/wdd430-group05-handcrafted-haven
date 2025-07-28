@@ -3,11 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+
+// You will now get Product and Review from '@/types/common'
+import type { Product, Review } from '@/types/common';
+// Import mockProducts and mockReviews directly as they are data, not just types
 import { mockProducts, mockReviews } from '@/data/mockData';
-import type { Product, Review } from '@/data/mockData';
+
 import Loading from '@/components/Loading/Loading';
 import './ProductPage.css';
 
+
+import { useCart } from '@/hooks/useCart';
 export default function ProductPage() {
   const params = useParams();
   const id = params.id as string;
