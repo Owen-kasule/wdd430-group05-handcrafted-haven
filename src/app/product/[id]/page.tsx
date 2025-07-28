@@ -104,7 +104,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         ) : (
           reviews.map(review => (
             <div key={review.id} className="review-item"> {/* Assuming review has an 'id' for the key */}
-              <h4>{review.author}</h4>
+               <h4>{review.userName}</h4> 
               <p>Rating: {review.rating}/5</p>
               <p>{review.comment}</p>
             </div>

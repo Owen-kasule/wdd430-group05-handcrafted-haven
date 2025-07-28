@@ -24,7 +24,6 @@ export interface Review {
   productId: string;
   userId: string;
   userName: string;
-  author?: string; // Add this line if you need an 'author' specifically
   rating: number;
   comment: string;
   createdAt: Date;
