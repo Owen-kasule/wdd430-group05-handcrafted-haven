@@ -14,9 +14,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "pre-commit": "npm run lint:fix && npm run type-check && npm run format"
+    "pre-commit": "npm run lint:fix && npm run type-check && npm run format",
+    "db:migrate": "psql $POSTGRES_URL -f migrations/0001_initial_schema.sql",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
     "next": "^15.4.1",
     "postgres": "^3.4.7",
     "react": "^18.3.1",
@@ -26,13 +31,16 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@types/node": "^24.0.14",
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^24.1.0",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.4.1",
     "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "engines": {

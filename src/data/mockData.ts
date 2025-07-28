@@ -34,7 +34,6 @@ export const mockUsers: User[] = [
 ];
 
 export const mockSellers: Seller[] = [
-  // ... existing sellers ...,
   {
     id: 'maria',
     name: 'Maria Rodriguez',
