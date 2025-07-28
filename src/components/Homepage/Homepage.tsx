@@ -97,21 +97,21 @@ export default function Homepage() {
         <h2 className="section-title">Shop by Category</h2>
         <div className="categories-grid">
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300" alt="Ceramics" />
+            <img src="https://img.freepik.com/premium-photo/modern-twist-ancient-pottery-techniques_902820-18893.jpg" alt="Ceramics" />
             <div className="category-overlay">
               <h3>Ceramics & Pottery</h3>
               <p>Beautiful handcrafted ceramic pieces</p>
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300" alt="Jewelry" />
+            <img src="https://i.pinimg.com/originals/2b/0e/13/2b0e13ace203b45f808fc77e488b5499.jpg" alt="Jewelry" />
             <div className="category-overlay">
               <h3>Jewelry</h3>
               <p>Unique handmade jewelry pieces</p>
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300" alt="Textiles" />
+            <img src="https://www.thetravelleaf.com/wp-content/uploads/2016/12/6-1692x1400.jpg" alt="Textiles" />
             <div className="category-overlay">
               <h3>Textiles</h3>
               <p>Handwoven fabrics and textiles</p>

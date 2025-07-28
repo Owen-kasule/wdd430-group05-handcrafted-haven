@@ -104,7 +104,7 @@ export const mockProducts: Product[] = [
     name: "Knitted Wool Scarf",
     price: 35.50,
     description: "A cozy wool scarf hand-knitted with care. Available in multiple colors and perfect for cold weather.",
-    image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=400&h=400&fit=crop",
+    image: "https://sarahmaker.com/wp-content/uploads/2023/02/sarahmaker-knit-scarf-12-819x1024.jpg",
     images: [
       "https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=400&h=400&fit=crop",
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop"
