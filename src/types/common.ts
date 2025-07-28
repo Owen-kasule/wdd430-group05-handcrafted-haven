@@ -15,8 +15,7 @@ export interface Product {
   specifications: Record<string, string>;
 }
 
-// Review Type (from your mockData)
-// src/types/common.ts
+
 
 // Review Type (from your mockData)
 export interface Review {

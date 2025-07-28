@@ -2,23 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+// IMPORT useParams from 'next/navigation'
+import { useParams } from 'next/navigation'; // <--- ADD THIS LINE
+
 import { mockProducts, mockReviews } from '@/data/mockData';
-import type { Product, Review } from '@/types/common';
+import type { Product, Review } from '@/types/common'; // Ensure this path is correct
 import Loading from '@/components/Loading/Loading';
 import { useCart } from '@/hooks/useCart';
 
-// 1. Define the props interface for ProductPage
-//    In the App Router, dynamic segments come via the 'params' object.
-interface ProductPageProps {
-  params: {
-    productId: string; // The ID of the product, from the dynamic route [productId]
-  };
-}
 
-// 2. Export the ProductPage component and apply the ProductPageProps interface.
-//    Destructure 'params' from the props, then 'productId' from 'params'.
-export default function ProductPage({ params }: ProductPageProps) {
-  const { productId } = params; // Extract productId from params
+export default function ProductPage() { // No props are passed directly here anymore
+  // Use the useParams hook to get the id
+  const params = useParams();
+  const id = params.id as string; // <--- FIX IS HERE: Get 'id' from the params object returned by useParams
 
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -27,21 +23,21 @@ export default function ProductPage({ params }: ProductPageProps) {
   // Get the addToCart function from your useCart hook
   const { addToCart } = useCart();
 
-  // useEffect to fetch product data when the productId changes
+  // useEffect to fetch product data when the id changes
   useEffect(() => {
     setLoading(true); // Start loading
     // Simulate data fetching (replace with actual API call later)
-    const foundProduct = mockProducts.find(p => p.id === productId);
+    const foundProduct = mockProducts.find(p => p.id === id); // Use 'id' here
 
     if (foundProduct) {
       setProduct(foundProduct);
-      setReviews(mockReviews.filter(r => r.productId === productId));
+      setReviews(mockReviews.filter(r => r.productId === id)); // Use 'id' here
     } else {
       setProduct(null); // Product not found
       setReviews([]);
     }
     setLoading(false); // End loading
-  }, [productId]); // Dependency array: Effect runs whenever productId changes
+  }, [id]); // Dependency array: Effect runs whenever id changes (use 'id')
 
   // Display loading state
   if (loading) {
@@ -103,8 +99,8 @@ export default function ProductPage({ params }: ProductPageProps) {
           <p>No reviews yet for this product.</p>
         ) : (
           reviews.map(review => (
-            <div key={review.id} className="review-item"> {/* Assuming review has an 'id' for the key */}
-               <h4>{review.userName}</h4> 
+            <div key={review.id} className="review-item">
+                <h4>{review.userName}</h4> {/* Ensure this is review.userName */}
               <p>Rating: {review.rating}/5</p>
               <p>{review.comment}</p>
             </div>
