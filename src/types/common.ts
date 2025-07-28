@@ -16,11 +16,15 @@ export interface Product {
 }
 
 // Review Type (from your mockData)
+// src/types/common.ts
+
+// Review Type (from your mockData)
 export interface Review {
   id: string;
   productId: string;
   userId: string;
   userName: string;
+  author?: string; // Add this line if you need an 'author' specifically
   rating: number;
   comment: string;
   createdAt: Date;

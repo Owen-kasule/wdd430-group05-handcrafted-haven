@@ -1,22 +1,25 @@
-'use client'; // This component uses client-side hooks like useState, useEffect, and useCart.
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link'; // You might use Link for navigation within the page
-// Assuming your mock data and types are located here:
+import Link from 'next/link';
 import { mockProducts, mockReviews } from '@/data/mockData';
-import type { Product, Review } from '@/types/common'; // Use 'type' for importing types/interfaces
-import Loading from '@/components/Loading/Loading'; // Assuming you have a Loading component
-import { useCart } from '@/hooks/useCart'; // Import the useCart hook (it's a value/function, so no 'type' keyword)
+import type { Product, Review } from '@/types/common';
+import Loading from '@/components/Loading/Loading';
+import { useCart } from '@/hooks/useCart';
 
 // 1. Define the props interface for ProductPage
-//    This tells TypeScript exactly what props ProductPage expects and their types.
+//    In the App Router, dynamic segments come via the 'params' object.
 interface ProductPageProps {
-  productId: string; // The ID of the product, which will be passed from the dynamic route.
+  params: {
+    productId: string; // The ID of the product, from the dynamic route [productId]
+  };
 }
 
 // 2. Export the ProductPage component and apply the ProductPageProps interface.
-//    The 'productId' prop is destructured from the props object.
-export default function ProductPage({ productId }: ProductPageProps) {
+//    Destructure 'params' from the props, then 'productId' from 'params'.
+export default function ProductPage({ params }: ProductPageProps) {
+  const { productId } = params; // Extract productId from params
+
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +84,7 @@ export default function ProductPage({ productId }: ProductPageProps) {
           {/* Add to Cart Button */}
           <button
             className="add-to-cart-button"
-            onClick={() => addToCart(product)} // Pass the entire product object to addToCart
+            onClick={() => addToCart(product)}
           >
             Add to Cart
           </button>
@@ -100,7 +103,7 @@ export default function ProductPage({ productId }: ProductPageProps) {
           <p>No reviews yet for this product.</p>
         ) : (
           reviews.map(review => (
-            <div key={review.id} className="review-item">
+            <div key={review.id} className="review-item"> {/* Assuming review has an 'id' for the key */}
               <h4>{review.author}</h4>
               <p>Rating: {review.rating}/5</p>
               <p>{review.comment}</p>

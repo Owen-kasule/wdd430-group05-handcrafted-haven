@@ -111,7 +111,7 @@ export const mockProducts: Product[] = [
     ],
     category: "textiles",
     sellerId: "seller3",
-    sellerName: "Emma''s Textiles",
+    sellerName: "Emma's Textiles",
     rating: 4.7,
     createdAt: new Date("2024-01-25T09:15:00Z"),
     featured: true,
@@ -134,7 +134,7 @@ export const mockProducts: Product[] = [
     ],
     category: "jewelry",
     sellerId: "seller4",
-    sellerName: "Luna''s Jewelry",
+    sellerName: "Luna's Jewelry",
     rating: 4.6,
     createdAt: new Date("2024-02-01T16:45:00Z"),
     featured: false,
@@ -156,8 +156,8 @@ export const mockProducts: Product[] = [
       "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
     ],
     category: "leather",
-    sellerId: "seller5",
-    sellerName: "Tom''s Leather Goods",
+    sellerId: "sellers",
+    sellerName: "Tom's Leather Goods",
     rating: 4.8,
     createdAt: new Date("2024-02-05T11:20:00Z"),
     featured: true,
@@ -174,7 +174,7 @@ export const mockProducts: Product[] = [
 export const mockSellers: Seller[] = [
   {
     id: "seller1",
-    name: "Sarah''s Pottery Studio",
+    name: "Sarah's Pottery Studio",
     email: "sarah@pottery.com",
     description: "Specializing in handcrafted ceramic pieces with over 10 years of experience.",
     bio: "I have been creating pottery for over 10 years, specializing in functional ceramics that bring beauty to everyday life.",
@@ -204,7 +204,7 @@ export const mockSellers: Seller[] = [
   },
   {
     id: "seller3",
-    name: "Emma''s Textiles",
+    name: "Emma's Textiles",
     email: "emma@textiles.com",
     description: "Handwoven and knitted items made with love and attention to detail.",
     bio: "Creating cozy, comfortable textiles using traditional techniques passed down through generations.",
@@ -219,7 +219,7 @@ export const mockSellers: Seller[] = [
   },
   {
     id: "seller4",
-    name: "Luna''s Jewelry",
+    name: "Luna's Jewelry",
     email: "luna@jewelry.com",
     description: "Unique jewelry pieces crafted with precious metals and stones.",
     bio: "Designing and creating unique jewelry pieces that tell a story and celebrate individuality.",
@@ -234,7 +234,7 @@ export const mockSellers: Seller[] = [
   },
   {
     id: "seller5",
-    name: "Tom''s Leather Goods",
+    name: "Tom's Leather Goods",
     email: "tom@leather.com",
     description: "Premium leather goods crafted using traditional techniques.",
     bio: "Handcrafting premium leather goods using time-honored techniques and the finest materials.",
