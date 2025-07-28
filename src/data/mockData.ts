@@ -5,10 +5,11 @@
   Category,
   User,
 } from '@/types/definitions';
+import { v4 as uuidv4 } from 'uuid';
 
 export const mockUsers: User[] = [
   {
-    id: 'user1',
+    id: uuidv4(),
     email: 'user1@example.com',
     name: 'User One',
     password: 'password1',
@@ -16,7 +17,7 @@ export const mockUsers: User[] = [
     role: 'user',
   },
   {
-    id: 'user2',
+    id: uuidv4(),
     email: 'user2@example.com',
     name: 'User Two',
     password: 'password2',
@@ -24,7 +25,7 @@ export const mockUsers: User[] = [
     role: 'user',
   },
   {
-    id: 'admin1',
+    id: uuidv4(),
     email: 'admin1@example.com',
     name: 'Admin One',
     password: 'adminpassword',
@@ -35,7 +36,7 @@ export const mockUsers: User[] = [
 
 export const mockSellers: Seller[] = [
   {
-    id: 'maria',
+    id: uuidv4(),
     name: 'Maria Rodriguez',
     bio: 'Passionate ceramic artist with over 15 years of experience creating unique, handcrafted pieces. I draw inspiration from traditional Mexican pottery techniques passed down through generations, combined with contemporary design elements.',
     profileImage:
@@ -59,7 +60,7 @@ export const mockSellers: Seller[] = [
     },
   },
   {
-    id: 'seller1',
+    id: uuidv4(),
     name: "Sarah's Pottery Studio",
     bio: 'Specializing in handcrafted ceramic pieces with over 10 years of experience.',
     profileImage:
@@ -83,7 +84,7 @@ export const mockSellers: Seller[] = [
     },
   },
   {
-    id: 'seller2',
+    id: uuidv4(),
     name: "Mike's Woodworks",
     bio: 'Custom woodworking pieces made with sustainably sourced materials.',
     profileImage:
@@ -107,7 +108,7 @@ export const mockSellers: Seller[] = [
     },
   },
   {
-    id: 'seller3',
+    id: uuidv4(),
     name: "Emma's Textiles",
     bio: 'Handwoven and knitted items made with love and attention to detail.',
     profileImage:
@@ -131,7 +132,7 @@ export const mockSellers: Seller[] = [
     },
   },
   {
-    id: 'seller4',
+    id: uuidv4(),
     name: "Luna's Jewelry",
     bio: 'Unique jewelry pieces crafted with precious metals and stones.',
     profileImage:
@@ -155,7 +156,7 @@ export const mockSellers: Seller[] = [
     },
   },
   {
-    id: 'seller5',
+    id: uuidv4(),
     name: "Tom's Leather Goods",
     bio: 'Premium leather goods crafted using traditional techniques.',
     profileImage:
@@ -180,9 +181,16 @@ export const mockSellers: Seller[] = [
   },
 ];
 
+const mariaId = mockSellers[0].id;
+const sarahId = mockSellers[1].id;
+const mikeId = mockSellers[2].id;
+const emmaId = mockSellers[3].id;
+const lunaId = mockSellers[4].id;
+const tomId = mockSellers[5].id;
+
 export const mockProducts: Product[] = [
   {
-    id: '1',
+    id: uuidv4(),
     name: 'Ceramic Dinner Plate Set',
     price: 125.0,
     image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
@@ -190,9 +198,9 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
     ],
     sellerName: 'Maria Rodriguez',
-    sellerId: 'maria',
+    sellerId: mariaId,
     featured: true,
-    category: 'ceramics',
+    category: 'pottery',
     description: 'Beautiful ceramic dinner plates',
     rating: 4.8,
     createdAt: new Date('2024-01-01'),
@@ -204,7 +212,7 @@ export const mockProducts: Product[] = [
     },
   },
   {
-    id: '2',
+    id: uuidv4(),
     name: 'Handcrafted Coffee Mug',
     price: 32.0,
     image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
@@ -212,9 +220,9 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
     ],
     sellerName: 'Maria Rodriguez',
-    sellerId: 'maria',
+    sellerId: mariaId,
     featured: false,
-    category: 'ceramics',
+    category: 'pottery',
     description: 'Handcrafted ceramic coffee mug',
     rating: 4.7,
     createdAt: new Date('2024-01-02'),
@@ -226,7 +234,7 @@ export const mockProducts: Product[] = [
     },
   },
   {
-    id: '3',
+    id: uuidv4(),
     name: 'Decorative Serving Bowl',
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
@@ -234,9 +242,9 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
     ],
     sellerName: 'Maria Rodriguez',
-    sellerId: 'maria',
+    sellerId: mariaId,
     featured: false,
-    category: 'ceramics',
+    category: 'pottery',
     description: 'Decorative ceramic serving bowl',
     rating: 4.9,
     createdAt: new Date('2024-01-03'),
@@ -248,7 +256,7 @@ export const mockProducts: Product[] = [
     },
   },
   {
-    id: '4',
+    id: uuidv4(),
     name: 'Silver Wire Earrings',
     price: 28.0,
     description:
@@ -259,8 +267,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=400&h=400&fit=crop',
     ],
     category: 'jewelry',
-    sellerId: 'seller4',
-    sellerName: "Luna''s Jewelry",
+    sellerId: lunaId,
+    sellerName: "Luna's Jewelry",
     rating: 4.6,
     createdAt: new Date('2024-02-01T16:45:00Z'),
     featured: false,
@@ -273,7 +281,7 @@ export const mockProducts: Product[] = [
     inStock: true,
   },
   {
-    id: '5',
+    id: uuidv4(),
     name: 'Leather Wallet',
     price: 60.0,
     description:
@@ -284,8 +292,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop',
     ],
     category: 'leather',
-    sellerId: 'seller5',
-    sellerName: "Tom''s Leather Goods",
+    sellerId: tomId,
+    sellerName: "Tom's Leather Goods",
     rating: 4.8,
     createdAt: new Date('2024-02-05T11:20:00Z'),
     featured: true,
@@ -298,11 +306,18 @@ export const mockProducts: Product[] = [
     inStock: false,
   },
 ];
+
+const plateSetId = mockProducts[0].id;
+const coffeeMugId = mockProducts[1].id;
+const servingBowlId = mockProducts[2].id;
+const earringsId = mockProducts[3].id;
+const walletId = mockProducts[4].id;
+
 export const mockReviews: Review[] = [
   {
-    id: 'review1',
-    productId: '1',
-    userId: 'user1',
+    id: uuidv4(),
+    productId: plateSetId,
+    userId: mockUsers[2].id,
     userName: 'Sarah Johnson',
     rating: 5,
     comment:
@@ -312,9 +327,9 @@ export const mockReviews: Review[] = [
     verified: true,
   },
   {
-    id: 'review2',
-    productId: '1',
-    userId: 'user2',
+    id: uuidv4(),
+    productId: coffeeMugId,
+    userId: mockUsers[1].id,
     userName: 'Mike Chen',
     rating: 4,
     comment:
@@ -324,9 +339,9 @@ export const mockReviews: Review[] = [
     verified: true,
   },
   {
-    id: 'review3',
-    productId: '2',
-    userId: 'user3',
+    id: uuidv4(),
+    productId: servingBowlId,
+    userId: mockUsers[1].id,
     userName: 'Emma Davis',
     rating: 5,
     comment:
@@ -336,9 +351,9 @@ export const mockReviews: Review[] = [
     verified: true,
   },
   {
-    id: 'review4',
-    productId: '3',
-    userId: 'user4',
+    id: uuidv4(),
+    productId: earringsId,
+    userId: mockUsers[2].id,
     userName: 'John Wilson',
     rating: 5,
     comment: 'So soft and warm! Perfect for the winter season.',
@@ -347,9 +362,9 @@ export const mockReviews: Review[] = [
     verified: false,
   },
   {
-    id: 'review5',
-    productId: '4',
-    userId: 'user5',
+    id: uuidv4(),
+    productId: walletId,
+    userId: mockUsers[1].id,
     userName: 'Lisa Brown',
     rating: 4,
     comment:
