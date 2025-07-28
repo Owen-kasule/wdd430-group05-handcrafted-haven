@@ -118,7 +118,7 @@ export default function Homepage() {
             </div>
           </div>
           <div className="category-card">
-            <img src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=300" alt="Woodwork" />
+            <img src="https://i.etsystatic.com/5901328/r/il/094834/1739631747/il_fullxfull.1739631747_42bp.jpg" alt="Woodwork" />
             <div className="category-overlay">
               <h3>Woodwork</h3>
               <p>Expertly crafted wooden items</p>
