@@ -40,9 +40,14 @@ export default function Homepage() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600" alt="Handcrafted pottery" />
-        </div>
-      </section>
+    <img 
+      src="/images/homepage/crafts4.png" 
+      alt="Artisan crafting handmade pottery"
+      width={600}
+      height={400}
+    />
+  </div>
+</section>
 
       {/* Search and Filter Section */}
       <section className="search-section">
