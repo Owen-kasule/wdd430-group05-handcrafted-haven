@@ -6,7 +6,6 @@ import Link from 'next/link'; // You might use Link for navigation within the pa
 import { mockProducts, mockReviews } from '@/data/mockData';
 import type { Product, Review } from '@/types/common'; // Use 'type' for importing types/interfaces
 import Loading from '@/components/Loading/Loading'; // Assuming you have a Loading component
-import './ProductPage.css'; // Your component-specific CSS
 import { useCart } from '@/hooks/useCart'; // Import the useCart hook (it's a value/function, so no 'type' keyword)
 
 // 1. Define the props interface for ProductPage
