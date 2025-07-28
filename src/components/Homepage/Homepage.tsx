@@ -41,7 +41,7 @@ export default function Homepage() {
         </div>
         <div className="hero-image">
           <img
-            src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=600"
+            src="/homepage-image/jug-porter.webp"
             alt="Handcrafted pottery"
           />
         </div>
