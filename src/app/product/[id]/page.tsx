@@ -14,7 +14,7 @@ import { useCart } from '@/hooks/useCart';
 export default function ProductPage() { // No props are passed directly here anymore
   // Use the useParams hook to get the id
   const params = useParams();
-  const id = params.id as string; // <--- FIX IS HERE: Get 'id' from the params object returned by useParams
+  const id = params.id as string; //  Get 'id' from the params object returned by useParams
 
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
