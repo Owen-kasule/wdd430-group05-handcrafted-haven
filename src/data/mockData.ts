@@ -377,7 +377,7 @@ export const mockReviews: Review[] = [
 
 export const categories: Category[] = [
   {
-    id: 'pottery',
+    id: uuidv4(),
     name: 'Pottery & Ceramics',
     description:
       'Handcrafted ceramic pieces including mugs, bowls, vases, and decorative items.',
@@ -385,7 +385,7 @@ export const categories: Category[] = [
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop',
   },
   {
-    id: 'woodworking',
+    id: uuidv4(),
     name: 'Woodworking',
     description:
       'Custom wooden items including furniture, cutting boards, and decorative pieces.',
@@ -393,7 +393,7 @@ export const categories: Category[] = [
       'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&h=400&fit=crop',
   },
   {
-    id: 'textiles',
+    id: uuidv4(),
     name: 'Textiles',
     description:
       'Handwoven and knitted items including scarves, blankets, and bags.',
@@ -401,7 +401,7 @@ export const categories: Category[] = [
       'https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=400&h=400&fit=crop',
   },
   {
-    id: 'jewelry',
+    id: uuidv4(),
     name: 'Jewelry',
     description:
       'Handcrafted jewelry pieces including earrings, necklaces, and bracelets.',
@@ -409,7 +409,7 @@ export const categories: Category[] = [
       'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=400&h=400&fit=crop',
   },
   {
-    id: 'leather',
+    id: uuidv4(),
     name: 'Leather Goods',
     description:
       'Premium leather items including wallets, bags, and accessories.',
