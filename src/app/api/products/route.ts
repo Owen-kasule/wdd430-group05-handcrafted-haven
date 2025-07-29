@@ -1,13 +1,31 @@
-import { getProducts } from '@/data/server-data'; // Import from server-data
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getProducts } from '@/data/server-data';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+
+  const options = {
+    query: searchParams.get('query') || undefined,
+    category: searchParams.get('category') || undefined,
+    minPrice: searchParams.get('minPrice')
+      ? Number(searchParams.get('minPrice'))
+      : undefined,
+    maxPrice: searchParams.get('maxPrice')
+      ? Number(searchParams.get('maxPrice'))
+      : undefined,
+    sortBy: searchParams.get('sortBy') || undefined,
+    page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+    itemsPerPage: searchParams.get('itemsPerPage')
+      ? Number(searchParams.get('itemsPerPage'))
+      : 12,
+  };
+
   try {
-    const products = await getProducts();
-    return NextResponse.json(products);
-  } catch (error: any) {
+    const { products, totalCount } = await getProducts(options);
+    return NextResponse.json({ products, totalCount });
+  } catch (error) {
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch products' },
+      { error: 'Failed to fetch products' },
       { status: 500 }
     );
   }

@@ -126,7 +126,7 @@ export default function ProductPage() {
 
           <div className="seller-info">
             <Link href={`/seller/${product.sellerId}`} className="seller-link">
-              <strong>Artisan:</strong> {product.sellerName}
+              <strong>Artisan:</strong> {product.seller_name}
             </Link>
             <div className="seller-rating">
               <span className="stars">★★★★★</span>

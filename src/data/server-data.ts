@@ -1,226 +1,321 @@
-import postgres from 'postgres';
+import { createClient } from '@supabase/supabase-js';
 import type { Product, Seller, Review, Category } from '@/types/definitions';
 
-const sql = postgres(process.env.POSTGRES_URL!, {
-  ssl: 'require',
-  transform: {
-    undefined: null, // Handle undefined values as NULL in the database
-  },
-});
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-// Helper function to handle database errors
+// Helper function for error handling
 function handleDatabaseError(error: any, context: string): never {
   console.error(`Database Error (${context}):`, error);
   throw new Error(`Failed to ${context}`);
 }
 
-// Products
-export async function getProducts(): Promise<Product[]> {
+// Products with filtering and pagination
+export async function getProducts(
+  options: {
+    query?: string;
+    category?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    sortBy?: string;
+    page?: number;
+    itemsPerPage?: number;
+  } = {}
+): Promise<{ products: Product[]; totalCount: number }> {
   try {
-    return await sql<Product[]>`
-      SELECT 
-        p.*, 
-        COALESCE(
-          (SELECT json_agg(DISTINCT pi.image_url) 
-           FROM product_images pi 
-           WHERE pi.product_id = p.id),
-          '[]'::json
-        ) as images,
-        COALESCE(
-          (SELECT jsonb_object_agg(ps.spec_key, ps.spec_value) 
-           FROM product_specifications ps 
-           WHERE ps.product_id = p.id),
-          '{}'::jsonb
-        ) as specifications
-      FROM products p
-      GROUP BY p.id
-    `;
+    const itemsPerPage = options.itemsPerPage || 12;
+    const offset = options.page ? (options.page - 1) * itemsPerPage : 0;
+
+    // Base query
+    let query = supabase.from('products').select(
+      `
+        *,
+        product_images (image_url),
+        product_specifications (spec_key, spec_value)
+      `,
+      { count: 'exact' }
+    );
+
+    // Apply filters
+    if (options.query) {
+      query = query.or(
+        `name.ilike.%${options.query}%,description.ilike.%${options.query}%,seller_name.ilike.%${options.query}%`
+      );
+    }
+    if (options.category) {
+      query = query.eq('category', options.category);
+    }
+    if (options.minPrice !== undefined) {
+      query = query.gte('price', options.minPrice);
+    }
+    if (options.maxPrice !== undefined) {
+      query = query.lte('price', options.maxPrice);
+    }
+
+    // Apply sorting
+    switch (options.sortBy) {
+      case 'price-low':
+        query = query.order('price', { ascending: true });
+        break;
+      case 'price-high':
+        query = query.order('price', { ascending: false });
+        break;
+      case 'rating':
+        query = query.order('rating', { ascending: false });
+        break;
+      case 'newest':
+        query = query.order('created_at', { ascending: false });
+        break;
+      default:
+        query = query.order('featured', { ascending: false });
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + itemsPerPage - 1);
+
+    const { data: products, count, error } = await query;
+
+    if (error) throw error;
+
+    // Transform data to match Product type
+    const transformedProducts = (products || []).map((product: any) => ({
+      ...product,
+      images: product.product_images.map((img: any) => img.image_url),
+      specifications: product.product_specifications.reduce(
+        (acc: Record<string, string>, spec: any) => {
+          acc[spec.spec_key] = spec.spec_value;
+          return acc;
+        },
+        {}
+      ),
+    }));
+
+    return {
+      products: transformedProducts,
+      totalCount: count || 0,
+    };
   } catch (error) {
     return handleDatabaseError(error, 'fetch products');
   }
 }
 
+// Get single product by ID
 export async function getProductById(id: string): Promise<Product | null> {
   try {
-    const [product] = await sql<Product[]>`
-      SELECT 
-        p.*, 
-        COALESCE(
-          (SELECT json_agg(DISTINCT pi.image_url) 
-           FROM product_images pi 
-           WHERE pi.product_id = p.id),
-          '[]'::json
-        ) as images,
-        COALESCE(
-          (SELECT jsonb_object_agg(ps.spec_key, ps.spec_value) 
-           FROM product_specifications ps 
-           WHERE ps.product_id = p.id),
-          '{}'::jsonb
-        ) as specifications
-      FROM products p
-      WHERE p.id = ${id}
-      GROUP BY p.id
-    `;
-    return product || null;
+    const { data, error } = await supabase
+      .from('products')
+      .select(
+        `
+        *,
+        product_images (image_url),
+        product_specifications (spec_key, spec_value)
+      `
+      )
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return null;
+
+    return {
+      ...data,
+      images: data.product_images.map((img: any) => img.image_url),
+      specifications: data.product_specifications.reduce(
+        (acc: Record<string, string>, spec: any) => {
+          acc[spec.spec_key] = spec.spec_value;
+          return acc;
+        },
+        {}
+      ),
+    };
   } catch (error) {
     return handleDatabaseError(error, 'fetch product');
+  }
+}
+
+// Get all categories
+export async function getCategories(): Promise<Category[]> {
+  try {
+    const { data, error } = await supabase.from('categories').select('*');
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    return handleDatabaseError(error, 'fetch categories');
+  }
+}
+
+// Get single category by ID
+export async function getCategoryById(id: string): Promise<Category | null> {
+  try {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    return data || null;
+  } catch (error) {
+    return handleDatabaseError(error, 'fetch category');
+  }
+}
+
+// Get product reviews
+export async function getProductReviews(productId: string): Promise<Review[]> {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    return handleDatabaseError(error, 'fetch product reviews');
+  }
+}
+
+// Create a new review
+export async function createReview(
+  review: Omit<Review, 'id' | 'created_at'>
+): Promise<Review> {
+  try {
+    // Insert review
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert({
+        product_id: review.productId,
+        user_id: review.userId,
+        user_name: review.userName,
+        rating: review.rating,
+        comment: review.comment,
+        verified: review.verified ?? false,
+      })
+      .single();
+
+    if (error) throw error;
+
+    // Update product rating
+    const { data: productData } = await supabase
+      .from('products')
+      .select('id')
+      .eq('id', review.productId);
+
+    if (productData && productData.length > 0) {
+      const { error: updateError } = await supabase.rpc(
+        'update_product_rating',
+        {
+          product_id: review.productId,
+        }
+      );
+
+      if (updateError) throw updateError;
+    }
+
+    return data;
+  } catch (error) {
+    return handleDatabaseError(error, 'create review');
   }
 }
 
 // Sellers
 export async function getSellers(): Promise<Seller[]> {
   try {
-    return await sql<Seller[]>`
-      SELECT 
-        id, 
-        name, 
-        bio, 
-        profile_image as "profileImage", 
-        location, 
-        join_date as "joinDate", 
-        rating, 
-        total_reviews as "totalReviews", 
-        total_sales as "totalSales",
-        specialties, 
+    const { data, error } = await supabase.from('sellers').select(`
+        id,
+        name,
+        bio,
+        profile_image,
+        location,
+        join_date,
+        rating,
+        total_reviews,
+        total_sales,
+        specialties,
         story,
-        json_build_object(
-          'email', contact_email,
-          'phone', contact_phone,
-          'website', contact_website
-        ) as contact,
-        json_build_object(
-          'instagram', instagram_handle,
-          'facebook', facebook_page
-        ) as "socialMedia"
-      FROM sellers
-    `;
+        contact_email,
+        contact_phone,
+        contact_website,
+        instagram_handle,
+        facebook_page
+      `);
+
+    if (error) throw error;
+
+    return (data || []).map(seller => ({
+      ...seller,
+      profileImage: seller.profile_image,
+      joinDate: seller.join_date,
+      totalReviews: seller.total_reviews,
+      totalSales: seller.total_sales,
+      contact: {
+        email: seller.contact_email,
+        phone: seller.contact_phone,
+        website: seller.contact_website,
+      },
+      socialMedia: {
+        instagram: seller.instagram_handle,
+        facebook: seller.facebook_page,
+      },
+    }));
   } catch (error) {
     return handleDatabaseError(error, 'fetch sellers');
   }
 }
 
+// Get single seller by ID
 export async function getSellerById(id: string): Promise<Seller | null> {
   try {
-    const [seller] = await sql<Seller[]>`
-      SELECT 
-        id, 
-        name, 
-        bio, 
-        profile_image as "profileImage", 
-        location, 
-        join_date as "joinDate", 
-        rating, 
-        total_reviews as "totalReviews", 
-        total_sales as "totalSales",
-        specialties, 
+    const { data, error } = await supabase
+      .from('sellers')
+      .select(
+        `
+        id,
+        name,
+        bio,
+        profile_image,
+        location,
+        join_date,
+        rating,
+        total_reviews,
+        total_sales,
+        specialties,
         story,
-        json_build_object(
-          'email', contact_email,
-          'phone', contact_phone,
-          'website', contact_website
-        ) as contact,
-        json_build_object(
-          'instagram', instagram_handle,
-          'facebook', facebook_page
-        ) as "socialMedia"
-      FROM sellers
-      WHERE id = ${id}
-    `;
-    return seller || null;
+        contact_email,
+        contact_phone,
+        contact_website,
+        instagram_handle,
+        facebook_page
+      `
+      )
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return null;
+
+    return {
+      ...data,
+      profileImage: data.profile_image,
+      joinDate: data.join_date,
+      totalReviews: data.total_reviews,
+      totalSales: data.total_sales,
+      contact: {
+        email: data.contact_email,
+        phone: data.contact_phone,
+        website: data.contact_website,
+      },
+      socialMedia: {
+        instagram: data.instagram_handle,
+        facebook: data.facebook_page,
+      },
+    };
   } catch (error) {
     return handleDatabaseError(error, 'fetch seller');
-  }
-}
-
-// Categories
-export async function getCategories(): Promise<Category[]> {
-  try {
-    return await sql<Category[]>`SELECT * FROM categories`;
-  } catch (error) {
-    return handleDatabaseError(error, 'fetch categories');
-  }
-}
-
-export async function getCategoryById(id: string): Promise<Category | null> {
-  try {
-    const [category] = await sql<Category[]>`
-      SELECT * FROM categories WHERE id = ${id}
-    `;
-    return category || null;
-  } catch (error) {
-    return handleDatabaseError(error, 'fetch category');
-  }
-}
-
-// Reviews
-export async function getProductReviews(productId: string): Promise<Review[]> {
-  try {
-    return await sql<Review[]>`
-      SELECT 
-        id, 
-        product_id as "productId", 
-        user_id as "userId", 
-        user_name as "userName", 
-        rating, 
-        comment, 
-        verified,
-        created_at as "createdAt",
-        to_char(created_at, 'YYYY-MM-DD') as "date"
-      FROM reviews
-      WHERE product_id = ${productId}
-      ORDER BY created_at DESC
-    `;
-  } catch (error) {
-    return handleDatabaseError(error, 'fetch product reviews');
-  }
-}
-
-export async function createReview(
-  review: Omit<Review, 'id' | 'createdAt' | 'date'>
-): Promise<Review> {
-  try {
-    const [newReview] = await sql<Review[]>`
-      INSERT INTO reviews (
-        product_id, 
-        user_id, 
-        user_name, 
-        rating, 
-        comment, 
-        verified
-      )
-      VALUES (
-        ${review.productId}, 
-        ${review.userId}, 
-        ${review.userName}, 
-        ${review.rating}, 
-        ${review.comment}, 
-        ${review.verified || false}
-      )
-      RETURNING 
-        id, 
-        product_id as "productId", 
-        user_id as "userId", 
-        user_name as "userName", 
-        rating, 
-        comment, 
-        verified,
-        created_at as "createdAt",
-        to_char(created_at, 'YYYY-MM-DD') as "date"
-    `;
-
-    // Update product rating
-    await sql`
-      UPDATE products
-      SET rating = (
-        SELECT AVG(rating)::numeric(10,1)
-        FROM reviews
-        WHERE product_id = ${review.productId}
-      )
-      WHERE id = ${review.productId}
-    `;
-
-    return newReview;
-  } catch (error) {
-    return handleDatabaseError(error, 'create review');
   }
 }

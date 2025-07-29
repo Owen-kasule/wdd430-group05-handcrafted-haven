@@ -69,7 +69,8 @@ async function seedSellers() {
   `;
 
   await Promise.all(
-    mockSellers.map(seller => sql`
+    mockSellers.map(
+      seller => sql`
       INSERT INTO sellers (
         id, name, bio, profile_image, location, join_date, rating, 
         total_reviews, total_sales, specialties, story, 
@@ -95,7 +96,8 @@ async function seedSellers() {
         ${seller.socialMedia.facebook}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 
@@ -112,7 +114,8 @@ async function seedCategories() {
   `;
 
   await Promise.all(
-    categories.map(category => sql`
+    categories.map(
+      category => sql`
       INSERT INTO categories (id, name, description, image)
       VALUES (
         ${category.id}, 
@@ -121,7 +124,8 @@ async function seedCategories() {
         ${category.image}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 
@@ -164,9 +168,24 @@ async function seedProducts() {
       UNIQUE (product_id, spec_key)
     );
   `;
+  await sql`
+CREATE OR REPLACE FUNCTION update_product_rating(product_id uuid)
+RETURNS void AS $$
+BEGIN
+  UPDATE products
+  SET rating = (
+    SELECT AVG(rating)::numeric(10,1)
+    FROM reviews
+    WHERE product_id = $1
+  )
+  WHERE id = $1;
+END;
+$$ LANGUAGE plpgsql;
+`;
 
   await Promise.all(
-    mockProducts.map(product => sql`
+    mockProducts.map(
+      product => sql`
       INSERT INTO products (
         id, name, price, description, category_id, seller_id, 
         seller_name, rating, featured, in_stock, created_at
@@ -178,35 +197,40 @@ async function seedProducts() {
         ${product.description},
         ${product.category},
         ${product.sellerId},
-        ${product.sellerName},
+        ${product.seller_name},
         ${product.rating},
         ${product.featured ?? false},
         ${product.inStock},
         ${product.createdAt}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 
   for (const product of mockProducts) {
     const images = [product.image, ...(product.images || [])];
     await Promise.all(
-      images.map((img, i) => sql`
+      images.map(
+        (img, i) => sql`
         INSERT INTO product_images (product_id, image_url, is_primary)
         VALUES (${product.id}, ${img}, ${i === 0})
         ON CONFLICT (product_id, image_url) DO NOTHING;
-      `)
+      `
+      )
     );
   }
 
   for (const product of mockProducts) {
     if (product.specifications) {
       await Promise.all(
-        Object.entries(product.specifications).map(([key, value]) => sql`
+        Object.entries(product.specifications).map(
+          ([key, value]) => sql`
           INSERT INTO product_specifications (product_id, spec_key, spec_value)
           VALUES (${product.id}, ${key}, ${value})
           ON CONFLICT (product_id, spec_key) DO NOTHING;
-        `)
+        `
+        )
       );
     }
   }
@@ -228,7 +252,8 @@ async function seedReviews() {
   `;
 
   await Promise.all(
-    mockReviews.map(review => sql`
+    mockReviews.map(
+      review => sql`
       INSERT INTO reviews (
         id, product_id, user_id, user_name, rating, 
         comment, created_at, date, verified
@@ -245,7 +270,8 @@ async function seedReviews() {
         ${review.verified}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 
