@@ -8,13 +8,11 @@ import {
   mockReviews,
 } from '@/data/mockData';
 
-// Initialize database connection
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 async function seedUsers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TABLE IF NOT EXISTS users (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
@@ -27,7 +25,7 @@ async function seedUsers() {
     );
   `;
 
-  const insertedUsers = await Promise.all(
+  await Promise.all(
     mockUsers.map(async user => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       return sql`
@@ -44,13 +42,9 @@ async function seedUsers() {
       `;
     })
   );
-
-  return insertedUsers;
 }
 
 async function seedSellers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS sellers (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -74,44 +68,38 @@ async function seedSellers() {
     );
   `;
 
-  const insertedSellers = await Promise.all(
-    mockSellers.map(
-      seller => sql`
-        INSERT INTO sellers (
-          id, name, bio, profile_image, location, join_date, rating, 
-          total_reviews, total_sales, specialties, story, 
-          contact_email, contact_phone, contact_website,
-          instagram_handle, facebook_page
-        )
-        VALUES (
-          ${seller.id}, 
-          ${seller.name}, 
-          ${seller.bio}, 
-          ${seller.profileImage}, 
-          ${seller.location}, 
-          ${seller.joinDate}, 
-          ${seller.rating}, 
-          ${seller.totalReviews}, 
-          ${seller.totalSales}, 
-          ${seller.specialties}, 
-          ${seller.story},
-          ${seller.contact.email},
-          ${seller.contact.phone},
-          ${seller.contact.website},
-          ${seller.socialMedia.instagram},
-          ${seller.socialMedia.facebook}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
+  await Promise.all(
+    mockSellers.map(seller => sql`
+      INSERT INTO sellers (
+        id, name, bio, profile_image, location, join_date, rating, 
+        total_reviews, total_sales, specialties, story, 
+        contact_email, contact_phone, contact_website,
+        instagram_handle, facebook_page
+      )
+      VALUES (
+        ${seller.id}, 
+        ${seller.name}, 
+        ${seller.bio}, 
+        ${seller.profileImage}, 
+        ${seller.location}, 
+        ${seller.joinDate}, 
+        ${seller.rating}, 
+        ${seller.totalReviews}, 
+        ${seller.totalSales}, 
+        ${seller.specialties}, 
+        ${seller.story},
+        ${seller.contact.email},
+        ${seller.contact.phone},
+        ${seller.contact.website},
+        ${seller.socialMedia.instagram},
+        ${seller.socialMedia.facebook}
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `)
   );
-
-  return insertedSellers;
 }
 
 async function seedCategories() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS categories (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -123,70 +111,21 @@ async function seedCategories() {
     );
   `;
 
-  const insertedCategories = await Promise.all(
-    categories.map(
-      category => sql`
-        INSERT INTO categories (id, name, description, image)
-        VALUES (
-          ${category.id}, 
-          ${category.name}, 
-          ${category.description}, 
-          ${category.image}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
+  await Promise.all(
+    categories.map(category => sql`
+      INSERT INTO categories (id, name, description, image)
+      VALUES (
+        ${category.id}, 
+        ${category.name}, 
+        ${category.description}, 
+        ${category.image}
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `)
   );
-
-  return insertedCategories;
-}
-async function seedReviews() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS reviews (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      product_id UUID REFERENCES products(id) ON DELETE CASCADE,
-      user_id UUID REFERENCES users(id),
-      user_name TEXT NOT NULL,
-      rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-      comment TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      date TEXT,
-      verified BOOLEAN DEFAULT false
-    );
-  `;
-
-  const insertedReviews = await Promise.all(
-    mockReviews.map(
-      review => sql`
-        INSERT INTO reviews (
-          id, product_id, user_id, user_name, rating, 
-          comment, created_at, date, verified
-        )
-        VALUES (
-          ${review.id}, 
-          ${review.productId}, 
-          ${review.userId}, 
-          ${review.userName}, 
-          ${review.rating},
-          ${review.comment},
-          ${review.createdAt},
-          ${review.date},
-          ${review.verified}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
-  );
-
-  return insertedReviews;
 }
 
 async function seedProducts() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  // Create products table
   await sql`
     CREATE TABLE IF NOT EXISTS products (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -204,7 +143,6 @@ async function seedProducts() {
     );
   `;
 
-  // Create product images table
   await sql`
     CREATE TABLE IF NOT EXISTS product_images (
       id SERIAL PRIMARY KEY,
@@ -216,7 +154,6 @@ async function seedProducts() {
     );
   `;
 
-  // Create product specifications table
   await sql`
     CREATE TABLE IF NOT EXISTS product_specifications (
       id SERIAL PRIMARY KEY,
@@ -228,75 +165,101 @@ async function seedProducts() {
     );
   `;
 
-  // Insert products
-  const insertedProducts = await Promise.all(
-    mockProducts.map(
-      product => sql`
-        INSERT INTO products (
-          id, name, price, description, category_id, seller_id, 
-          seller_name, rating, featured, in_stock, created_at
-        )
-        VALUES (
-          ${product.id},
-          ${product.name},
-          ${product.price},
-          ${product.description},
-          ${product.category},
-          ${product.sellerId},
-          ${product.sellerName},
-          ${product.rating},
-          ${product.featured || false},
-          ${product.inStock},
-          ${product.createdAt}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
+  await Promise.all(
+    mockProducts.map(product => sql`
+      INSERT INTO products (
+        id, name, price, description, category_id, seller_id, 
+        seller_name, rating, featured, in_stock, created_at
+      )
+      VALUES (
+        ${product.id},
+        ${product.name},
+        ${product.price},
+        ${product.description},
+        ${product.category},
+        ${product.sellerId},
+        ${product.sellerName},
+        ${product.rating},
+        ${product.featured ?? false},
+        ${product.inStock},
+        ${product.createdAt}
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `)
   );
 
-  // Insert product images
   for (const product of mockProducts) {
     const images = [product.image, ...(product.images || [])];
     await Promise.all(
-      images.map(
-        (img, i) =>
-          sql`
-          INSERT INTO product_images (product_id, image_url, is_primary)
-          VALUES (${product.id}, ${img}, ${i === 0})
-          ON CONFLICT (product_id, image_url) DO NOTHING;
-        `
-      )
+      images.map((img, i) => sql`
+        INSERT INTO product_images (product_id, image_url, is_primary)
+        VALUES (${product.id}, ${img}, ${i === 0})
+        ON CONFLICT (product_id, image_url) DO NOTHING;
+      `)
     );
   }
 
-  // Insert product specifications
   for (const product of mockProducts) {
     if (product.specifications) {
       await Promise.all(
-        Object.entries(product.specifications).map(
-          ([key, value]) =>
-            sql`
-            INSERT INTO product_specifications (product_id, spec_key, spec_value)
-            VALUES (${product.id}, ${key}, ${value})
-            ON CONFLICT (product_id, spec_key) DO NOTHING;
-          `
-        )
+        Object.entries(product.specifications).map(([key, value]) => sql`
+          INSERT INTO product_specifications (product_id, spec_key, spec_value)
+          VALUES (${product.id}, ${key}, ${value})
+          ON CONFLICT (product_id, spec_key) DO NOTHING;
+        `)
       );
     }
   }
+}
 
-  return insertedProducts;
+async function seedReviews() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS reviews (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id),
+      user_name TEXT NOT NULL,
+      rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      comment TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      date TEXT,
+      verified BOOLEAN DEFAULT false
+    );
+  `;
+
+  await Promise.all(
+    mockReviews.map(review => sql`
+      INSERT INTO reviews (
+        id, product_id, user_id, user_name, rating, 
+        comment, created_at, date, verified
+      )
+      VALUES (
+        ${review.id}, 
+        ${review.productId}, 
+        ${review.userId}, 
+        ${review.userName}, 
+        ${review.rating},
+        ${review.comment},
+        ${review.createdAt},
+        ${review.date},
+        ${review.verified}
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `)
+  );
 }
 
 export async function GET() {
   try {
-    await sql.begin(async sql => [
-      await seedUsers(),
-      await seedSellers(),
-      await seedCategories(),
-      await seedProducts(),
-      await seedReviews(),
-    ]);
+    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    await sql.begin(async sql => {
+      await seedUsers();
+      await seedSellers();
+      await seedCategories();
+      await seedProducts();
+      await seedReviews();
+    });
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
@@ -307,7 +270,7 @@ export async function GET() {
   }
 }
 
-// Run the seed function when executed directly
+// CLI support
 if (import.meta.url.endsWith(process.argv[1])) {
   GET()
     .then(response => {

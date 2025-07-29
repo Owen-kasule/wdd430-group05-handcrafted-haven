@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   Review,
   Product,
   Seller,
@@ -181,199 +181,13 @@ export const mockSellers: Seller[] = [
   },
 ];
 
+// Get seller IDs
 const mariaId = mockSellers[0].id;
 const sarahId = mockSellers[1].id;
 const mikeId = mockSellers[2].id;
 const emmaId = mockSellers[3].id;
 const lunaId = mockSellers[4].id;
 const tomId = mockSellers[5].id;
-
-export const mockProducts: Product[] = [
-  {
-    id: uuidv4(),
-    name: 'Ceramic Dinner Plate Set',
-    price: 125.0,
-    image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    images: [
-      'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
-    featured: true,
-    category: 'pottery',
-    description: 'Beautiful ceramic dinner plates',
-    rating: 4.8,
-    createdAt: new Date('2024-01-01'),
-    inStock: true,
-    specifications: {
-      Material: 'Ceramic',
-      Size: '10 inches',
-      Color: 'Earth tones',
-    },
-  },
-  {
-    id: uuidv4(),
-    name: 'Handcrafted Coffee Mug',
-    price: 32.0,
-    image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    images: [
-      'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
-    featured: false,
-    category: 'pottery',
-    description: 'Handcrafted ceramic coffee mug',
-    rating: 4.7,
-    createdAt: new Date('2024-01-02'),
-    inStock: true,
-    specifications: {
-      Material: 'Ceramic',
-      Capacity: '12 oz',
-      Color: 'Blue',
-    },
-  },
-  {
-    id: uuidv4(),
-    name: 'Decorative Serving Bowl',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    images: [
-      'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
-    ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
-    featured: false,
-    category: 'pottery',
-    description: 'Decorative ceramic serving bowl',
-    rating: 4.9,
-    createdAt: new Date('2024-01-03'),
-    inStock: true,
-    specifications: {
-      Material: 'Ceramic',
-      Size: '8 inches',
-      Color: 'Green',
-    },
-  },
-  {
-    id: uuidv4(),
-    name: 'Silver Wire Earrings',
-    price: 28.0,
-    description:
-      'Elegant silver wire earrings with a minimalist design. Handcrafted with sterling silver wire.',
-    image:
-      'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=400&h=400&fit=crop',
-    images: [
-      'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=400&h=400&fit=crop',
-    ],
-    category: 'jewelry',
-    sellerId: lunaId,
-    sellerName: "Luna's Jewelry",
-    rating: 4.6,
-    createdAt: new Date('2024-02-01T16:45:00Z'),
-    featured: false,
-    specifications: {
-      Material: 'Sterling silver',
-      Style: 'Minimalist',
-      Length: '1.5 inches',
-      Weight: '2g',
-    },
-    inStock: true,
-  },
-  {
-    id: uuidv4(),
-    name: 'Leather Wallet',
-    price: 60.0,
-    description:
-      'A premium leather wallet with multiple card slots and a bill compartment. Made from genuine leather.',
-    image:
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop',
-    images: [
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop',
-    ],
-    category: 'leather',
-    sellerId: tomId,
-    sellerName: "Tom's Leather Goods",
-    rating: 4.8,
-    createdAt: new Date('2024-02-05T11:20:00Z'),
-    featured: true,
-    specifications: {
-      Material: 'Genuine leather',
-      Color: 'Brown',
-      'Card slots': '8',
-      Dimensions: '4.5x3.5x0.5 inches',
-    },
-    inStock: false,
-  },
-];
-
-const plateSetId = mockProducts[0].id;
-const coffeeMugId = mockProducts[1].id;
-const servingBowlId = mockProducts[2].id;
-const earringsId = mockProducts[3].id;
-const walletId = mockProducts[4].id;
-
-export const mockReviews: Review[] = [
-  {
-    id: uuidv4(),
-    productId: plateSetId,
-    userId: mockUsers[2].id,
-    userName: 'Sarah Johnson',
-    rating: 5,
-    comment:
-      'Absolutely love this mug! The craftsmanship is excellent and it keeps my coffee warm.',
-    createdAt: new Date('2024-01-20T09:30:00Z'),
-    date: '2024-01-20',
-    verified: true,
-  },
-  {
-    id: uuidv4(),
-    productId: coffeeMugId,
-    userId: mockUsers[1].id,
-    userName: 'Mike Chen',
-    rating: 4,
-    comment:
-      'Beautiful mug, very well made. Arrived quickly and was well packaged.',
-    createdAt: new Date('2024-01-22T14:15:00Z'),
-    date: '2024-01-22',
-    verified: true,
-  },
-  {
-    id: uuidv4(),
-    productId: servingBowlId,
-    userId: mockUsers[1].id,
-    userName: 'Emma Davis',
-    rating: 5,
-    comment:
-      "This cutting board is amazing! The wood grain is beautiful and it''s very durable.",
-    createdAt: new Date('2024-01-25T16:45:00Z'),
-    date: '2024-01-25',
-    verified: true,
-  },
-  {
-    id: uuidv4(),
-    productId: earringsId,
-    userId: mockUsers[2].id,
-    userName: 'John Wilson',
-    rating: 5,
-    comment: 'So soft and warm! Perfect for the winter season.',
-    createdAt: new Date('2024-01-30T11:20:00Z'),
-    date: '2024-01-30',
-    verified: false,
-  },
-  {
-    id: uuidv4(),
-    productId: walletId,
-    userId: mockUsers[1].id,
-    userName: 'Lisa Brown',
-    rating: 4,
-    comment:
-      'Beautiful earrings, exactly as described. Very happy with my purchase.',
-    createdAt: new Date('2024-02-05T10:00:00Z'),
-    date: '2024-02-05',
-    verified: true,
-  },
-];
 
 export const categories: Category[] = [
   {
@@ -415,5 +229,256 @@ export const categories: Category[] = [
       'Premium leather items including wallets, bags, and accessories.',
     image:
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop',
+  },
+];
+
+// Get category IDs
+const potteryCategoryId = categories[0].id;
+const woodworkingCategoryId = categories[1].id;
+const textilesCategoryId = categories[2].id;
+const jewelryCategoryId = categories[3].id;
+const leatherGoodsCategoryId = categories[4].id;
+
+export const mockProducts: Product[] = [
+  {
+    id: uuidv4(),
+    name: 'Ceramic Dinner Plate Set',
+    price: 125.0,
+    image: 'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
+      'https://images.unsplash.com/photo-1564436872-f6d81182df12?w=300',
+      'https://images.unsplash.com/photo-1547825407-5d4e1e5c3d05?w=300',
+    ],
+    sellerName: 'Maria Rodriguez',
+    sellerId: mariaId,
+    featured: true,
+    category: potteryCategoryId,
+    description:
+      'Beautiful ceramic dinner plates with elegant earth tone glazes',
+    rating: 4.8,
+    createdAt: new Date('2024-01-01'),
+    inStock: true,
+    specifications: {
+      Material: 'Ceramic',
+      Size: '10 inches',
+      Color: 'Earth tones',
+      'Set Includes': '4 dinner plates, 4 salad plates',
+    },
+  },
+  {
+    id: uuidv4(),
+    name: 'Handcrafted Coffee Mug',
+    price: 32.0,
+    image: 'https://images.unsplash.com/photo-1517638851339-a711cfcf3279?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1517638851339-a711cfcf3279?w=300',
+      'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300',
+      'https://images.unsplash.com/photo-1579781351528-1f1e4e1b032f?w=300',
+    ],
+    sellerName: 'Maria Rodriguez',
+    sellerId: mariaId,
+    featured: false,
+    category: potteryCategoryId,
+    description: 'Handcrafted ceramic coffee mug with comfortable grip',
+    rating: 4.7,
+    createdAt: new Date('2024-01-02'),
+    inStock: true,
+    specifications: {
+      Material: 'Stoneware ceramic',
+      Capacity: '12 oz',
+      Color: 'Cobalt blue',
+      Microwave: 'Yes',
+      Dishwasher: 'Yes',
+    },
+  },
+  {
+    id: uuidv4(),
+    name: 'Decorative Serving Bowl',
+    price: 89.99,
+    image: 'https://images.unsplash.com/photo-1564436872-f6d81182df12?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1564436872-f6d81182df12?w=300',
+      'https://images.unsplash.com/photo-1547825407-5d4e1e5c3d05?w=300',
+      'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
+    ],
+    sellerName: 'Maria Rodriguez',
+    sellerId: mariaId,
+    featured: false,
+    category: potteryCategoryId,
+    description: 'Decorative ceramic serving bowl with intricate patterns',
+    rating: 4.9,
+    createdAt: new Date('2024-01-03'),
+    inStock: true,
+    specifications: {
+      Material: 'Ceramic',
+      Size: '8 inches diameter',
+      Color: 'Sage green',
+      Microwave: 'No',
+      Dishwasher: 'No',
+    },
+  },
+  {
+    id: uuidv4(),
+    name: 'Silver Wire Earrings',
+    price: 28.0,
+    description:
+      'Elegant silver wire earrings with a minimalist design. Handcrafted with sterling silver wire.',
+    image: 'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?w=300',
+      'https://images.unsplash.com/photo-1585926520751-ee2a4d9d7d7c?w=300',
+      'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300',
+    ],
+    category: jewelryCategoryId,
+    sellerId: lunaId,
+    sellerName: "Luna's Jewelry",
+    rating: 4.6,
+    createdAt: new Date('2024-02-01T16:45:00Z'),
+    featured: false,
+    specifications: {
+      Material: 'Sterling silver',
+      Style: 'Minimalist',
+      Length: '1.5 inches',
+      Weight: '2g',
+      Closure: 'Leverback',
+    },
+    inStock: true,
+  },
+  {
+    id: uuidv4(),
+    name: 'Leather Wallet',
+    price: 60.0,
+    description:
+      'A premium leather wallet with multiple card slots and a bill compartment. Made from genuine leather.',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',
+      'https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?w=300',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300',
+    ],
+    category: leatherGoodsCategoryId,
+    sellerId: tomId,
+    sellerName: "Tom's Leather Goods",
+    rating: 4.8,
+    createdAt: new Date('2024-02-05T11:20:00Z'),
+    featured: true,
+    specifications: {
+      Material: 'Genuine leather',
+      Color: 'Chestnut brown',
+      'Card slots': '8',
+      'ID window': 'Yes',
+      Dimensions: '4.5x3.5x0.5 inches',
+    },
+    inStock: false,
+  },
+  {
+    id: uuidv4(),
+    name: 'Handwoven Wool Scarf',
+    price: 45.0,
+    description: 'Warm and cozy handwoven wool scarf perfect for winter',
+    image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=300',
+    images: [
+      'https://images.unsplash.com/photo-1544966503-7cc5ac882d5d?w=300',
+      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300',
+      'https://images.unsplash.com/photo-1622550816048-18f5d1a3c0c0?w=300',
+    ],
+    category: textilesCategoryId,
+    sellerId: emmaId,
+    sellerName: "Emma's Textiles",
+    rating: 4.7,
+    createdAt: new Date('2024-02-10T09:15:00Z'),
+    featured: true,
+    specifications: {
+      Material: '100% Wool',
+      Length: '72 inches',
+      Width: '10 inches',
+      Color: 'Navy blue and cream',
+      Care: 'Hand wash only',
+    },
+    inStock: true,
+  },
+];
+
+// Get product IDs
+const plateSetId = mockProducts[0].id;
+const coffeeMugId = mockProducts[1].id;
+const servingBowlId = mockProducts[2].id;
+const earringsId = mockProducts[3].id;
+const walletId = mockProducts[4].id;
+const scarfId = mockProducts[5].id;
+
+export const mockReviews: Review[] = [
+  {
+    id: uuidv4(),
+    productId: plateSetId,
+    userId: mockUsers[0].id,
+    userName: 'Sarah Johnson',
+    rating: 5,
+    comment:
+      'These plates are absolutely stunning! The craftsmanship is excellent and they make every meal feel special.',
+    createdAt: new Date('2024-01-20T09:30:00Z'),
+    date: '2024-01-20',
+    verified: true,
+  },
+  {
+    id: uuidv4(),
+    productId: coffeeMugId,
+    userId: mockUsers[1].id,
+    userName: 'Mike Chen',
+    rating: 4,
+    comment:
+      'Beautiful mug, very well made. Arrived quickly and was well packaged. Perfect size for my morning coffee.',
+    createdAt: new Date('2024-01-22T14:15:00Z'),
+    date: '2024-01-22',
+    verified: true,
+  },
+  {
+    id: uuidv4(),
+    productId: servingBowlId,
+    userId: mockUsers[1].id,
+    userName: 'Emma Davis',
+    rating: 5,
+    comment:
+      "This serving bowl is a showstopper! The glaze is beautiful and it's the perfect size for salads and sides.",
+    createdAt: new Date('2024-01-25T16:45:00Z'),
+    date: '2024-01-25',
+    verified: true,
+  },
+  {
+    id: uuidv4(),
+    productId: earringsId,
+    userId: mockUsers[2].id,
+    userName: 'John Wilson',
+    rating: 5,
+    comment:
+      'Elegant and lightweight! These earrings are perfect for everyday wear and go with everything in my wardrobe.',
+    createdAt: new Date('2024-01-30T11:20:00Z'),
+    date: '2024-01-30',
+    verified: false,
+  },
+  {
+    id: uuidv4(),
+    productId: walletId,
+    userId: mockUsers[1].id,
+    userName: 'Lisa Brown',
+    rating: 4,
+    comment:
+      'Beautiful leather wallet with plenty of space for cards. The craftsmanship is excellent and it feels durable.',
+    createdAt: new Date('2024-02-05T10:00:00Z'),
+    date: '2024-02-05',
+    verified: true,
+  },
+  {
+    id: uuidv4(),
+    productId: scarfId,
+    userId: mockUsers[0].id,
+    userName: 'Alex Thompson',
+    rating: 5,
+    comment:
+      'So soft and warm! Perfect for the winter season. The colors are even more beautiful in person.',
+    createdAt: new Date('2024-02-12T15:30:00Z'),
+    date: '2024-02-12',
+    verified: true,
   },
 ];
