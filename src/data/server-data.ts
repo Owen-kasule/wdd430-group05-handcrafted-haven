@@ -18,12 +18,21 @@ function handleDatabaseError(error: any, context: string): never {
 export async function getProducts(): Promise<Product[]> {
   try {
     return await sql<Product[]>`
-      SELECT p.*, 
-             json_agg(DISTINCT pi.image_url) as images,
-             jsonb_object_agg(ps.spec_key, ps.spec_value) FILTER (WHERE ps.spec_key IS NOT NULL) as specifications
+      SELECT 
+        p.*, 
+        COALESCE(
+          (SELECT json_agg(DISTINCT pi.image_url) 
+           FROM product_images pi 
+           WHERE pi.product_id = p.id),
+          '[]'::json
+        ) as images,
+        COALESCE(
+          (SELECT jsonb_object_agg(ps.spec_key, ps.spec_value) 
+           FROM product_specifications ps 
+           WHERE ps.product_id = p.id),
+          '{}'::jsonb
+        ) as specifications
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id
-      LEFT JOIN product_specifications ps ON p.id = ps.product_id
       GROUP BY p.id
     `;
   } catch (error) {
@@ -34,12 +43,21 @@ export async function getProducts(): Promise<Product[]> {
 export async function getProductById(id: string): Promise<Product | null> {
   try {
     const [product] = await sql<Product[]>`
-      SELECT p.*, 
-             json_agg(DISTINCT pi.image_url) as images,
-             jsonb_object_agg(ps.spec_key, ps.spec_value) FILTER (WHERE ps.spec_key IS NOT NULL) as specifications
+      SELECT 
+        p.*, 
+        COALESCE(
+          (SELECT json_agg(DISTINCT pi.image_url) 
+           FROM product_images pi 
+           WHERE pi.product_id = p.id),
+          '[]'::json
+        ) as images,
+        COALESCE(
+          (SELECT jsonb_object_agg(ps.spec_key, ps.spec_value) 
+           FROM product_specifications ps 
+           WHERE ps.product_id = p.id),
+          '{}'::jsonb
+        ) as specifications
       FROM products p
-      LEFT JOIN product_images pi ON p.id = pi.product_id
-      LEFT JOIN product_specifications ps ON p.id = ps.product_id
       WHERE p.id = ${id}
       GROUP BY p.id
     `;
@@ -54,10 +72,17 @@ export async function getSellers(): Promise<Seller[]> {
   try {
     return await sql<Seller[]>`
       SELECT 
-        id, name, bio, profile_image as "profileImage", 
-        location, join_date as "joinDate", rating, 
-        total_reviews as "totalReviews", total_sales as "totalSales",
-        specialties, story,
+        id, 
+        name, 
+        bio, 
+        profile_image as "profileImage", 
+        location, 
+        join_date as "joinDate", 
+        rating, 
+        total_reviews as "totalReviews", 
+        total_sales as "totalSales",
+        specialties, 
+        story,
         json_build_object(
           'email', contact_email,
           'phone', contact_phone,
@@ -78,10 +103,17 @@ export async function getSellerById(id: string): Promise<Seller | null> {
   try {
     const [seller] = await sql<Seller[]>`
       SELECT 
-        id, name, bio, profile_image as "profileImage", 
-        location, join_date as "joinDate", rating, 
-        total_reviews as "totalReviews", total_sales as "totalSales",
-        specialties, story,
+        id, 
+        name, 
+        bio, 
+        profile_image as "profileImage", 
+        location, 
+        join_date as "joinDate", 
+        rating, 
+        total_reviews as "totalReviews", 
+        total_sales as "totalSales",
+        specialties, 
+        story,
         json_build_object(
           'email', contact_email,
           'phone', contact_phone,
@@ -125,8 +157,13 @@ export async function getProductReviews(productId: string): Promise<Review[]> {
   try {
     return await sql<Review[]>`
       SELECT 
-        id, product_id as "productId", user_id as "userId", 
-        user_name as "userName", rating, comment, verified,
+        id, 
+        product_id as "productId", 
+        user_id as "userId", 
+        user_name as "userName", 
+        rating, 
+        comment, 
+        verified,
         created_at as "createdAt",
         to_char(created_at, 'YYYY-MM-DD') as "date"
       FROM reviews
@@ -143,7 +180,14 @@ export async function createReview(
 ): Promise<Review> {
   try {
     const [newReview] = await sql<Review[]>`
-      INSERT INTO reviews (product_id, user_id, user_name, rating, comment, verified)
+      INSERT INTO reviews (
+        product_id, 
+        user_id, 
+        user_name, 
+        rating, 
+        comment, 
+        verified
+      )
       VALUES (
         ${review.productId}, 
         ${review.userId}, 
@@ -153,17 +197,22 @@ export async function createReview(
         ${review.verified || false}
       )
       RETURNING 
-        id, product_id as "productId", user_id as "userId", 
-        user_name as "userName", rating, comment, verified,
+        id, 
+        product_id as "productId", 
+        user_id as "userId", 
+        user_name as "userName", 
+        rating, 
+        comment, 
+        verified,
         created_at as "createdAt",
         to_char(created_at, 'YYYY-MM-DD') as "date"
     `;
 
     // Update product rating
     await sql`
-      UPDATE products p
+      UPDATE products
       SET rating = (
-        SELECT AVG(rating)::numeric(3,2)
+        SELECT AVG(rating)::numeric(10,1)
         FROM reviews
         WHERE product_id = ${review.productId}
       )
