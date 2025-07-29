@@ -8,12 +8,9 @@ import {
   mockReviews,
 } from '@/data/mockData';
 
-// Initialize database connection
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 async function seedUsers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -49,8 +46,6 @@ async function seedUsers() {
 }
 
 async function seedSellers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS sellers (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -58,7 +53,7 @@ async function seedSellers() {
       bio TEXT,
       profile_image TEXT,
       location TEXT,
-      join_date DATE,
+      join_date TEXT,
       rating FLOAT,
       total_reviews INT,
       total_sales INT,
@@ -110,8 +105,6 @@ async function seedSellers() {
 }
 
 async function seedCategories() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS categories (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -140,53 +133,8 @@ async function seedCategories() {
 
   return insertedCategories;
 }
-async function seedReviews() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS reviews (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      product_id UUID REFERENCES products(id) ON DELETE CASCADE,
-      user_id UUID REFERENCES users(id),
-      user_name TEXT NOT NULL,
-      rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
-      comment TEXT,
-      created_at TIMESTAMP DEFAULT NOW(),
-      date TEXT,
-      verified BOOLEAN DEFAULT false
-    );
-  `;
-
-  const insertedReviews = await Promise.all(
-    mockReviews.map(
-      review => sql`
-        INSERT INTO reviews (
-          id, product_id, user_id, user_name, rating, 
-          comment, created_at, date, verified
-        )
-        VALUES (
-          ${review.id}, 
-          ${review.productId}, 
-          ${review.userId}, 
-          ${review.userName}, 
-          ${review.rating},
-          ${review.comment},
-          ${review.createdAt},
-          ${review.date},
-          ${review.verified}
-        )
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
-  );
-
-  return insertedReviews;
-}
 
 async function seedProducts() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  // Create products table
   await sql`
     CREATE TABLE IF NOT EXISTS products (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -245,7 +193,7 @@ async function seedProducts() {
           ${product.sellerId},
           ${product.sellerName},
           ${product.rating},
-          ${product.featured || false},
+          ${product.featured ?? false},
           ${product.inStock},
           ${product.createdAt}
         )
@@ -256,11 +204,9 @@ async function seedProducts() {
 
   // Insert product images
   for (const product of mockProducts) {
-    const images = [product.image, ...(product.images || [])];
     await Promise.all(
-      images.map(
-        (img, i) =>
-          sql`
+      product.images.map(
+        (img, i) => sql`
           INSERT INTO product_images (product_id, image_url, is_primary)
           VALUES (${product.id}, ${img}, ${i === 0})
           ON CONFLICT (product_id, image_url) DO NOTHING;
@@ -274,8 +220,7 @@ async function seedProducts() {
     if (product.specifications) {
       await Promise.all(
         Object.entries(product.specifications).map(
-          ([key, value]) =>
-            sql`
+          ([key, value]) => sql`
             INSERT INTO product_specifications (product_id, spec_key, spec_value)
             VALUES (${product.id}, ${key}, ${value})
             ON CONFLICT (product_id, spec_key) DO NOTHING;
@@ -288,15 +233,59 @@ async function seedProducts() {
   return insertedProducts;
 }
 
+async function seedReviews() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS reviews (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id),
+      user_name TEXT NOT NULL,
+      rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      comment TEXT,
+      created_at TIMESTAMP DEFAULT NOW(),
+      date TEXT,
+      verified BOOLEAN DEFAULT false
+    );
+  `;
+
+  const insertedReviews = await Promise.all(
+    mockReviews.map(
+      review => sql`
+        INSERT INTO reviews (
+          id, product_id, user_id, user_name, rating, 
+          comment, created_at, date, verified
+        )
+        VALUES (
+          ${review.id}, 
+          ${review.productId}, 
+          ${review.userId}, 
+          ${review.userName}, 
+          ${review.rating},
+          ${review.comment},
+          ${review.createdAt},
+          ${review.date},
+          ${review.verified}
+        )
+        ON CONFLICT (id) DO NOTHING;
+      `
+    )
+  );
+
+  return insertedReviews;
+}
+
 export async function GET() {
   try {
-    await sql.begin(async sql => [
-      await seedUsers(),
-      await seedSellers(),
-      await seedCategories(),
-      await seedProducts(),
-      await seedReviews(),
-    ]);
+    // Create extension once at beginning
+    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    await sql.begin(async sql => {
+      await seedUsers();
+      await seedSellers();
+      await seedCategories();
+      await seedProducts();
+      await seedReviews();
+    });
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
