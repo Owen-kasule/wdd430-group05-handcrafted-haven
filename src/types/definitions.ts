@@ -21,7 +21,7 @@ export interface Product {
   seller_name: string;
   rating: number;
   created_at: Date;
-  featured?: boolean;
+  featured: boolean;
   specifications: Record<string, string>;
   in_stock: boolean;
 }
