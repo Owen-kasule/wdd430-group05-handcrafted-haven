@@ -232,13 +232,19 @@ export const categories: Category[] = [
   },
 ];
 
-// Get category IDs
+// Get category Names
+const potteryCategoryName = categories[0].name;
+const woodworkingCategoryName = categories[1].name;
+const textilesCategoryName = categories[2].name;
+const jewelryCategoryName = categories[3].name;
+const leatherGoodsCategoryName = categories[4].name;
+
+//Get category Names
 const potteryCategoryId = categories[0].id;
 const woodworkingCategoryId = categories[1].id;
 const textilesCategoryId = categories[2].id;
 const jewelryCategoryId = categories[3].id;
 const leatherGoodsCategoryId = categories[4].id;
-
 export const mockProducts: Product[] = [
   {
     id: uuidv4(),
@@ -250,15 +256,16 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1564436872-f6d81182df12?w=300',
       'https://images.unsplash.com/photo-1547825407-5d4e1e5c3d05?w=300',
     ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
+    seller_name: 'Maria Rodriguez',
+    seller_id: mariaId,
     featured: true,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description:
       'Beautiful ceramic dinner plates with elegant earth tone glazes',
     rating: 4.8,
-    createdAt: new Date('2024-01-01'),
-    inStock: true,
+    created_at: new Date('2024-01-01'),
+    in_stock: true,
     specifications: {
       Material: 'Ceramic',
       Size: '10 inches',
@@ -276,14 +283,15 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300',
       'https://images.unsplash.com/photo-1579781351528-1f1e4e1b032f?w=300',
     ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
+    seller_name: 'Maria Rodriguez',
+    seller_id: mariaId,
     featured: false,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description: 'Handcrafted ceramic coffee mug with comfortable grip',
     rating: 4.7,
-    createdAt: new Date('2024-01-02'),
-    inStock: true,
+    created_at: new Date('2024-01-02'),
+    in_stock: true,
     specifications: {
       Material: 'Stoneware ceramic',
       Capacity: '12 oz',
@@ -302,14 +310,15 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1547825407-5d4e1e5c3d05?w=300',
       'https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300',
     ],
-    sellerName: 'Maria Rodriguez',
-    sellerId: mariaId,
+    seller_name: 'Maria Rodriguez',
+    seller_id: mariaId,
     featured: false,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description: 'Decorative ceramic serving bowl with intricate patterns',
     rating: 4.9,
-    createdAt: new Date('2024-01-03'),
-    inStock: true,
+    created_at: new Date('2024-01-03'),
+    in_stock: true,
     specifications: {
       Material: 'Ceramic',
       Size: '8 inches diameter',
@@ -330,11 +339,12 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1585926520751-ee2a4d9d7d7c?w=300',
       'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300',
     ],
-    category: jewelryCategoryId,
-    sellerId: lunaId,
-    sellerName: "Luna's Jewelry",
+    category: jewelryCategoryName,
+    category_id: jewelryCategoryId,
+    seller_id: lunaId,
+    seller_name: "Luna's Jewelry",
     rating: 4.6,
-    createdAt: new Date('2024-02-01T16:45:00Z'),
+    created_at: new Date('2024-02-01T16:45:00Z'),
     featured: false,
     specifications: {
       Material: 'Sterling silver',
@@ -343,7 +353,7 @@ export const mockProducts: Product[] = [
       Weight: '2g',
       Closure: 'Leverback',
     },
-    inStock: true,
+    in_stock: true,
   },
   {
     id: uuidv4(),
@@ -357,11 +367,12 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?w=300',
       'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300',
     ],
-    category: leatherGoodsCategoryId,
-    sellerId: tomId,
-    sellerName: "Tom's Leather Goods",
+    category: leatherGoodsCategoryName,
+    category_id: potteryCategoryId,
+    seller_id: tomId,
+    seller_name: "Tom's Leather Goods",
     rating: 4.8,
-    createdAt: new Date('2024-02-05T11:20:00Z'),
+    created_at: new Date('2024-02-05T11:20:00Z'),
     featured: true,
     specifications: {
       Material: 'Genuine leather',
@@ -370,7 +381,7 @@ export const mockProducts: Product[] = [
       'ID window': 'Yes',
       Dimensions: '4.5x3.5x0.5 inches',
     },
-    inStock: false,
+    in_stock: false,
   },
   {
     id: uuidv4(),
@@ -383,11 +394,12 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300',
       'https://images.unsplash.com/photo-1622550816048-18f5d1a3c0c0?w=300',
     ],
-    category: textilesCategoryId,
-    sellerId: emmaId,
-    sellerName: "Emma's Textiles",
+    category: textilesCategoryName,
+    category_id: textilesCategoryId,
+    seller_id: emmaId,
+    seller_name: "Emma's Textiles",
     rating: 4.7,
-    createdAt: new Date('2024-02-10T09:15:00Z'),
+    created_at: new Date('2024-02-10T09:15:00Z'),
     featured: true,
     specifications: {
       Material: '100% Wool',
@@ -396,7 +408,7 @@ export const mockProducts: Product[] = [
       Color: 'Navy blue and cream',
       Care: 'Hand wash only',
     },
-    inStock: true,
+    in_stock: true,
   },
 ];
 
@@ -411,74 +423,68 @@ const scarfId = mockProducts[5].id;
 export const mockReviews: Review[] = [
   {
     id: uuidv4(),
-    productId: plateSetId,
-    userId: mockUsers[0].id,
-    userName: 'Sarah Johnson',
+    product_id: plateSetId,
+    user_id: mockUsers[0].id,
+    user_name: 'Sarah Johnson',
     rating: 5,
     comment:
       'These plates are absolutely stunning! The craftsmanship is excellent and they make every meal feel special.',
-    createdAt: new Date('2024-01-20T09:30:00Z'),
-    date: '2024-01-20',
+    created_at: new Date('2024-01-20T09:30:00Z'),
     verified: true,
   },
   {
     id: uuidv4(),
-    productId: coffeeMugId,
-    userId: mockUsers[1].id,
-    userName: 'Mike Chen',
+    product_id: coffeeMugId,
+    user_id: mockUsers[1].id,
+    user_name: 'Mike Chen',
     rating: 4,
     comment:
       'Beautiful mug, very well made. Arrived quickly and was well packaged. Perfect size for my morning coffee.',
-    createdAt: new Date('2024-01-22T14:15:00Z'),
-    date: '2024-01-22',
+    created_at: new Date('2024-01-22T14:15:00Z'),
     verified: true,
   },
   {
     id: uuidv4(),
-    productId: servingBowlId,
-    userId: mockUsers[1].id,
-    userName: 'Emma Davis',
+    product_id: servingBowlId,
+    user_id: mockUsers[1].id,
+    user_name: 'Emma Davis',
     rating: 5,
     comment:
       "This serving bowl is a showstopper! The glaze is beautiful and it's the perfect size for salads and sides.",
-    createdAt: new Date('2024-01-25T16:45:00Z'),
-    date: '2024-01-25',
+    created_at: new Date('2024-01-25T16:45:00Z'),
     verified: true,
   },
   {
     id: uuidv4(),
-    productId: earringsId,
-    userId: mockUsers[2].id,
-    userName: 'John Wilson',
+    product_id: earringsId,
+    user_id: mockUsers[2].id,
+    user_name: 'John Wilson',
     rating: 5,
     comment:
       'Elegant and lightweight! These earrings are perfect for everyday wear and go with everything in my wardrobe.',
-    createdAt: new Date('2024-01-30T11:20:00Z'),
-    date: '2024-01-30',
+    created_at: new Date('2024-01-30T11:20:00Z'),
     verified: false,
   },
   {
     id: uuidv4(),
-    productId: walletId,
-    userId: mockUsers[1].id,
-    userName: 'Lisa Brown',
+    product_id: walletId,
+    user_id: mockUsers[1].id,
+    user_name: 'Lisa Brown',
     rating: 4,
     comment:
       'Beautiful leather wallet with plenty of space for cards. The craftsmanship is excellent and it feels durable.',
-    createdAt: new Date('2024-02-05T10:00:00Z'),
-    date: '2024-02-05',
+    created_at: new Date('2024-02-05T10:00:00Z'),
     verified: true,
   },
   {
     id: uuidv4(),
-    productId: scarfId,
-    userId: mockUsers[0].id,
-    userName: 'Alex Thompson',
+    product_id: scarfId,
+    user_id: mockUsers[0].id,
+    user_name: 'Alex Thompson',
     rating: 5,
     comment:
       'So soft and warm! Perfect for the winter season. The colors are even more beautiful in person.',
-    createdAt: new Date('2024-02-12T15:30:00Z'),
-    date: '2024-02-12',
+    created_at: new Date('2024-02-12T15:30:00Z'),
     verified: true,
   },
 ];

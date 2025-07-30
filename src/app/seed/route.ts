@@ -11,8 +11,8 @@ import {
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 async function seedUsers() {
+  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await sql`
-    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     CREATE TABLE IF NOT EXISTS users (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
@@ -22,7 +22,7 @@ async function seedUsers() {
       role TEXT NOT NULL CHECK (role IN ('user', 'admin')),
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
-    );
+    )
   `;
 
   await Promise.all(
@@ -69,7 +69,8 @@ async function seedSellers() {
   `;
 
   await Promise.all(
-    mockSellers.map(seller => sql`
+    mockSellers.map(
+      seller => sql`
       INSERT INTO sellers (
         id, name, bio, profile_image, location, join_date, rating, 
         total_reviews, total_sales, specialties, story, 
@@ -95,7 +96,8 @@ async function seedSellers() {
         ${seller.socialMedia.facebook}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 
@@ -112,7 +114,8 @@ async function seedCategories() {
   `;
 
   await Promise.all(
-    categories.map(category => sql`
+    categories.map(
+      category => sql`
       INSERT INTO categories (id, name, description, image)
       VALUES (
         ${category.id}, 
@@ -121,7 +124,8 @@ async function seedCategories() {
         ${category.image}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 
@@ -132,7 +136,8 @@ async function seedProducts() {
       name TEXT NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
       description TEXT,
-      category_id UUID REFERENCES categories(id),
+      category TEXT NOT NULL,
+     category_id UUID REFERENCES categories(id),
       seller_id UUID REFERENCES sellers(id),
       seller_name TEXT,
       rating FLOAT,
@@ -140,7 +145,7 @@ async function seedProducts() {
       in_stock BOOLEAN DEFAULT true,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
-    );
+    )
   `;
 
   await sql`
@@ -151,7 +156,7 @@ async function seedProducts() {
       is_primary BOOLEAN DEFAULT false,
       created_at TIMESTAMP DEFAULT NOW(),
       UNIQUE (product_id, image_url)
-    );
+    )
   `;
 
   await sql`
@@ -162,13 +167,29 @@ async function seedProducts() {
       spec_value TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT NOW(),
       UNIQUE (product_id, spec_key)
-    );
+    )
+  `;
+
+  await sql`
+    CREATE OR REPLACE FUNCTION update_product_rating(product_id uuid)
+    RETURNS void AS $$
+    BEGIN
+      UPDATE products
+      SET rating = (
+        SELECT AVG(rating)::numeric(10,1)
+        FROM reviews
+        WHERE product_id = $1
+      )
+      WHERE id = $1;
+    END;
+    $$ LANGUAGE plpgsql
   `;
 
   await Promise.all(
-    mockProducts.map(product => sql`
+    mockProducts.map(
+      product => sql`
       INSERT INTO products (
-        id, name, price, description, category_id, seller_id, 
+        id, name, price, description, category, category_id, seller_id, 
         seller_name, rating, featured, in_stock, created_at
       )
       VALUES (
@@ -177,36 +198,42 @@ async function seedProducts() {
         ${product.price},
         ${product.description},
         ${product.category},
-        ${product.sellerId},
-        ${product.sellerName},
+        ${product.category_id},
+        ${product.seller_id},
+        ${product.seller_name},
         ${product.rating},
         ${product.featured ?? false},
-        ${product.inStock},
-        ${product.createdAt}
+        ${product.in_stock},
+        ${product.created_at}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 
   for (const product of mockProducts) {
     const images = [product.image, ...(product.images || [])];
     await Promise.all(
-      images.map((img, i) => sql`
+      images.map(
+        (img, i) => sql`
         INSERT INTO product_images (product_id, image_url, is_primary)
         VALUES (${product.id}, ${img}, ${i === 0})
         ON CONFLICT (product_id, image_url) DO NOTHING;
-      `)
+      `
+      )
     );
   }
 
   for (const product of mockProducts) {
     if (product.specifications) {
       await Promise.all(
-        Object.entries(product.specifications).map(([key, value]) => sql`
+        Object.entries(product.specifications).map(
+          ([key, value]) => sql`
           INSERT INTO product_specifications (product_id, spec_key, spec_value)
           VALUES (${product.id}, ${key}, ${value})
           ON CONFLICT (product_id, spec_key) DO NOTHING;
-        `)
+        `
+        )
       );
     }
   }
@@ -222,30 +249,30 @@ async function seedReviews() {
       rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
       comment TEXT,
       created_at TIMESTAMP DEFAULT NOW(),
-      date TEXT,
       verified BOOLEAN DEFAULT false
-    );
+    )
   `;
 
   await Promise.all(
-    mockReviews.map(review => sql`
+    mockReviews.map(
+      review => sql`
       INSERT INTO reviews (
         id, product_id, user_id, user_name, rating, 
-        comment, created_at, date, verified
+        comment, created_at, verified
       )
       VALUES (
         ${review.id}, 
-        ${review.productId}, 
-        ${review.userId}, 
-        ${review.userName}, 
+        ${review.product_id}, 
+        ${review.user_id}, 
+        ${review.user_name}, 
         ${review.rating},
         ${review.comment},
-        ${review.createdAt},
-        ${review.date},
+        ${review.created_at},
         ${review.verified}
       )
       ON CONFLICT (id) DO NOTHING;
-    `)
+    `
+    )
   );
 }
 

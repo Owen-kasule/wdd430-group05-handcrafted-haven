@@ -20,17 +20,21 @@
     "db:reset": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
+    "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.1",
-    "next": "^15.4.1",
+    "next": "15.4.2-canary.19",
     "postgres": "^3.4.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "use-debounce": "^10.0.5",
     "uuid": "^11.1.0",
     "zod": "^4.0.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.1.0",
     "@types/react": "^18.3.23",
@@ -39,6 +43,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.4.1",
     "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"

@@ -2,26 +2,70 @@
 
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
-import { mockProducts } from '@/data/mockData';
-import type { Product } from '@/types/definitions';
+import { getProducts, getCategories } from '@/data/server-data';
+import type { Product, Category } from '@/types/definitions';
 import './Homepage.css';
+import { useRouter } from 'next/navigation';
+import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
+import Link from 'Next/Link';
 
 export default function Homepage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
+  // Fetch categories
   useEffect(() => {
-    setFeaturedProducts(mockProducts.filter(product => product.featured));
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchCategories();
   }, []);
 
-  const categories = [
+  // Fetch products and filter for featured
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const { products } = await getProducts({ itemsPerPage: 100 });
+        //Featured products filter
+        const featured = products
+          .filter(product => product.featured)
+          .slice(0, 4);
+        setFeaturedProducts(featured);
+      } catch (err) {
+        console.error('Failed to fetch products', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Handle search and filter submission
+  const handleSearchSubmit = () => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (selectedCategory !== 'all') params.set('category', selectedCategory);
+
+    router.push(`/products?${params.toString()}`);
+  };
+
+  // Categories for dropdown
+  const categoryOptions = [
     { value: 'all', label: 'All Categories' },
-    { value: 'home-decor', label: 'Home Decor' },
-    { value: 'jewelry', label: 'Jewelry' },
-    { value: 'textiles', label: 'Textiles' },
-    { value: 'ceramics', label: 'Ceramics' },
-    { value: 'woodwork', label: 'Woodwork' },
+    ...categories.map(category => ({
+      value: category.id.toString(),
+      label: category.name,
+    })),
   ];
 
   return (
@@ -35,8 +79,12 @@ export default function Homepage() {
             one-of-a-kind creations into your home
           </p>
           <div className="hero-cta">
-            <button className="cta-button primary">Shop Now</button>
-            <button className="cta-button secondary">Become a Seller</button>
+            <Link href="/products">
+              <button className="cta-button primary">Shop Now</button>
+            </Link>
+            <Link href="/login">
+              <button className="cta-button secondary">Become a Seller</button>
+            </Link>
           </div>
         </div>
         <div className="hero-image">
@@ -48,7 +96,7 @@ export default function Homepage() {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="search-section">
+      {/* <section className="search-section">
         <div className="search-container">
           <div className="search-bar">
             <input
@@ -56,9 +104,12 @@ export default function Homepage() {
               placeholder="Search for handcrafted items..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSearchSubmit()}
               className="search-input"
             />
-            <button className="search-button">🔍</button>
+            <button className="search-button" onClick={handleSearchSubmit}>
+              🔍
+            </button>
           </div>
           <div className="filter-container">
             <select
@@ -66,16 +117,21 @@ export default function Homepage() {
               onChange={e => setSelectedCategory(e.target.value)}
               className="category-filter"
               aria-label="Filter by category"
+              disabled={categories.length === 0}
             >
-              {categories.map(category => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
-                </option>
-              ))}
+              {categories.length === 0 ? (
+                <option>Loading categories...</option>
+              ) : (
+                categoryOptions.map(category => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))
+              )}
             </select>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Featured Products Section */}
       <section className="featured-section">
@@ -85,11 +141,23 @@ export default function Homepage() {
             Curated selections from our most talented artisans
           </p>
         </div>
-        <div className="products-grid">
-          {featuredProducts.slice(0, 4).map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+
+        {loading ? (
+          <div className="products-grid">
+            <CardsSkeleton />
+          </div>
+        ) : featuredProducts.length > 0 ? (
+          <div className="products-grid">
+            {featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="no-products">
+            <h3>No featured products available</h3>
+            <p>Check back later for new arrivals</p>
+          </div>
+        )}
       </section>
 
       {/* Categories Section */}

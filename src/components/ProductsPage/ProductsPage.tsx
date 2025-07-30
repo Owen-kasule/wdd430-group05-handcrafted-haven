@@ -1,94 +1,93 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '../ProductCard/ProductCard';
-import { mockProducts, categories } from '@/data/mockData';
-import type { Product } from '@/types/definitions';
+import { getProducts, getCategories } from '@/data/server-data';
+import type { Product, Category } from '@/types/definitions';
+import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
+import { Suspense } from 'react';
+import { useDebounce } from 'use-debounce';
 import './ProductsPage.css';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 3000);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(12);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
 
+  const itemsPerPage = 12;
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Get initial filters from URL
   useEffect(() => {
-    setProducts(mockProducts);
-    setFilteredProducts(mockProducts);
-  }, []);
-
-  useEffect(() => {
-    // Get URL parameters
     const categoryParam = searchParams.get('category');
     const searchParam = searchParams.get('search');
 
     if (categoryParam) {
-      setSelectedCategory(categoryParam);
+      if (!isNaN(Number(categoryParam))) {
+        setSelectedCategory(categoryParam);
+      } else if (categoryParam === 'all') {
+        setSelectedCategory('all');
+      }
     }
+
     if (searchParam) {
+      setInputValue(searchParam);
       setSearchTerm(searchParam);
     }
   }, [searchParams]);
 
+  // Fetch categories
   useEffect(() => {
-    let filtered = [...products];
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(
-        product =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          product.sellerName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(
-        product =>
-          product.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
-    }
-
-    // Filter by price range
-    filtered = filtered.filter(
-      product =>
-        product.price >= priceRange.min && product.price <= priceRange.max
-    );
-
-    // Sort products
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'newest':
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        case 'featured':
-        default:
-          return Number(b.featured) - Number(a.featured);
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
       }
-    });
+    };
+    fetchCategories();
+  }, []);
 
-    setFilteredProducts(filtered);
-    setCurrentPage(1);
-  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
+  // Fetch products (debounced search)
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const { products: filteredProducts, totalCount } = await getProducts({
+          query: debouncedSearchTerm,
+          category: selectedCategory !== 'all' ? selectedCategory : undefined,
+          minPrice: priceRange.min,
+          maxPrice: priceRange.max,
+          sortBy,
+          page: currentPage,
+          itemsPerPage,
+        });
+
+        setProducts(filteredProducts);
+        setTotalCount(totalCount);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load products. Please try again later.');
+        setProducts([]);
+        setTotalCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [debouncedSearchTerm, selectedCategory, priceRange, sortBy, currentPage]);
 
   // Update URL when filters change
   useEffect(() => {
@@ -96,18 +95,14 @@ export default function ProductsPage() {
     if (selectedCategory !== 'all') params.set('category', selectedCategory);
     if (searchTerm) params.set('search', searchTerm);
 
-    const newUrl = `/products${params.toString() ? `?${params.toString()}` : ''}`;
-    router.replace(newUrl);
+    router.replace(`/products${params.toString() ? `?${params}` : ''}`);
   }, [selectedCategory, searchTerm, router]);
 
-  // Pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const handleSearchChange = (term: string) => {
+    setInputValue(term);
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -115,11 +110,15 @@ export default function ProductsPage() {
   };
 
   const clearFilters = () => {
+    setInputValue('');
     setSearchTerm('');
     setSelectedCategory('all');
     setPriceRange({ min: 0, max: 1000 });
     setSortBy('featured');
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   return (
     <div className="products-page">
@@ -136,8 +135,8 @@ export default function ProductsPage() {
             <input
               type="text"
               placeholder="Search products..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              value={inputValue}
+              onChange={e => handleSearchChange(e.target.value)}
               className="search-input"
             />
           </div>
@@ -145,13 +144,16 @@ export default function ProductsPage() {
           <div className="category-filter">
             <select
               value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value)}
+              onChange={e => {
+                setSelectedCategory(e.target.value);
+                setCurrentPage(1);
+              }}
               className="filter-select"
               aria-label="Filter by category"
             >
               <option value="all">All Categories</option>
               {categories.map(category => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.name}>
                   {category.name}
                 </option>
               ))}
@@ -159,7 +161,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="price-filter">
-            <label htmlFor="price-range">
+            <label>
               Price Range: ${priceRange.min} - ${priceRange.max}
             </label>
             <div className="price-inputs">
@@ -174,6 +176,7 @@ export default function ProductsPage() {
                   })
                 }
                 className="price-input"
+                min="0"
               />
               <input
                 type="number"
@@ -186,6 +189,7 @@ export default function ProductsPage() {
                   })
                 }
                 className="price-input"
+                min="0"
               />
             </div>
           </div>
@@ -193,7 +197,10 @@ export default function ProductsPage() {
           <div className="sort-filter">
             <select
               value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
+              onChange={e => {
+                setSortBy(e.target.value);
+                setCurrentPage(1);
+              }}
               className="filter-select"
               aria-label="Sort products"
             >
@@ -213,52 +220,67 @@ export default function ProductsPage() {
 
       {/* Results Info */}
       <div className="results-info">
-        <p>Showing {filteredProducts.length} products</p>
+        <p>
+          Showing {loading ? '...' : products.length} of{' '}
+          {loading ? '...' : totalCount} products
+        </p>
       </div>
 
       {/* Products Grid */}
-      <div className="products-grid">
-        {currentProducts.length > 0 ? (
-          currentProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))
-        ) : (
-          <div className="no-products">
-            <h3>No products found</h3>
-            <p>Try adjusting your search or filter criteria</p>
+      {loading ? (
+        <Suspense fallback={<CardsSkeleton />}>
+          <div className="products-grid">
+            <CardsSkeleton />
           </div>
-        )}
-      </div>
+        </Suspense>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : (
+        <>
+          <div className="products-grid">
+            {products.length > 0 ? (
+              products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="no-products">
+                <h3>No products found</h3>
+                <p>Try adjusting your search or filter criteria</p>
+              </div>
+            )}
+          </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="pagination-btn"
-          >
-            Previous
-          </button>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                Previous
+              </button>
 
-          {[...Array(totalPages)].map((_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => handlePageChange(index + 1)}
-              className={`pagination-btn ${currentPage === index + 1 ? 'active' : ''}`}
-            >
-              {index + 1}
-            </button>
-          ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                >
+                  {page}
+                </button>
+              ))}
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="pagination-btn"
-          >
-            Next
-          </button>
-        </div>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

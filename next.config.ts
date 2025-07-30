@@ -1,14 +1,15 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   experimental: {
-    optimizePackageImports: ["uuid"],
+    optimizePackageImports: ['uuid'],
+    ppr: 'incremental',
   },
   turbopack: {
     rules: {
-      "*.svg": {
-        loaders: ["@svgr/webpack"],
-        as: "*.js",
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },
@@ -21,8 +22,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
-    domains: ["images.unsplash.com"],
-    formats: ["image/webp", "image/avif"],
+    domains: ['images.unsplash.com'],
+    formats: ['image/webp', 'image/avif'],
   },
   reactStrictMode: true,
 };
