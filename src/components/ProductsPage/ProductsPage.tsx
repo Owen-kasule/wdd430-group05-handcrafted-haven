@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '../ProductCard/ProductCard';
 import { getProducts, getCategories } from '@/data/server-data';
 import type { Product, Category } from '@/types/definitions';
+import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
 import './ProductsPage.css';
 
 export default function ProductsPage() {
@@ -21,6 +22,15 @@ export default function ProductsPage() {
   const itemsPerPage = 12;
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Get initial filters from URL
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    const searchParam = searchParams.get('search');
+
+    if (categoryParam) setSelectedCategory(categoryParam);
+    if (searchParam) setSearchTerm(searchParam);
+  }, [searchParams]);
 
   // Fetch categories
   useEffect(() => {
@@ -53,8 +63,12 @@ export default function ProductsPage() {
 
         setProducts(filteredProducts);
         setTotalCount(totalCount);
+        setError(null);
       } catch (err) {
+        console.error('Error fetching products:', err);
         setError('Failed to load products. Please try again later.');
+        setProducts([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }
@@ -141,6 +155,7 @@ export default function ProductsPage() {
                   })
                 }
                 className="price-input"
+                min="0"
               />
               <input
                 type="number"
@@ -153,6 +168,7 @@ export default function ProductsPage() {
                   })
                 }
                 className="price-input"
+                min="0"
               />
             </div>
           </div>
@@ -181,13 +197,16 @@ export default function ProductsPage() {
       {/* Results Info */}
       <div className="results-info">
         <p>
-          Showing {products.length} of {totalCount} products
+          Showing {loading ? '...' : products.length} of{' '}
+          {loading ? '...' : totalCount} products
         </p>
       </div>
 
       {/* Products Grid */}
       {loading ? (
-        <div className="loading">Loading products...</div>
+        <div className="products-grid">
+          <CardsSkeleton />
+        </div>
       ) : error ? (
         <div className="error">{error}</div>
       ) : (

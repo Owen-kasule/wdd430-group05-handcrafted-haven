@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { mockProducts, mockReviews } from '@/data/mockData';
-import type { Product, Review } from '@/types/definitions';
-import Loading from '@/components/Loading/Loading';
+import {
+  getProductById,
+  getProductReviews,
+  createReview,
+} from '@/data/server-data';
+import type { Product, Review, User } from '@/types/definitions';
 import './ProductPage.css';
 
 export default function ProductPage() {
@@ -21,35 +24,73 @@ export default function ProductPage() {
     comment: '',
     userName: 'Anonymous User',
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
-    // Find product by ID
-    const foundProduct = mockProducts.find(p => p.id === id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-      // Get reviews for this product
-      const productReviews = mockReviews.filter(r => r.productId === id);
-      setReviews(productReviews);
-    }
-  }, [id]);
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        const [productData, reviewsData] = await Promise.all([
+          getProductById(id),
+          getProductReviews(id),
+        ]);
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const review: Review = {
-      id: Date.now().toString(),
-      productId: id,
-      userId: 'user_' + Date.now().toString(),
-      userName: newReview.userName,
-      rating: newReview.rating,
-      comment: newReview.comment,
-      createdAt: new Date(),
-      date: new Date().toISOString().split('T')[0],
-      verified: false,
+        if (!productData) {
+          throw new Error('Product not found');
+        }
+
+        setProduct(productData);
+        setReviews(reviewsData || []);
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError('Failed to load product. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    setReviews([review, ...reviews]);
-    setNewReview({ rating: 5, comment: '', userName: 'Anonymous User' });
-    setShowReviewForm(false);
+    fetchProductData();
+  }, [id]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSubmittingReview(true);
+
+      // Generate a mock user ID for now
+      const userId = 'user_' + Date.now().toString();
+
+      const createdReview = await createReview({
+        product_id: id,
+        user_id: userId,
+        user_name: newReview.userName,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        verified: false,
+      });
+
+      // Update reviews list with new review
+      setReviews([
+        {
+          ...createdReview,
+          id: createdReview.id,
+          product_id: createdReview.product_id,
+          user_id: createdReview.user_id,
+          user_name: createdReview.user_name,
+          created_at: new Date(createdReview.created_at),
+        },
+        ...reviews,
+      ]);
+
+      // ... rest of the function remains the same
+    } catch (err) {
+      console.error('Error creating review:', err);
+      setError('Failed to submit review. Please try again.');
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   const calculateRatingBreakdown = () => {
@@ -63,16 +104,59 @@ export default function ProductPage() {
     return breakdown;
   };
 
-  const averageRating =
-    reviews.length > 0
-      ? (
-          reviews.reduce((sum, review) => sum + review.rating, 0) /
-          reviews.length
-        ).toFixed(1)
-      : '0';
+  const averageRating = product?.rating || 0;
+
+  if (loading) {
+    return (
+      <div className="product-page">
+        <div className="product-container skeleton-container">
+          {/* Image Skeleton */}
+          <div className="product-images">
+            <div className="main-image skeleton"></div>
+            <div className="image-thumbnails">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="skeleton"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Details Skeleton */}
+          <div className="product-details">
+            <div className="skeleton title-skeleton"></div>
+            <div className="skeleton meta-skeleton"></div>
+            <div className="skeleton rating-skeleton"></div>
+            <div className="skeleton seller-skeleton"></div>
+            <div className="skeleton description-skeleton"></div>
+            <div
+              className="skeleton description-skeleton"
+              style={{ width: '80%' }}
+            ></div>
+            <div className="skeleton specs-skeleton"></div>
+            <div className="skeleton purchase-skeleton"></div>
+          </div>
+        </div>
+
+        {/* Reviews Section Skeleton */}
+        <div className="reviews-section skeleton-container">
+          <div className="skeleton reviews-header-skeleton"></div>
+          <div className="skeleton rating-summary-skeleton"></div>
+          <div className="skeleton reviews-list-skeleton"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Try Again</button>
+      </div>
+    );
+  }
 
   if (!product) {
-    return <Loading message="Loading product..." />;
+    return <div className="error-message">Product not found</div>;
   }
 
   const ratingBreakdown = calculateRatingBreakdown();
@@ -82,7 +166,14 @@ export default function ProductPage() {
       <div className="product-container">
         <div className="product-images">
           <div className="main-image">
-            <img src={product.images[selectedImage]} alt={product.name} />
+            <img
+              src={product.images[selectedImage]}
+              alt={product.name}
+              onError={e => {
+                (e.target as HTMLImageElement).src =
+                  '/placeholder-image/placeholder-image.jpg';
+              }}
+            />
           </div>
           <div className="image-thumbnails">
             {product.images.map((image, index) => (
@@ -92,6 +183,10 @@ export default function ProductPage() {
                 alt={`${product.name} ${index + 1}`}
                 className={selectedImage === index ? 'active' : ''}
                 onClick={() => setSelectedImage(index)}
+                onError={e => {
+                  (e.target as HTMLImageElement).src =
+                    '/placeholder-image/placeholder-image.jpg';
+                }}
               />
             ))}
           </div>
@@ -100,7 +195,7 @@ export default function ProductPage() {
         <div className="product-details">
           <h1 className="product-title">{product.name}</h1>
           <div className="product-meta">
-            <span className="product-price">${product.price}</span>
+            <span className="product-price">${product.price.toFixed(2)}</span>
             <span className="product-category">{product.category}</span>
           </div>
 
@@ -110,9 +205,7 @@ export default function ProductPage() {
                 <span
                   key={star}
                   className={
-                    star <= Math.round(Number(averageRating))
-                      ? 'star filled'
-                      : 'star'
+                    star <= Math.round(averageRating) ? 'star filled' : 'star'
                   }
                 >
                   ★
@@ -120,12 +213,12 @@ export default function ProductPage() {
               ))}
             </div>
             <span className="rating-text">
-              {averageRating} ({reviews.length} reviews)
+              {averageRating.toFixed(1)} ({reviews.length} reviews)
             </span>
           </div>
 
           <div className="seller-info">
-            <Link href={`/seller/${product.sellerId}`} className="seller-link">
+            <Link href={`/seller/${product.seller_id}`} className="seller-link">
               <strong>Artisan:</strong> {product.seller_name}
             </Link>
             <div className="seller-rating">
@@ -163,8 +256,8 @@ export default function ProductPage() {
                 ))}
               </select>
             </div>
-            <button className="add-to-cart-btn" disabled={!product.inStock}>
-              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+            <button className="add-to-cart-btn" disabled={!product.in_stock}>
+              {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
             </button>
           </div>
         </div>
@@ -176,6 +269,7 @@ export default function ProductPage() {
           <button
             className="write-review-btn"
             onClick={() => setShowReviewForm(!showReviewForm)}
+            disabled={submittingReview}
           >
             Write a Review
           </button>
@@ -184,15 +278,13 @@ export default function ProductPage() {
         {/* Rating Summary */}
         <div className="rating-summary">
           <div className="overall-rating">
-            <div className="rating-number">{averageRating}</div>
+            <div className="rating-number">{averageRating.toFixed(1)}</div>
             <div className="rating-stars">
               {[1, 2, 3, 4, 5].map(star => (
                 <span
                   key={star}
                   className={
-                    star <= Math.round(Number(averageRating))
-                      ? 'star filled'
-                      : 'star'
+                    star <= Math.round(averageRating) ? 'star filled' : 'star'
                   }
                 >
                   ★
@@ -249,6 +341,7 @@ export default function ProductPage() {
                     setNewReview({ ...newReview, userName: e.target.value })
                   }
                   required
+                  disabled={submittingReview}
                 />
               </div>
 
@@ -263,6 +356,7 @@ export default function ProductPage() {
                       rating: parseInt(e.target.value),
                     })
                   }
+                  disabled={submittingReview}
                 >
                   {[5, 4, 3, 2, 1].map(num => (
                     <option key={num} value={num}>
@@ -282,17 +376,23 @@ export default function ProductPage() {
                   }
                   rows={4}
                   required
+                  disabled={submittingReview}
                 ></textarea>
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="submit-review-btn">
-                  Submit Review
+                <button
+                  type="submit"
+                  className="submit-review-btn"
+                  disabled={submittingReview}
+                >
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
                 </button>
                 <button
                   type="button"
                   className="cancel-review-btn"
                   onClick={() => setShowReviewForm(false)}
+                  disabled={submittingReview}
                 >
                   Cancel
                 </button>
@@ -306,8 +406,14 @@ export default function ProductPage() {
           {reviews.map(review => (
             <div key={review.id} className="review">
               <div className="review-header">
-                <span className="reviewer-name">{review.userName}</span>
-                <span className="review-date">{review.date}</span>
+                <span className="reviewer-name">{review.user_name}</span>
+                <span className="review-date">
+                  {new Date(review.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </span>
                 {review.verified && (
                   <span className="verified-badge">Verified Purchase</span>
                 )}
@@ -329,7 +435,7 @@ export default function ProductPage() {
           ))}
         </div>
 
-        {reviews.length === 0 && (
+        {reviews.length === 0 && !showReviewForm && (
           <div className="no-reviews">
             <p>No reviews yet. Be the first to review this product!</p>
           </div>

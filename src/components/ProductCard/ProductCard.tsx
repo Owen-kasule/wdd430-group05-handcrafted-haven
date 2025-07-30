@@ -10,7 +10,9 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   // Handle missing images
   const firstImage =
-    product.images?.length > 0 ? product.images[0] : '/placeholder-image.jpg';
+    product.images?.length > 0
+      ? product.images[0]
+      : '/placeholder-image/placeholder-image.jpg';
 
   return (
     <div className="product-card">

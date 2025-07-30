@@ -185,16 +185,15 @@ export async function createReview(
   review: Omit<Review, 'id' | 'created_at'>
 ): Promise<Review> {
   try {
-    // Insert review
     const { data, error } = await supabase
       .from('reviews')
       .insert({
-        product_id: review.productId,
-        user_id: review.userId,
-        user_name: review.userName,
+        product_id: review.product_id,
+        user_id: review.user_id,
+        user_name: review.user_name,
         rating: review.rating,
         comment: review.comment,
-        verified: review.verified ?? false,
+        verified: review.verified,
       })
       .single();
 
@@ -204,13 +203,13 @@ export async function createReview(
     const { data: productData } = await supabase
       .from('products')
       .select('id')
-      .eq('id', review.productId);
+      .eq('id', review.product_id);
 
     if (productData && productData.length > 0) {
       const { error: updateError } = await supabase.rpc(
         'update_product_rating',
         {
-          product_id: review.productId,
+          product_id: review.product_id,
         }
       );
 

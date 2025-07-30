@@ -7,6 +7,7 @@ export interface User {
   role: 'user' | 'admin';
 }
 
+// Update Product interface
 export interface Product {
   id: string;
   name: string;
@@ -15,13 +16,13 @@ export interface Product {
   image: string;
   images: string[];
   category: string;
-  sellerId: string;
+  seller_id: string;
   seller_name: string;
   rating: number;
-  createdAt: Date;
+  created_at: Date;
   featured?: boolean;
   specifications: Record<string, string>;
-  inStock: boolean;
+  in_stock: boolean;
 }
 
 export interface Seller {
@@ -46,16 +47,14 @@ export interface Seller {
     facebook: string;
   };
 }
-
 export interface Review {
   id: string;
-  productId: string;
-  userId: string;
-  userName: string;
+  product_id: string;
+  user_id: string;
+  user_name: string;
   rating: number;
   comment: string;
-  createdAt: Date;
-  date: string;
+  created_at: Date;
   verified: boolean;
 }
 

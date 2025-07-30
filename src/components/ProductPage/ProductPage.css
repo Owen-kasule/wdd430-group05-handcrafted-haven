@@ -51,7 +51,7 @@
 .image-thumbnails img:hover,
 .image-thumbnails img.active {
   opacity: 1;
-  border-color: #4B8F29;
+  border-color: #4b8f29;
 }
 
 .product-details {
@@ -63,7 +63,7 @@
 .product-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
-  color: #A52A2A;
+  color: #a52a2a;
   margin: 0;
 }
 
@@ -76,12 +76,12 @@
 .product-price {
   font-size: 2rem;
   font-weight: bold;
-  color: #4B8F29;
+  color: #4b8f29;
 }
 
 .product-category {
-  background-color: #F4A300;
-  color: #A52A2A;
+  background-color: #f4a300;
+  color: #a52a2a;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: bold;
@@ -92,11 +92,11 @@
   background-color: #f8f9fa;
   padding: 1rem;
   border-radius: 8px;
-  border-left: 4px solid #4B8F29;
+  border-left: 4px solid #4b8f29;
 }
 
 .seller-link {
-  color: #A52A2A;
+  color: #a52a2a;
   text-decoration: none;
   font-weight: bold;
   margin-right: 1rem;
@@ -119,7 +119,7 @@
 }
 
 .stars {
-  color: #F4A300;
+  color: #f4a300;
 }
 
 .product-description {
@@ -129,7 +129,7 @@
 }
 
 .product-specifications h3 {
-  color: #A52A2A;
+  color: #a52a2a;
   margin-bottom: 1rem;
 }
 
@@ -175,7 +175,7 @@
 }
 
 .add-to-cart-btn {
-  background-color: #4B8F29;
+  background-color: #4b8f29;
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -187,7 +187,7 @@
 }
 
 .add-to-cart-btn:hover:not(:disabled) {
-  background-color: #3A6F1F;
+  background-color: #3a6f1f;
 }
 
 .add-to-cart-btn:disabled {
@@ -201,7 +201,7 @@
 }
 
 .reviews-section h2 {
-  color: #A52A2A;
+  color: #a52a2a;
   margin-bottom: 1.5rem;
 }
 
@@ -215,7 +215,7 @@
   background-color: #f8f9fa;
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #F4A300;
+  border-left: 4px solid #f4a300;
 }
 
 .review-header {
@@ -226,7 +226,7 @@
 
 .reviewer-name {
   font-weight: bold;
-  color: #A52A2A;
+  color: #a52a2a;
 }
 
 .review-date {
@@ -255,11 +255,11 @@
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .product-title {
     font-size: 2rem;
   }
-  
+
   .product-meta {
     flex-direction: column;
     align-items: flex-start;
@@ -526,7 +526,127 @@
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.skeleton-container {
+  display: flex;
+  gap: 2rem;
+}
 
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.product-images .skeleton {
+  height: 400px;
+}
+
+.image-thumbnails .skeleton {
+  width: 80px;
+  height: 80px;
+  margin: 0 5px;
+}
+
+.product-details .skeleton {
+  margin-bottom: 15px;
+}
+
+.title-skeleton {
+  height: 40px;
+  width: 70%;
+}
+
+.meta-skeleton {
+  height: 25px;
+  width: 40%;
+}
+
+.rating-skeleton {
+  height: 25px;
+  width: 30%;
+}
+
+.seller-skeleton {
+  height: 25px;
+  width: 50%;
+}
+
+.description-skeleton {
+  height: 20px;
+  width: 100%;
+}
+
+.specs-skeleton {
+  height: 200px;
+  width: 100%;
+}
+
+.purchase-skeleton {
+  height: 50px;
+  width: 100%;
+}
+
+.reviews-section.skeleton-container {
+  flex-direction: column;
+}
+
+.reviews-header-skeleton {
+  height: 40px;
+  width: 100%;
+}
+
+.rating-summary-skeleton {
+  height: 200px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.reviews-list-skeleton {
+  height: 300px;
+  width: 100%;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #d32f2f;
+}
+
+.error-message button {
+  background-color: #d21919;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.verified-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 10px;
+}
+
+.review-date {
+  color: #666;
+  font-size: 0.9rem;
+}
 /* Responsive design for reviews */
 @media (max-width: 768px) {
   .reviews-header {
@@ -534,20 +654,20 @@
     gap: 1rem;
     align-items: stretch;
   }
-  
+
   .rating-summary {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .overall-rating {
     min-width: auto;
   }
-  
+
   .rating-row {
     grid-template-columns: 70px 1fr 30px;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
