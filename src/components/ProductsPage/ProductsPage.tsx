@@ -5,12 +5,16 @@ import ProductCard from '../ProductCard/ProductCard';
 import { getProducts, getCategories } from '@/data/server-data';
 import type { Product, Category } from '@/types/definitions';
 import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
+import { Suspense } from 'react';
+import { useDebounce } from 'use-debounce';
 import './ProductsPage.css';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 3000);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [sortBy, setSortBy] = useState('featured');
@@ -28,8 +32,18 @@ export default function ProductsPage() {
     const categoryParam = searchParams.get('category');
     const searchParam = searchParams.get('search');
 
-    if (categoryParam) setSelectedCategory(categoryParam);
-    if (searchParam) setSearchTerm(searchParam);
+    if (categoryParam) {
+      if (!isNaN(Number(categoryParam))) {
+        setSelectedCategory(categoryParam);
+      } else if (categoryParam === 'all') {
+        setSelectedCategory('all');
+      }
+    }
+
+    if (searchParam) {
+      setInputValue(searchParam);
+      setSearchTerm(searchParam);
+    }
   }, [searchParams]);
 
   // Fetch categories
@@ -42,17 +56,16 @@ export default function ProductsPage() {
         console.error('Error fetching categories:', err);
       }
     };
-
     fetchCategories();
   }, []);
 
-  // Fetch products with filters
+  // Fetch products (debounced search)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const { products: filteredProducts, totalCount } = await getProducts({
-          query: searchTerm,
+          query: debouncedSearchTerm,
           category: selectedCategory !== 'all' ? selectedCategory : undefined,
           minPrice: priceRange.min,
           maxPrice: priceRange.max,
@@ -65,7 +78,6 @@ export default function ProductsPage() {
         setTotalCount(totalCount);
         setError(null);
       } catch (err) {
-        console.error('Error fetching products:', err);
         setError('Failed to load products. Please try again later.');
         setProducts([]);
         setTotalCount(0);
@@ -75,7 +87,7 @@ export default function ProductsPage() {
     };
 
     fetchProducts();
-  }, [searchTerm, selectedCategory, priceRange, sortBy, currentPage]);
+  }, [debouncedSearchTerm, selectedCategory, priceRange, sortBy, currentPage]);
 
   // Update URL when filters change
   useEffect(() => {
@@ -86,13 +98,19 @@ export default function ProductsPage() {
     router.replace(`/products${params.toString() ? `?${params}` : ''}`);
   }, [selectedCategory, searchTerm, router]);
 
-  // Handle page change
+  const handleSearchChange = (term: string) => {
+    setInputValue(term);
+    setSearchTerm(term);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const clearFilters = () => {
+    setInputValue('');
     setSearchTerm('');
     setSelectedCategory('all');
     setPriceRange({ min: 0, max: 1000 });
@@ -117,8 +135,8 @@ export default function ProductsPage() {
             <input
               type="text"
               placeholder="Search products..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              value={inputValue}
+              onChange={e => handleSearchChange(e.target.value)}
               className="search-input"
             />
           </div>
@@ -126,13 +144,16 @@ export default function ProductsPage() {
           <div className="category-filter">
             <select
               value={selectedCategory}
-              onChange={e => setSelectedCategory(e.target.value)}
+              onChange={e => {
+                setSelectedCategory(e.target.value);
+                setCurrentPage(1);
+              }}
               className="filter-select"
               aria-label="Filter by category"
             >
               <option value="all">All Categories</option>
               {categories.map(category => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.name}>
                   {category.name}
                 </option>
               ))}
@@ -140,7 +161,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="price-filter">
-            <label htmlFor="price-range">
+            <label>
               Price Range: ${priceRange.min} - ${priceRange.max}
             </label>
             <div className="price-inputs">
@@ -176,7 +197,10 @@ export default function ProductsPage() {
           <div className="sort-filter">
             <select
               value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
+              onChange={e => {
+                setSortBy(e.target.value);
+                setCurrentPage(1);
+              }}
               className="filter-select"
               aria-label="Sort products"
             >
@@ -204,9 +228,11 @@ export default function ProductsPage() {
 
       {/* Products Grid */}
       {loading ? (
-        <div className="products-grid">
-          <CardsSkeleton />
-        </div>
+        <Suspense fallback={<CardsSkeleton />}>
+          <div className="products-grid">
+            <CardsSkeleton />
+          </div>
+        </Suspense>
       ) : error ? (
         <div className="error">{error}</div>
       ) : (

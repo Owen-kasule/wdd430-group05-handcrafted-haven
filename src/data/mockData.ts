@@ -232,13 +232,19 @@ export const categories: Category[] = [
   },
 ];
 
-// Get category IDs
+// Get category Names
+const potteryCategoryName = categories[0].name;
+const woodworkingCategoryName = categories[1].name;
+const textilesCategoryName = categories[2].name;
+const jewelryCategoryName = categories[3].name;
+const leatherGoodsCategoryName = categories[4].name;
+
+//Get category Names
 const potteryCategoryId = categories[0].id;
 const woodworkingCategoryId = categories[1].id;
 const textilesCategoryId = categories[2].id;
 const jewelryCategoryId = categories[3].id;
 const leatherGoodsCategoryId = categories[4].id;
-
 export const mockProducts: Product[] = [
   {
     id: uuidv4(),
@@ -253,7 +259,8 @@ export const mockProducts: Product[] = [
     seller_name: 'Maria Rodriguez',
     seller_id: mariaId,
     featured: true,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description:
       'Beautiful ceramic dinner plates with elegant earth tone glazes',
     rating: 4.8,
@@ -279,7 +286,8 @@ export const mockProducts: Product[] = [
     seller_name: 'Maria Rodriguez',
     seller_id: mariaId,
     featured: false,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description: 'Handcrafted ceramic coffee mug with comfortable grip',
     rating: 4.7,
     created_at: new Date('2024-01-02'),
@@ -305,7 +313,8 @@ export const mockProducts: Product[] = [
     seller_name: 'Maria Rodriguez',
     seller_id: mariaId,
     featured: false,
-    category: potteryCategoryId,
+    category: potteryCategoryName,
+    category_id: potteryCategoryId,
     description: 'Decorative ceramic serving bowl with intricate patterns',
     rating: 4.9,
     created_at: new Date('2024-01-03'),
@@ -330,7 +339,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1585926520751-ee2a4d9d7d7c?w=300',
       'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300',
     ],
-    category: jewelryCategoryId,
+    category: jewelryCategoryName,
+    category_id: jewelryCategoryId,
     seller_id: lunaId,
     seller_name: "Luna's Jewelry",
     rating: 4.6,
@@ -357,7 +367,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?w=300',
       'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300',
     ],
-    category: leatherGoodsCategoryId,
+    category: leatherGoodsCategoryName,
+    category_id: potteryCategoryId,
     seller_id: tomId,
     seller_name: "Tom's Leather Goods",
     rating: 4.8,
@@ -383,7 +394,8 @@ export const mockProducts: Product[] = [
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300',
       'https://images.unsplash.com/photo-1622550816048-18f5d1a3c0c0?w=300',
     ],
-    category: textilesCategoryId,
+    category: textilesCategoryName,
+    category_id: textilesCategoryId,
     seller_id: emmaId,
     seller_name: "Emma's Textiles",
     rating: 4.7,

@@ -38,6 +38,19 @@ export async function getProducts(
       `,
       { count: 'exact' }
     );
+    if (options.category) {
+      // Get category ID by name
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('name', options.category)
+        .single();
+
+      if (categoryError) throw categoryError;
+      if (categoryData) {
+        query = query.eq('category_id', categoryData.id);
+      }
+    }
 
     // Apply filters
     if (options.query) {
