@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Product, Seller, Review, Category } from '@/types/definitions';
+import type {
+  Product,
+  Seller,
+  Review,
+  Category,
+  User,
+} from '@/types/definitions';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -11,6 +17,54 @@ const supabase = createClient(
 function handleDatabaseError(error: any, context: string): never {
   console.error(`Database Error (${context}):`, error);
   throw new Error(`Failed to ${context}`);
+}
+export async function getUserById(id: string) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch user: ${error.message}`);
+  }
+
+  return data;
+}
+export async function getAllUsers() {
+  const { data, error } = await supabase.from('users').select('*');
+
+  if (error) {
+    throw new Error(`Failed to fetch users: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function getUsers(
+  userIds: string[]
+): Promise<Record<string, { name: string }>> {
+  try {
+    if (userIds.length === 0) return {};
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, name')
+      .in('id', userIds);
+
+    if (error) throw error;
+
+    const usersMap: Record<string, { name: string }> = {};
+    (data || []).forEach(user => {
+      usersMap[user.id] = {
+        name: user.name,
+      };
+    });
+
+    return usersMap;
+  } catch (error) {
+    return handleDatabaseError(error, 'fetch users');
+  }
 }
 
 // Products with filtering and pagination
