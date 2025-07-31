@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { mockSellers } from '@/data/mockData';
+import axios from 'axios';
 import type { Seller } from '@/types/definitions';
 import './SellersPage.css';
+import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
 
 export default function SellersPage() {
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -12,13 +13,35 @@ export default function SellersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('all');
   const [sortBy, setSortBy] = useState('rating');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch sellers from API route
   useEffect(() => {
-    setSellers(mockSellers);
-    setFilteredSellers(mockSellers);
+    const fetchSellers = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('/api/sellers');
+        setSellers(response.data);
+        setFilteredSellers(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch sellers:', err);
+        setError('Failed to load sellers. Please try again later.');
+        setSellers([]);
+        setFilteredSellers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSellers();
   }, []);
 
+  // Filter and sort sellers
   useEffect(() => {
+    if (loading) return;
+
     let filtered = [...sellers];
 
     // Filter by search term
@@ -62,7 +85,7 @@ export default function SellersPage() {
     });
 
     setFilteredSellers(filtered);
-  }, [sellers, searchTerm, selectedSpecialty, sortBy]);
+  }, [sellers, searchTerm, selectedSpecialty, sortBy, loading]);
 
   const specialties = [
     { value: 'all', label: 'All Specialties' },
@@ -74,6 +97,40 @@ export default function SellersPage() {
     { value: 'glass', label: 'Glass Art' },
     { value: 'fiber', label: 'Fiber Art' },
   ];
+
+  if (loading) {
+    return (
+      <div className="sellers-page">
+        <div className="sellers-header">
+          <h1>Meet Our Artisans</h1>
+          <p>Discover talented creators and their unique handcrafted stories</p>
+        </div>
+        <div className="sellers-grid">
+          <CardsSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="sellers-page">
+        <div className="sellers-header">
+          <h1>Meet Our Artisans</h1>
+          <p>Discover talented creators and their unique handcrafted stories</p>
+        </div>
+        <div className="error-message">
+          {error}
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sellers-page">
@@ -182,7 +239,7 @@ export default function SellersPage() {
         ))}
       </div>
 
-      {filteredSellers.length === 0 && (
+      {filteredSellers.length === 0 && !loading && (
         <div className="no-sellers">
           <h3>No artisans found</h3>
           <p>Try adjusting your search or filter criteria</p>

@@ -23,6 +23,7 @@ export async function getProducts(
     sortBy?: string;
     page?: number;
     itemsPerPage?: number;
+    sellerId?: string;
   } = {}
 ): Promise<{ products: Product[]; totalCount: number }> {
   try {
@@ -38,6 +39,10 @@ export async function getProducts(
       `,
       { count: 'exact' }
     );
+    if (options.sellerId) {
+      query = query.eq('seller_id', options.sellerId);
+    }
+
     if (options.category) {
       // Get category ID by name
       const { data: categoryData, error: categoryError } = await supabase
@@ -52,7 +57,6 @@ export async function getProducts(
       }
     }
 
-    // Apply filters
     if (options.query) {
       query = query.or(
         `name.ilike.%${options.query}%,description.ilike.%${options.query}%,seller_name.ilike.%${options.query}%`

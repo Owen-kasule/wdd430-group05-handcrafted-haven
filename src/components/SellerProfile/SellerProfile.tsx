@@ -2,31 +2,79 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import axios from 'axios';
 import ProductCard from '../ProductCard/ProductCard';
-import Loading from '@/components/Loading/Loading';
 import type { Product, Seller } from '@/types/definitions';
-import { mockSellers, mockProducts } from '@/data/mockData';
 import './SellerProfile.css';
+import { SellerProfileSkeleton } from '@/components/skeletonLoader/skeleton';
 
 export default function SellerProfile() {
   const params = useParams();
   const id = params.id as string;
   const [seller, setSeller] = useState<Seller | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Find seller by ID
-    const foundSeller = mockSellers.find(s => s.id === id);
+    const fetchSellerData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    // Find products for this seller
-    const sellerProducts = mockProducts.filter(p => p.sellerId === id);
+        // Fetch seller data
+        const sellerResponse = await axios.get(`/api/sellers/${id}`);
+        setSeller(sellerResponse.data);
 
-    setSeller(foundSeller || null);
-    setProducts(sellerProducts);
+        // Fetch seller's products
+        const productsResponse = await axios.get(
+          `/api/products?sellerId=${id}`
+        );
+        console.log('Products response:', productsResponse.data.products);
+        setProducts(productsResponse.data.products);
+      } catch (err) {
+        console.error('Failed to fetch seller data:', err);
+        setError('Failed to load seller profile. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSellerData();
   }, [id]);
 
+  if (loading) {
+    return <SellerProfileSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="seller-profile">
+        <div className="error-message">
+          {error}
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!seller) {
-    return <Loading message="Loading seller profile..." />;
+    return (
+      <div className="seller-profile">
+        <div className="not-found">
+          <h2>Seller not found</h2>
+          <p>
+            The seller you're looking for doesn't exist or may have been
+            removed.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -43,8 +91,8 @@ export default function SellerProfile() {
             <p className="seller-location">{seller.location}</p>
             <div className="seller-stats">
               <div className="stat">
-                <span className="stat-number">{seller.rating}</span>
                 <span className="stat-label">Rating</span>
+                <span className="stat-number">{seller.rating}</span>
                 <div className="rating-stars">
                   <span className="stars">★★★★★</span>
                   <span className="review-count">
@@ -53,12 +101,12 @@ export default function SellerProfile() {
                 </div>
               </div>
               <div className="stat">
-                <span className="stat-number">{seller.totalSales}</span>
                 <span className="stat-label">Total Sales</span>
+                <span className="stat-number">{seller.totalSales}</span>
               </div>
               <div className="stat">
-                <span className="stat-number">{seller.joinDate}</span>
                 <span className="stat-label">Member Since</span>
+                <span className="stat-number">{seller.joinDate}</span>
               </div>
             </div>
           </div>
@@ -129,9 +177,15 @@ export default function SellerProfile() {
         <div className="seller-products">
           <h2>Products by {seller.name}</h2>
           <div className="products-grid">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {products.length > 0 ? (
+              products.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="no-products">
+                <p>This seller currently has no products available.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
