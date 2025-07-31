@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
 import Link from 'next/link';
 
+
 export default function Homepage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
