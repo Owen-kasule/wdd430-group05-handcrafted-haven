@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     itemsPerPage: searchParams.get('itemsPerPage')
       ? Number(searchParams.get('itemsPerPage'))
       : 12,
+    sellerId: searchParams.get('sellerId') || undefined,
   };
 
   try {

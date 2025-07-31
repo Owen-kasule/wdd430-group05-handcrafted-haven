@@ -5,7 +5,7 @@
 }
 
 .seller-header {
-  background: linear-gradient(135deg, #4B8F29, #3A6F1F);
+  background: linear-gradient(135deg, #4b8f29, #3a6f1f);
   color: white;
   padding: 3rem 2rem;
   border-radius: 12px;
@@ -24,7 +24,7 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #F4A300;
+  border: 4px solid #f4a300;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -42,7 +42,7 @@
 .seller-location {
   font-size: 1.2rem;
   margin: 0 0 1.5rem 0;
-  color: #F4A300;
+  color: #f4a300;
   font-weight: 500;
 }
 
@@ -55,18 +55,20 @@
 .stat {
   text-align: center;
   background-color: rgba(255, 255, 255, 0.1);
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 8px;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
 }
 
 .stat-number {
   display: block;
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #F4A300;
-  margin-bottom: 0.5rem;
+  color: #f4a300;
+  /* margin-bottom: 0.5rem; */
 }
 
 .stat-label {
@@ -78,18 +80,21 @@
 }
 
 .rating-stars {
-  margin-top: 0.5rem;
+  align-self: center;
 }
 
 .stars {
-  color: #F4A300;
+  color: #f4a300;
   font-size: 1rem;
   margin-right: 0.5rem;
+  align-self: center;
 }
 
 .review-count {
   font-size: 0.8rem;
   opacity: 0.9;
+  color: #000;
+  align-self: center;
 }
 
 .seller-content {
@@ -100,11 +105,11 @@
 
 .seller-story h2,
 .seller-products h2 {
-  color: #A52A2A;
+  color: #a52a2a;
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #F4A300;
+  border-bottom: 2px solid #f4a300;
   padding-bottom: 0.5rem;
 }
 
@@ -121,7 +126,7 @@
   background-color: #f8f9fa;
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #4B8F29;
+  border-left: 4px solid #4b8f29;
 }
 
 .seller-specialties {
@@ -130,7 +135,7 @@
 
 .seller-specialties h3,
 .seller-contact h3 {
-  color: #A52A2A;
+  color: #a52a2a;
   margin-bottom: 1rem;
   font-size: 1.3rem;
 }
@@ -142,8 +147,8 @@
 }
 
 .specialty-tag {
-  background-color: #F4A300;
-  color: #A52A2A;
+  background-color: #f4a300;
+  color: #a52a2a;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: bold;
@@ -163,7 +168,7 @@
 }
 
 .contact-info a {
-  color: #4B8F29;
+  color: #4b8f29;
   text-decoration: none;
 }
 
@@ -185,7 +190,7 @@
 }
 
 .social-links a {
-  color: #4B8F29;
+  color: #4b8f29;
   text-decoration: none;
   font-weight: 500;
 }
@@ -197,7 +202,7 @@
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
   margin-top: 1.5rem;
 }
 
@@ -213,21 +218,30 @@
     flex-direction: column;
     text-align: center;
   }
-  
+
   .seller-name {
     font-size: 2.5rem;
   }
-  
+
   .seller-content {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .seller-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
   }
-  
+
   .specialty-tags {
     justify-content: center;
+  }
+  .stat {
+    padding: 0.5rem;
+    display: flex;
+    text-align: center;
+    align-items: center;
+  }
+  span.stat-number {
+    font-size: 16px;
   }
 }

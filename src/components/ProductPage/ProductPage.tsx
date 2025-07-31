@@ -6,9 +6,9 @@ import Link from 'next/link';
 import {
   getProductById,
   getProductReviews,
-  createReview,
+  getUsers,
 } from '@/data/server-data';
-import type { Product, Review, User } from '@/types/definitions';
+import type { Product, Review } from '@/types/definitions';
 import './ProductPage.css';
 
 export default function ProductPage() {
@@ -19,14 +19,8 @@ export default function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [newReview, setNewReview] = useState({
-    rating: 5,
-    comment: '',
-    userName: 'Anonymous User',
-  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -41,8 +35,24 @@ export default function ProductPage() {
           throw new Error('Product not found');
         }
 
+        // Get unique user IDs from reviews
+        const userIds = [
+          ...new Set(reviewsData?.map(review => review.user_id) || []),
+        ];
+
+        // Fetch user data (only names)
+        const usersMap = await getUsers(userIds);
+
+        // Enhance reviews with user names
+        const enhancedReviews =
+          reviewsData?.map(review => ({
+            ...review,
+            user_name:
+              usersMap[review.user_id]?.name || review.user_name || 'Anonymous',
+          })) || [];
+
         setProduct(productData);
-        setReviews(reviewsData || []);
+        setReviews(enhancedReviews);
       } catch (err) {
         console.error('Error fetching product:', err);
         setError('Failed to load product. Please try again later.');
@@ -53,45 +63,6 @@ export default function ProductPage() {
 
     fetchProductData();
   }, [id]);
-
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setSubmittingReview(true);
-
-      // Generate a mock user ID for now
-      const userId = 'user_' + Date.now().toString();
-
-      const createdReview = await createReview({
-        product_id: id,
-        user_id: userId,
-        user_name: newReview.userName,
-        rating: newReview.rating,
-        comment: newReview.comment,
-        verified: false,
-      });
-
-      // Update reviews list with new review
-      setReviews([
-        {
-          ...createdReview,
-          id: createdReview.id,
-          product_id: createdReview.product_id,
-          user_id: createdReview.user_id,
-          user_name: createdReview.user_name,
-          created_at: new Date(createdReview.created_at),
-        },
-        ...reviews,
-      ]);
-
-      // ... rest of the function remains the same
-    } catch (err) {
-      console.error('Error creating review:', err);
-      setError('Failed to submit review. Please try again.');
-    } finally {
-      setSubmittingReview(false);
-    }
-  };
 
   const calculateRatingBreakdown = () => {
     if (reviews.length === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -104,13 +75,22 @@ export default function ProductPage() {
     return breakdown;
   };
 
+  function getInitials(name: string): string {
+    if (!name) return '?';
+    const parts = name.split(' ');
+    let initials = parts[0].charAt(0).toUpperCase();
+    if (parts.length > 1) {
+      initials += parts[parts.length - 1].charAt(0).toUpperCase();
+    }
+    return initials;
+  }
+
   const averageRating = product?.rating || 0;
 
   if (loading) {
     return (
       <div className="product-page">
         <div className="product-container skeleton-container">
-          {/* Image Skeleton */}
           <div className="product-images">
             <div className="main-image skeleton"></div>
             <div className="image-thumbnails">
@@ -120,7 +100,6 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Details Skeleton */}
           <div className="product-details">
             <div className="skeleton title-skeleton"></div>
             <div className="skeleton meta-skeleton"></div>
@@ -136,7 +115,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* Reviews Section Skeleton */}
         <div className="reviews-section skeleton-container">
           <div className="skeleton reviews-header-skeleton"></div>
           <div className="skeleton rating-summary-skeleton"></div>
@@ -269,13 +247,12 @@ export default function ProductPage() {
           <button
             className="write-review-btn"
             onClick={() => setShowReviewForm(!showReviewForm)}
-            disabled={submittingReview}
+            disabled={true}
           >
             Write a Review
           </button>
         </div>
 
-        {/* Rating Summary */}
         <div className="rating-summary">
           <div className="overall-rating">
             <div className="rating-number">{averageRating.toFixed(1)}</div>
@@ -326,87 +303,17 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* Review Form */}
-        {showReviewForm && (
-          <div className="review-form-container">
-            <h3>Write Your Review</h3>
-            <form onSubmit={handleReviewSubmit} className="review-form">
-              <div className="form-group">
-                <label htmlFor="reviewer-name">Name:</label>
-                <input
-                  type="text"
-                  id="reviewer-name"
-                  value={newReview.userName}
-                  onChange={e =>
-                    setNewReview({ ...newReview, userName: e.target.value })
-                  }
-                  required
-                  disabled={submittingReview}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="rating">Rating:</label>
-                <select
-                  id="rating"
-                  value={newReview.rating}
-                  onChange={e =>
-                    setNewReview({
-                      ...newReview,
-                      rating: parseInt(e.target.value),
-                    })
-                  }
-                  disabled={submittingReview}
-                >
-                  {[5, 4, 3, 2, 1].map(num => (
-                    <option key={num} value={num}>
-                      {num} stars
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="comment">Review:</label>
-                <textarea
-                  id="comment"
-                  value={newReview.comment}
-                  onChange={e =>
-                    setNewReview({ ...newReview, comment: e.target.value })
-                  }
-                  rows={4}
-                  required
-                  disabled={submittingReview}
-                ></textarea>
-              </div>
-
-              <div className="form-actions">
-                <button
-                  type="submit"
-                  className="submit-review-btn"
-                  disabled={submittingReview}
-                >
-                  {submittingReview ? 'Submitting...' : 'Submit Review'}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-review-btn"
-                  onClick={() => setShowReviewForm(false)}
-                  disabled={submittingReview}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
         {/* Reviews List */}
         <div className="reviews-list">
           {reviews.map(review => (
             <div key={review.id} className="review">
               <div className="review-header">
-                <span className="reviewer-name">{review.user_name}</span>
+                <div className="reviewer-info">
+                  <div className="reviewer-avatar">
+                    {getInitials(review.user_name)}
+                  </div>
+                  <span className="reviewer-name">{review.user_name}</span>
+                </div>
                 <span className="review-date">
                   {new Date(review.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -437,7 +344,7 @@ export default function ProductPage() {
 
         {reviews.length === 0 && !showReviewForm && (
           <div className="no-reviews">
-            <p>No reviews yet. Be the first to review this product!</p>
+            <p>No reviews yet.</p>
           </div>
         )}
       </div>

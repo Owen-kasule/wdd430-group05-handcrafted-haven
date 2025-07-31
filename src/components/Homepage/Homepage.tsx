@@ -7,7 +7,8 @@ import type { Product, Category } from '@/types/definitions';
 import './Homepage.css';
 import { useRouter } from 'next/navigation';
 import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
-import Link from 'next/Link';
+import Link from 'next/link';
+
 
 export default function Homepage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
