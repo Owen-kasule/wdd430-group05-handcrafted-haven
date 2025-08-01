@@ -1,13 +1,14 @@
 // app/account/page.tsx
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
-import type { JwtPayload } from 'jsonwebtoken'; // ✅ type-only import
+import type { JwtPayload } from 'jsonwebtoken';
 import { redirect } from 'next/navigation';
+import './AccountPage.css'; // global CSS, not CSS module
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export default async function AccountPage() {
-  const cookieStore =  await cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) {
@@ -28,10 +29,17 @@ export default async function AccountPage() {
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>My Account</h1>
-      <p>Welcome, <strong>{user.name}</strong>!</p>
-      <p>This page is protected by JWT authentication.</p>
+    <div className="account-page">
+      <div className="account-container">
+        <h1 className="account-title">My Account</h1>
+        <p className="account-welcome">
+          Welcome, <span className="account-name">{user.name}</span>!
+        </p>
+        <p className="account-info">
+          This page is protected by JWT authentication. You can add more personal details,
+          order history, or settings here later.
+        </p>
+      </div>
     </div>
   );
 }
