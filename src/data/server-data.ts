@@ -1,11 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import type {
-  Product,
-  Seller,
-  Review,
-  Category,
-  User,
-} from '@/types/definitions';
+import type { Product, Seller, Review, Category } from '@/types/definitions';
 
 // Initialize Supabase client
 const supabase = createClient(

@@ -6,8 +6,6 @@ export interface User {
   provider: string;
   role: 'user' | 'admin';
 }
-
-// Update Product interface
 export interface Product {
   id: string;
   name: string;
