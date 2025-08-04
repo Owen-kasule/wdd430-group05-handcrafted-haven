@@ -383,3 +383,31 @@ export async function getSellerById(id: string): Promise<Seller | null> {
     return handleDatabaseError(error, 'fetch seller');
   }
 }
+
+export async function findUserByEmail(email: string): Promise<User | null> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error) throw error;
+    return data || null;
+  } catch (error) {
+    console.error(`Failed to find user by email: ${email}`, error);
+    return null;
+  }
+}
+
+
+export async function createUser(user: Omit<User, 'id'>): Promise<User> {
+  const { data, error } = await supabase
+    .from('users')
+    .insert(user)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
