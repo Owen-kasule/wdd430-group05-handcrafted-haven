@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import type { Product, Seller, Review, Category } from '@/types/definitions';
+import type {
+  Product,
+  Seller,
+  Review,
+  Category,
+  User,
+} from '@/types/definitions';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -399,7 +405,6 @@ export async function findUserByEmail(email: string): Promise<User | null> {
     return null;
   }
 }
-
 
 export async function createUser(user: Omit<User, 'id'>): Promise<User> {
   const { data, error } = await supabase

@@ -10,7 +10,7 @@ interface FormData {
   password: string;
   confirmPassword: string;
   name: string;
-  userType: string;
+  role: 'buyer' | 'seller';
 }
 
 interface FormErrors {
@@ -18,7 +18,7 @@ interface FormErrors {
   password?: string;
   confirmPassword?: string;
   name?: string;
-  userType?: string;
+  role?: string;
 }
 
 export default function LoginPage() {
@@ -28,7 +28,7 @@ export default function LoginPage() {
     password: '',
     confirmPassword: '',
     name: '',
-    userType: 'buyer',
+    role: 'buyer',
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -107,6 +107,7 @@ export default function LoginPage() {
           password: formData.password,
           isLogin,
           name: formData.name,
+          role: formData.role,
         }),
       });
 
@@ -150,7 +151,7 @@ export default function LoginPage() {
       password: '',
       confirmPassword: '',
       name: '',
-      userType: 'buyer',
+      role: 'buyer',
     });
     setErrors({});
   };
@@ -245,20 +246,16 @@ export default function LoginPage() {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="userType">Account Type</label>
+                  <label htmlFor="role">Account Type</label>
                   <select
-                    id="userType"
-                    name="userType"
-                    value={formData.userType}
+                    id="role"
+                    name="role"
+                    value={formData.role}
                     onChange={handleInputChange}
-                    className="user-type-select"
+                    className="role-select"
                   >
-                    <option value="buyer">
-                      Buyer - I want to purchase handcrafted items
-                    </option>
-                    <option value="seller">
-                      Seller - I want to sell my handcrafted items
-                    </option>
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
                   </select>
                 </div>
               </>

@@ -20,31 +20,38 @@ function createJwtToken(user: any) {
 }
 
 export async function POST(req: NextRequest) {
-  const { email, password, isLogin, name } = await req.json();
-  console.log('Auth POST received:', { email, isLogin, name });
+  const { email, password, isLogin, name, role } = await req.json();
+  console.log('Auth POST received:', { email, isLogin, name, role });
 
   if (!email || !password) {
     return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
   }
 
   if (isLogin) {
-  const user = await findUserByEmail(email);
+    const user = await findUserByEmail(email);
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-  }
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return NextResponse.json(
+        { error: 'Invalid credentials' },
+        { status: 401 }
+      );
+    }
 
-  console.log('Login successful for user:', email);
-  const token = createJwtToken(user);
+    console.log('Login successful for user:', email);
+    const token = createJwtToken(user);
 
-  const response = NextResponse.json({ message: 'Login successful', user, token });
+    const response = NextResponse.json({
+      message: 'Login successful',
+      user,
+      token,
+    });
 
-  response.cookies.set('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: MAX_AGE,
-  });
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: MAX_AGE,
+    });
 
     return response;
   } else {
@@ -66,7 +73,7 @@ export async function POST(req: NextRequest) {
       name,
       password: hashedPassword,
       provider: 'local',
-      role: 'user',
+      role: role || 'user',
       created_at: now,
       updated_at: now,
     });
