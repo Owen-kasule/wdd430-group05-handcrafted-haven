@@ -108,6 +108,129 @@
 .nav-login.active::after {
   display: none;
 }
+.nav-login-item {
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  background-color: var(--primary-yellow);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.nav-login-item:hover,
+.nav-login-item.active {
+  background-color: #ffb84d;
+  color: #2f2f2f;
+}
+
+.nav-login-icon img {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-login-label {
+  display: inline-block;
+}
+
+.nav-logout {
+  all: unset; /* reset button styles */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-color: var(--primary-yellow);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  gap: 0.5rem;
+  color: #2f2f2f;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.nav-logout:hover {
+  background-color: #ffb84d;
+  box-shadow: 0 4px 12px rgba(244, 163, 0, 0.3);
+}
+
+.nav-welcome {
+  color: var(--white);
+  font-weight: 600;
+  margin-right: 1rem;
+  font-size: 1rem;
+}
+
+.nav-account-dropdown {
+  position: relative;
+}
+
+.nav-account-button {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-account-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary-yellow);
+}
+
+.nav-account-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--white);
+  color: #2F2F2F;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.nav-account-dropdown:hover .nav-account-menu {
+  display: block;
+}
+
+.nav-account-name {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #333;
+}
+
+.nav-account-divider {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 0.5rem 0;
+}
+
+.nav-account-logout {
+  background: none;
+  border: none;
+  color: #d9534f;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.25rem 0;
+  text-align: left;
+  width: 100%;
+}
+
+.nav-account-logout:hover {
+  text-decoration: underline;
+}
 
 /* Hamburger Menu */
 .hamburger {
@@ -221,6 +344,87 @@
   text-align: center;
   line-height: 1;
 }
+.mobile-account-wrapper {
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobile-account-button {
+  background: none;
+  border: none;
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem 0.25rem;
+}
+
+.mobile-account-button:hover {
+  color: var(--primary-yellow);
+}
+
+.mobile-account-menu {
+  position: absolute;
+  bottom: 100%; /* Pushes menu UP above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--white);
+  color: #2F2F2F;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.mobile-account-name {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #333;
+  text-align: center;
+}
+
+.mobile-account-divider {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 0.5rem 0;
+}
+
+.mobile-account-logout {
+  background: none;
+  border: none;
+  color: #d9534f;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.mobile-account-logout:hover {
+  text-decoration: underline;
+}
+.nav-account-link,
+.mobile-account-link {
+  display: block;
+  color: var(--primary-green);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+}
+
+.nav-account-link:hover,
+.mobile-account-link:hover {
+  text-decoration: underline;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -325,3 +529,4 @@
     height: 20px;
   }
 }
+

@@ -28,25 +28,27 @@ export default function LoginPage() {
     password: '',
     confirmPassword: '',
     name: '',
-    userType: 'buyer'
+    userType: 'buyer',
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const router = useRouter();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        [name]: '',
       }));
     }
   };
@@ -70,7 +72,7 @@ export default function LoginPage() {
       if (!formData.name) {
         newErrors.name = 'Name is required';
       }
-      
+
       if (!formData.confirmPassword) {
         newErrors.confirmPassword = 'Please confirm your password';
       } else if (formData.password !== formData.confirmPassword) {
@@ -84,21 +86,61 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      // In a real app, you would handle authentication here
-      console.log(isLogin ? 'Login attempt:' : 'Registration attempt:', formData);
-      
-      // Simulate successful login/registration
-      alert(isLogin ? 'Login successful!' : 'Registration successful!');
-      router.push('/'); // Redirect to homepage
-    }, 1000);
+
+    console.log('Sending login data:', {
+      email: formData.email,
+      password: formData.password,
+      isLogin,
+      name: formData.name,
+    });
+
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          isLogin,
+          name: formData.name,
+        }),
+      });
+
+      console.log('Response status:', response.status);
+
+      const data = await response.json();
+
+      console.log('Response data:', data);
+
+      if (!response.ok) {
+        alert(data.error || 'Something went wrong');
+        setIsLoading(false);
+        return;
+      }
+
+      if (isLogin) {
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+          // alert('Login successful!');
+          router.push('/');
+          router.refresh();
+        } else {
+          // alert('Login succeeded but no token received');
+        }
+      } else {
+        // alert('Registration successful!');
+        setIsLogin(true);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      // alert('Login failed');
+    }
+
+    setIsLoading(false);
   };
 
   const toggleMode = () => {
@@ -108,7 +150,7 @@ export default function LoginPage() {
       password: '',
       confirmPassword: '',
       name: '',
-      userType: 'buyer'
+      userType: 'buyer',
     });
     setErrors({});
   };
@@ -118,18 +160,18 @@ export default function LoginPage() {
       {/* Header Section */}
       <div className="login-header">
         <div className="section-header">
-          <h1 className="section-title">{isLogin ? 'Welcome Back' : 'Join Handcrafted Haven'}</h1>
+          <h1 className="section-title">
+            {isLogin ? 'Welcome Back' : 'Join Handcrafted Haven'}
+          </h1>
           <p className="section-subtitle">
-            {isLogin 
-              ? 'Sign in to your account to continue shopping' 
-              : 'Create an account to start buying or selling handcrafted items'
-            }
+            {isLogin
+              ? 'Sign in to your account to continue shopping'
+              : 'Create an account to start buying or selling handcrafted items'}
           </p>
         </div>
       </div>
 
       <div className="login-container">
-
         <div className="login-form-container">
           <form onSubmit={handleSubmit} className="login-form">
             {!isLogin && (
@@ -144,7 +186,9 @@ export default function LoginPage() {
                   className={errors.name ? 'error' : ''}
                   placeholder="Enter your full name"
                 />
-                {errors.name && <span className="error-message">{errors.name}</span>}
+                {errors.name && (
+                  <span className="error-message">{errors.name}</span>
+                )}
               </div>
             )}
 
@@ -159,7 +203,9 @@ export default function LoginPage() {
                 className={errors.email ? 'error' : ''}
                 placeholder="Enter your email"
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              {errors.email && (
+                <span className="error-message">{errors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -173,7 +219,9 @@ export default function LoginPage() {
                 className={errors.password ? 'error' : ''}
                 placeholder="Enter your password"
               />
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {errors.password && (
+                <span className="error-message">{errors.password}</span>
+              )}
             </div>
 
             {!isLogin && (
@@ -189,7 +237,11 @@ export default function LoginPage() {
                     className={errors.confirmPassword ? 'error' : ''}
                     placeholder="Confirm your password"
                   />
-                  {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+                  {errors.confirmPassword && (
+                    <span className="error-message">
+                      {errors.confirmPassword}
+                    </span>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -201,34 +253,40 @@ export default function LoginPage() {
                     onChange={handleInputChange}
                     className="user-type-select"
                   >
-                    <option value="buyer">Buyer - I want to purchase handcrafted items</option>
-                    <option value="seller">Seller - I want to sell my handcrafted items</option>
+                    <option value="buyer">
+                      Buyer - I want to purchase handcrafted items
+                    </option>
+                    <option value="seller">
+                      Seller - I want to sell my handcrafted items
+                    </option>
                   </select>
                 </div>
               </>
             )}
 
-            <button 
-              type="submit" 
-              className="login-btn"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
+            <button type="submit" className="login-btn" disabled={isLoading}>
+              {isLoading
+                ? 'Please wait...'
+                : isLogin
+                  ? 'Sign In'
+                  : 'Create Account'}
             </button>
           </form>
 
           <div className="login-footer">
             <p>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button 
-                type="button" 
+              {isLogin
+                ? "Don't have an account? "
+                : 'Already have an account? '}
+              <button
+                type="button"
                 onClick={toggleMode}
                 className="toggle-mode-btn"
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}
               </button>
             </p>
-            
+
             {isLogin && (
               <p>
                 <Link href="/forgot-password" className="forgot-password-link">
@@ -243,17 +301,26 @@ export default function LoginPage() {
           <div className="feature">
             <div className="feature-icon">🛍️</div>
             <h3>Shop Unique Items</h3>
-            <p>Discover one-of-a-kind handcrafted pieces from talented artisans around the world</p>
+            <p>
+              Discover one-of-a-kind handcrafted pieces from talented artisans
+              around the world
+            </p>
           </div>
           <div className="feature">
             <div className="feature-icon">🎨</div>
             <h3>Support Artisans</h3>
-            <p>Directly support independent creators and help preserve traditional craftsmanship</p>
+            <p>
+              Directly support independent creators and help preserve
+              traditional craftsmanship
+            </p>
           </div>
           <div className="feature">
             <div className="feature-icon">🌟</div>
             <h3>Quality Guaranteed</h3>
-            <p>Every item is handmade with care, attention to detail, and premium materials</p>
+            <p>
+              Every item is handmade with care, attention to detail, and premium
+              materials
+            </p>
           </div>
         </div>
       </div>
