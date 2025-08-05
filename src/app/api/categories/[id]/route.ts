@@ -1,5 +1,5 @@
 import { getCategoryById } from '@/data/server-data';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function GET(
   request: Request,
@@ -14,10 +14,14 @@ export async function GET(
         { status: 404 }
       );
     }
+
     return NextResponse.json(category);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch category' },
+      {
+        error:
+          error instanceof Error ? error.message : 'Failed to fetch category',
+      },
       { status: 500 }
     );
   }
