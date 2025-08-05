@@ -1,14 +1,14 @@
-import bcrypt from 'bcrypt';
-import postgres from 'postgres';
+import bcrypt from "bcrypt";
+import postgres from "postgres";
 import {
   mockUsers,
   mockSellers,
   mockProducts,
   categories,
   mockReviews,
-} from '@/data/mockData';
+} from "@/data/mockData";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 async function seedUsers() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
@@ -19,14 +19,14 @@ async function seedUsers() {
       name TEXT NOT NULL,
       password TEXT NOT NULL,
       provider TEXT,
-      role TEXT NOT NULL CHECK (role IN ('user', 'admin')),
+      role TEXT NOT NULL CHECK (role IN ('buyer', 'seller, 'admin')),
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `;
 
   await Promise.all(
-    mockUsers.map(async user => {
+    mockUsers.map(async (user) => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       return sql`
         INSERT INTO users (id, email, name, password, provider, role)
@@ -70,7 +70,7 @@ async function seedSellers() {
 
   await Promise.all(
     mockSellers.map(
-      seller => sql`
+      (seller) => sql`
       INSERT INTO sellers (
         id, name, bio, profile_image, location, join_date, rating, 
         total_reviews, total_sales, specialties, story, 
@@ -115,7 +115,7 @@ async function seedCategories() {
 
   await Promise.all(
     categories.map(
-      category => sql`
+      (category) => sql`
       INSERT INTO categories (id, name, description, image)
       VALUES (
         ${category.id}, 
@@ -187,7 +187,7 @@ async function seedProducts() {
 
   await Promise.all(
     mockProducts.map(
-      product => sql`
+      (product) => sql`
       INSERT INTO products (
         id, name, price, description, category, category_id, seller_id, 
         seller_name, rating, featured, in_stock, created_at
@@ -255,7 +255,7 @@ async function seedReviews() {
 
   await Promise.all(
     mockReviews.map(
-      review => sql`
+      (review) => sql`
       INSERT INTO reviews (
         id, product_id, user_id, user_name, rating, 
         comment, created_at, verified
@@ -280,7 +280,7 @@ export async function GET() {
   try {
     await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
-    await sql.begin(async sql => {
+    await sql.begin(async (sql) => {
       await seedUsers();
       await seedSellers();
       await seedCategories();
@@ -288,9 +288,9 @@ export async function GET() {
       await seedReviews();
     });
 
-    return Response.json({ message: 'Database seeded successfully' });
+    return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
     return Response.json({ error }, { status: 500 });
   } finally {
     await sql.end();
@@ -300,18 +300,18 @@ export async function GET() {
 // CLI support
 if (import.meta.url.endsWith(process.argv[1])) {
   GET()
-    .then(response => {
+    .then((response) => {
       if (response.status >= 400) {
         console.error(`Seeding failed with status ${response.status}`);
-        response.json().then(data => console.error(data));
+        response.json().then((data) => console.error(data));
         process.exit(1);
       } else {
-        response.json().then(data => console.log(data));
+        response.json().then((data) => console.log(data));
         process.exit(0);
       }
     })
-    .catch(err => {
-      console.error('Unhandled error:', err);
+    .catch((err) => {
+      console.error("Unhandled error:", err);
       process.exit(1);
     });
 }
