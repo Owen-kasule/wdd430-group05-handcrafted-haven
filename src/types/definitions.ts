@@ -5,8 +5,8 @@ export interface User {
   password: string;
   provider: string;
   role: 'buyer' | 'seller' | 'admin';
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date;
 }
 export interface Product {
   id: string;
