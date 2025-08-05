@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import {
   getProductById,
   getProductReviews,
   getUsers,
   createReview,
-} from '@/data/server-data';
-import type { Product, Review } from '@/types/definitions';
-import './ProductPage.css';
+} from "@/data/server-data";
+import type { Product, Review } from "@/types/definitions";
+import "./ProductPage.css";
 
 export default function ProductPage() {
   const params = useParams();
@@ -24,8 +24,8 @@ export default function ProductPage() {
   const [error, setError] = useState<string | null>(null);
   const [newReview, setNewReview] = useState({
     rating: 5,
-    comment: '',
-    userName: 'Anonymous User',
+    comment: "",
+    userName: "Anonymous User",
   });
   const [currentUser, setCurrentUser] = useState<{
     id: string;
@@ -44,27 +44,27 @@ export default function ProductPage() {
         ]);
 
         if (!productData) {
-          throw new Error('Product not found');
+          throw new Error("Product not found");
         }
 
         const userIds = [
-          ...new Set(reviewsData?.map(review => review.user_id) || []),
+          ...new Set(reviewsData?.map((review) => review.user_id) || []),
         ];
 
         const usersMap = await getUsers(userIds);
 
         const enhancedReviews =
-          reviewsData?.map(review => ({
+          reviewsData?.map((review) => ({
             ...review,
             user_name:
-              usersMap[review.user_id]?.name || review.user_name || 'Anonymous',
+              usersMap[review.user_id]?.name || review.user_name || "Anonymous",
           })) || [];
 
         setProduct(productData);
         setReviews(enhancedReviews);
       } catch (err) {
-        console.error('Error fetching product:', err);
-        setError('Failed to load product. Please try again later.');
+        console.error("Error fetching product:", err);
+        setError("Failed to load product. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -76,7 +76,7 @@ export default function ProductPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch("/api/auth/me");
         const data = await res.json();
         setCurrentUser(data.user || null);
       } catch (err) {
@@ -91,7 +91,7 @@ export default function ProductPage() {
     if (reviews.length === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
     const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       breakdown[review.rating as keyof typeof breakdown]++;
     });
 
@@ -99,8 +99,8 @@ export default function ProductPage() {
   };
 
   function getInitials(name: string): string {
-    if (!name) return '?';
-    const parts = name.split(' ');
+    if (!name) return "?";
+    const parts = name.split(" ");
     let initials = parts[0].charAt(0).toUpperCase();
     if (parts.length > 1) {
       initials += parts[parts.length - 1].charAt(0).toUpperCase();
@@ -114,74 +114,54 @@ export default function ProductPage() {
     e.preventDefault();
 
     if (!currentUser) {
-      alert('You must be logged in to submit a review.');
+      alert("You must be logged in to submit a review.");
       return;
     }
 
-    const review: Review = {
-      id: Date.now().toString(),
-      product_id: id,
-      user_id: currentUser.id,
-      user_name: currentUser.name,
-      rating: newReview.rating,
-      comment: newReview.comment,
-      created_at: new Date(),
-      verified: false,
-    };
-
-    const handleReviewSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-
-      if (!currentUser) {
-        alert('You must be logged in to submit a review.');
+    try {
+      // Check if user already has a review for this product
+      const userReviewExists = reviews.some(
+        (review) => review.user_id === currentUser.id
+      );
+      if (userReviewExists) {
+        alert("You have already reviewed this product.");
         return;
       }
 
-      try {
-        // Check if user already has a review for this product
-        const userReviewExists = reviews.some(
-          review => review.user_id === currentUser.id
-        );
-        if (userReviewExists) {
-          alert('You have already reviewed this product.');
-          return;
-        }
+      await createReview({
+        product_id: id,
+        user_id: currentUser.id,
+        user_name: currentUser.name,
+        rating: newReview.rating,
+        comment: newReview.comment,
+        verified: false,
+      });
 
-        const createdReview = await createReview({
-          product_id: id,
-          user_id: currentUser.id,
-          user_name: currentUser.name,
-          rating: newReview.rating,
-          comment: newReview.comment,
-          verified: false,
-        });
+      // Refresh the reviews list after successful submission
+      const refreshedReviews = await getProductReviews(id);
+      const userIds = [
+        ...(new Set(refreshedReviews?.map((review) => review.user_id)) || []),
+      ];
+      const usersMap = await getUsers(userIds);
 
-        // Refresh the reviews list after successful submission
-        const refreshedReviews = await getProductReviews(id);
-        const userIds = [
-          ...(new Set(refreshedReviews?.map(review => review.user_id)) || []),
-        ];
-        const usersMap = await getUsers(userIds);
+      const enhancedReviews =
+        refreshedReviews?.map((review) => ({
+          ...review,
+          user_name:
+            usersMap[review.user_id]?.name || review.user_name || "Anonymous",
+        })) || [];
 
-        const enhancedReviews =
-          refreshedReviews?.map(review => ({
-            ...review,
-            user_name:
-              usersMap[review.user_id]?.name || review.user_name || 'Anonymous',
-          })) || [];
-
-        setReviews(enhancedReviews);
-        setNewReview({ rating: 5, comment: '', userName: currentUser.name });
-        setShowReviewForm(false);
-      } catch (error) {
-        console.error('Failed to save review:', error);
-        alert(
-          error instanceof Error
-            ? error.message
-            : 'Failed to submit your review. Please try again.'
-        );
-      }
-    };
+      setReviews(enhancedReviews);
+      setNewReview({ rating: 5, comment: "", userName: currentUser.name });
+      setShowReviewForm(false);
+    } catch (error) {
+      console.error("Failed to save review:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit your review. Please try again."
+      );
+    }
   };
 
   if (loading) {
@@ -205,7 +185,7 @@ export default function ProductPage() {
             <div className="skeleton description-skeleton"></div>
             <div
               className="skeleton description-skeleton"
-              style={{ width: '80%' }}
+              style={{ width: "80%" }}
             ></div>
             <div className="skeleton specs-skeleton"></div>
             <div className="skeleton purchase-skeleton"></div>
@@ -244,9 +224,9 @@ export default function ProductPage() {
             <img
               src={product.images[selectedImage]}
               alt={product.name}
-              onError={e => {
+              onError={(e) => {
                 (e.target as HTMLImageElement).src =
-                  '/placeholder-image/placeholder-image.jpg';
+                  "/placeholder-image/placeholder-image.jpg";
               }}
             />
           </div>
@@ -256,11 +236,11 @@ export default function ProductPage() {
                 key={index}
                 src={image}
                 alt={`${product.name} ${index + 1}`}
-                className={selectedImage === index ? 'active' : ''}
+                className={selectedImage === index ? "active" : ""}
                 onClick={() => setSelectedImage(index)}
-                onError={e => {
+                onError={(e) => {
                   (e.target as HTMLImageElement).src =
-                    '/placeholder-image/placeholder-image.jpg';
+                    "/placeholder-image/placeholder-image.jpg";
                 }}
               />
             ))}
@@ -276,11 +256,11 @@ export default function ProductPage() {
 
           <div className="product-rating">
             <div className="rating-stars">
-              {[1, 2, 3, 4, 5].map(star => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
                   className={
-                    star <= Math.round(averageRating) ? 'star filled' : 'star'
+                    star <= Math.round(averageRating) ? "star filled" : "star"
                   }
                 >
                   ★
@@ -322,9 +302,9 @@ export default function ProductPage() {
               <select
                 id="quantity"
                 value={quantity}
-                onChange={e => setQuantity(parseInt(e.target.value))}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
               >
-                {[1, 2, 3, 4, 5].map(num => (
+                {[1, 2, 3, 4, 5].map((num) => (
                   <option key={num} value={num}>
                     {num}
                   </option>
@@ -332,7 +312,7 @@ export default function ProductPage() {
               </select>
             </div>
             <button className="add-to-cart-btn" disabled={!product.in_stock}>
-              {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
+              {product.in_stock ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
         </div>
@@ -341,12 +321,6 @@ export default function ProductPage() {
       <div className="reviews-section">
         <div className="reviews-header">
           <h2>Customer Reviews</h2>
-          {/* <button
-            className="write-review-btn"
-            onClick={() => setShowReviewForm(!showReviewForm)}
-          >
-            Write a Review
-          </button> */}
           {currentUser ? (
             <button
               className="write-review-btn"
@@ -363,11 +337,11 @@ export default function ProductPage() {
           <div className="overall-rating">
             <div className="rating-number">{averageRating.toFixed(1)}</div>
             <div className="rating-stars">
-              {[1, 2, 3, 4, 5].map(star => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <span
                   key={star}
                   className={
-                    star <= Math.round(averageRating) ? 'star filled' : 'star'
+                    star <= Math.round(averageRating) ? "star filled" : "star"
                   }
                 >
                   ★
@@ -378,7 +352,7 @@ export default function ProductPage() {
           </div>
 
           <div className="rating-breakdown">
-            {[5, 4, 3, 2, 1].map(rating => {
+            {[5, 4, 3, 2, 1].map((rating) => {
               const percentage =
                 reviews.length > 0
                   ? (ratingBreakdown[rating as keyof typeof ratingBreakdown] /
@@ -395,7 +369,7 @@ export default function ProductPage() {
                       data-percentage={percentage}
                       style={
                         {
-                          '--rating-width': `${percentage}%`,
+                          "--rating-width": `${percentage}%`,
                         } as React.CSSProperties
                       }
                     ></div>
@@ -419,7 +393,7 @@ export default function ProductPage() {
                   type="text"
                   id="reviewer-name"
                   value={currentUser?.name}
-                  onChange={e =>
+                  onChange={(e) =>
                     setNewReview({ ...newReview, userName: e.target.value })
                   }
                   required
@@ -431,14 +405,14 @@ export default function ProductPage() {
                 <select
                   id="rating"
                   value={newReview.rating}
-                  onChange={e =>
+                  onChange={(e) =>
                     setNewReview({
                       ...newReview,
                       rating: parseInt(e.target.value),
                     })
                   }
                 >
-                  {[5, 4, 3, 2, 1].map(num => (
+                  {[5, 4, 3, 2, 1].map((num) => (
                     <option key={num} value={num}>
                       {num} stars
                     </option>
@@ -451,7 +425,7 @@ export default function ProductPage() {
                 <textarea
                   id="comment"
                   value={newReview.comment}
-                  onChange={e =>
+                  onChange={(e) =>
                     setNewReview({ ...newReview, comment: e.target.value })
                   }
                   rows={4}
@@ -476,7 +450,7 @@ export default function ProductPage() {
         )}
         {/* Reviews List */}
         <div className="reviews-list">
-          {reviews.map(review => (
+          {reviews.map((review) => (
             <div key={review.id} className="review">
               <div className="review-header">
                 <div className="reviewer-info">
@@ -486,10 +460,10 @@ export default function ProductPage() {
                   <span className="reviewer-name">{review.user_name}</span>
                 </div>
                 <span className="review-date">
-                  {new Date(review.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {new Date(review.created_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </span>
                 {review.verified && (
@@ -498,10 +472,10 @@ export default function ProductPage() {
               </div>
               <div className="review-rating">
                 <span className="stars">
-                  {[1, 2, 3, 4, 5].map(star => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <span
                       key={star}
-                      className={star <= review.rating ? 'star filled' : 'star'}
+                      className={star <= review.rating ? "star filled" : "star"}
                     >
                       ★
                     </span>
