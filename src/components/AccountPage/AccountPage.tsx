@@ -1,9 +1,9 @@
-// app/account/page.tsx
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import type { JwtPayload } from 'jsonwebtoken';
 import { redirect } from 'next/navigation';
-import './AccountPage.css'; // global CSS, not CSS module
+import EditAccountForm from './EditForm/editAccountForm'; // import the new form component
+import './AccountPage.css';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -28,6 +28,12 @@ export default async function AccountPage() {
     redirect('/login');
   }
 
+  // pass only needed fields to the form
+  const initialData = {
+    name: user.name,
+    email: user.email, // if available
+  };
+
   return (
     <div className="account-page">
       <div className="account-container">
@@ -35,10 +41,7 @@ export default async function AccountPage() {
         <p className="account-welcome">
           Welcome, <span className="account-name">{user.name}</span>!
         </p>
-        <p className="account-info">
-          This page is protected by JWT authentication. You can add more personal details,
-          order history, or settings here later.
-        </p>
+        <EditAccountForm initialData={initialData} />
       </div>
     </div>
   );
