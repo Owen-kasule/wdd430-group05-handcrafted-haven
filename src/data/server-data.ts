@@ -406,7 +406,6 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   }
 }
 
-
 export async function createUser(user: Omit<User, 'id'>): Promise<User> {
   const { data, error } = await supabase
     .from('users')

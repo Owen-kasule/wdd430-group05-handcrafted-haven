@@ -20,6 +20,7 @@
     "db:reset": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "@auth/supabase-adapter": "^1.10.0",
     "@supabase/supabase-js": "^2.53.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
@@ -27,6 +28,7 @@
     "dotenv": "^17.2.1",
     "jsonwebtoken": "^9.0.2",
     "next": "15.4.2-canary.19",
+    "next-auth": "^4.24.11",
     "postgres": "^3.4.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
