@@ -10,7 +10,7 @@ import {
   mockProducts, 
   mockSellers, 
   mockUsers, 
-  mockCategories, 
+  categories, 
   mockReviews 
 } from './mockData';
 
@@ -27,6 +27,14 @@ const supabase = hasSupabaseConfig ? createClient(
 function handleDatabaseError(error: any, context: string): never {
   console.error(`Database Error (${context}):`, error);
   throw new Error(`Failed to ${context}`);
+}
+
+// Helper function to ensure supabase is available for operations that require it
+function requireSupabase() {
+  if (!supabase) {
+    throw new Error('Database not available - Supabase configuration missing');
+  }
+  return supabase;
 }
 
 export async function getUserById(id: string) {
@@ -69,6 +77,18 @@ export async function getUsers(
 ): Promise<Record<string, { name: string }>> {
   try {
     if (userIds.length === 0) return {};
+
+    if (!supabase) {
+      // Fallback to mock data
+      const result: Record<string, { name: string }> = {};
+      userIds.forEach(id => {
+        const user = mockUsers.find((u: any) => u.id === id);
+        if (user) {
+          result[id] = { name: user.name };
+        }
+      });
+      return result;
+    }
 
     const { data, error } = await supabase
       .from('users')
@@ -229,6 +249,10 @@ export async function getProducts(
 // Get single product by ID
 export async function getProductById(id: string): Promise<Product | null> {
   try {
+    if (!supabase) {
+      return mockProducts.find((p: any) => p.id === id) || null;
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .select(
@@ -264,7 +288,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 export async function getCategories(): Promise<Category[]> {
   try {
     if (!supabase) {
-      return mockCategories;
+      return categories;
     }
     
     const { data, error } = await supabase.from('categories').select('*');
@@ -280,7 +304,7 @@ export async function getCategories(): Promise<Category[]> {
 export async function getCategoryById(id: string): Promise<Category | null> {
   try {
     if (!supabase) {
-      return mockCategories.find(c => c.id === id) || null;
+      return categories.find((c: any) => c.id === id) || null;
     }
     
     const { data, error } = await supabase
@@ -299,7 +323,11 @@ export async function getCategoryById(id: string): Promise<Category | null> {
 // Get product reviews
 export async function getProductReviews(productId: string): Promise<Review[]> {
   try {
-    const { data, error } = await supabase
+    if (!supabase) {
+      return mockReviews.filter((r: any) => r.product_id === productId);
+    }
+    
+    const { data, error } = await requireSupabase()
       .from('reviews')
       .select('*')
       .eq('product_id', productId)
@@ -319,7 +347,7 @@ export async function createReview(
 ): Promise<Review> {
   try {
     // Check if user already has a review for this product
-    const { data: existingReview, error: existingError } = await supabase
+    const { data: existingReview, error: existingError } = await requireSupabase()
       .from('reviews')
       .select('id')
       .eq('product_id', review.product_id)
@@ -330,7 +358,7 @@ export async function createReview(
       throw new Error('You have already reviewed this product');
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await requireSupabase()
       .from('reviews')
       .insert({
         product_id: review.product_id,
@@ -346,7 +374,7 @@ export async function createReview(
     if (error) throw error;
 
     // Update product rating
-    await supabase.rpc('update_product_rating', {
+    await requireSupabase().rpc('update_product_rating', {
       product_id: review.product_id,
     });
 
