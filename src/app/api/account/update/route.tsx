@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'; 
+import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { updateUser, getUserById } from '@/data/accountData/accountData'; // adjust path as needed
 
@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
     const userPayload = jwt.verify(token, JWT_SECRET);
 
     if (typeof userPayload === 'string' || !userPayload.id) {
-      return NextResponse.json({ error: 'Invalid token payload' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid token payload' },
+        { status: 401 }
+      );
     }
 
     const body = await request.json();
-    const { name, email } = body;
+    const { name, email, role } = body;
 
     if (!name || typeof name !== 'string') {
       return NextResponse.json({ error: 'Invalid name' }, { status: 400 });
@@ -29,14 +32,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
+    if (role && typeof role !== 'string') {
+      return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+    }
+
     // Update user info in DB
-    await updateUser(userPayload.id, { name, email });
+    await updateUser(userPayload.id, { name, email, role });
 
     // Fetch updated user from DB (to include all needed fields for token)
     const updatedUser = await getUserById(userPayload.id);
 
     if (!updatedUser) {
-      return NextResponse.json({ error: 'User not found after update' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'User not found after update' },
+        { status: 404 }
+      );
     }
 
     // Create new JWT token with updated user info
@@ -52,7 +62,10 @@ export async function POST(request: NextRequest) {
     );
 
     // Prepare response with new token cookie set
-    const response = NextResponse.json({ message: 'User updated', user: updatedUser });
+    const response = NextResponse.json({
+      message: 'User updated',
+      user: updatedUser,
+    });
 
     response.cookies.set('token', newToken, {
       httpOnly: true,
@@ -65,6 +78,9 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

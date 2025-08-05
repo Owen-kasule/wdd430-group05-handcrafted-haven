@@ -1,11 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import EditSellerInfoForm from '../EditSellerForm/EditSellerInfoForm';
 
 interface EditAccountFormProps {
   initialData: {
     name: string;
     email: string;
+    role: string;
   };
 }
 
@@ -13,10 +15,9 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState(initialData);
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Sync formData if initialData changes (e.g., on page load)
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
@@ -39,8 +40,6 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
       }
 
       setStatus('success');
-
-      // Refresh the page's server components and data (soft refresh)
       router.refresh();
     } catch (err) {
       if (err instanceof Error) {
@@ -55,35 +54,63 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input
-          name="name"
-          value={formData.name}
-          onChange={e => setFormData(d => ({ ...d, name: e.target.value }))}
-          required
-        />
-      </label>
+    <>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:
+          <input
+            name='name'
+            value={formData.name}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, name: e.target.value }))
+            }
+            required
+          />
+        </label>
 
-      <label>
-        Email:
-        <input
-          name="email"
-          value={formData.email}
-          onChange={e => setFormData(d => ({ ...d, email: e.target.value }))}
-          type="email"
-        />
-      </label>
+        <label>
+          Email:
+          <input
+            name='email'
+            type='email'
+            value={formData.email}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, email: e.target.value }))
+            }
+            required
+          />
+        </label>
 
-      <button type="submit" disabled={status === 'saving'}>
-        {status === 'saving' ? 'Saving...' : 'Save Changes'}
-      </button>
+        <label>
+          Role:
+          <select
+            name='role'
+            value={formData.role}
+            onChange={(e) =>
+              setFormData((d) => ({ ...d, role: e.target.value }))
+            }
+            required
+          >
+            <option value='buyer'>Buyer</option>
+            <option value='seller'>Seller</option>
+            <option value='admin'>Admin</option>
+          </select>
+        </label>
 
-      {status === 'error' && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {status === 'success' && (
-        <p style={{ color: 'green' }}>Profile updated!</p>
+        <button type='submit' disabled={status === 'saving'}>
+          {status === 'saving' ? 'Saving...' : 'Save Changes'}
+        </button>
+
+        {status === 'error' && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        {status === 'success' && (
+          <p style={{ color: 'green' }}>Profile updated!</p>
+        )}
+      </form>
+
+      {/* Only show seller form if role is seller */}
+      {formData.role === 'seller' && (
+        <EditSellerInfoForm email={formData.email} />
       )}
-    </form>
+    </>
   );
 }

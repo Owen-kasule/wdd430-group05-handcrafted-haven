@@ -11,22 +11,18 @@ function handleDatabaseError(error: any, context: string): never {
   throw new Error(`Failed to ${context}`);
 }
 
-export async function updateUser(id: string, updates: Partial<Pick<User, 'name' | 'email'>>) {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
+export async function updateUser(id: string, updates: { name?: string; email?: string; role?: string }) {
+  const { data, error } = await supabase
+    .from('users')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
-    if (error) handleDatabaseError(error, 'update user');
-
-    return data;
-  } catch (error) {
-    handleDatabaseError(error, 'update user');
-  }
+  if (error) throw error;
+  return data;
 }
+
 
 export async function getUserById(id: string) {
   const { data, error } = await supabase
