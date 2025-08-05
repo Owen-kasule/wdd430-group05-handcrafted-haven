@@ -1,22 +1,32 @@
 import { getCategoryById } from '@/data/server-data';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const category = await getCategoryById(params.id);
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Missing category ID' },
+        { status: 400 }
+      );
+    }
+
+    const category = await getCategoryById(id);
     if (!category) {
       return NextResponse.json(
         { error: 'Category not found' },
         { status: 404 }
       );
     }
+
     return NextResponse.json(category);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch category' },
+      {
+        error:
+          error instanceof Error ? error.message : 'Failed to fetch category',
+      },
       { status: 500 }
     );
   }
