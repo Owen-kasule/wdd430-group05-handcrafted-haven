@@ -7,6 +7,7 @@ import {
   getProductById,
   getProductReviews,
   getUsers,
+  createReview,
 } from '@/data/server-data';
 import type { Product, Review } from '@/types/definitions';
 import './ProductPage.css';
@@ -21,6 +22,17 @@ export default function ProductPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newReview, setNewReview] = useState({
+    rating: 5,
+    comment: '',
+    userName: 'Anonymous User',
+  });
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -35,15 +47,12 @@ export default function ProductPage() {
           throw new Error('Product not found');
         }
 
-        // Get unique user IDs from reviews
         const userIds = [
           ...new Set(reviewsData?.map(review => review.user_id) || []),
         ];
 
-        // Fetch user data (only names)
         const usersMap = await getUsers(userIds);
 
-        // Enhance reviews with user names
         const enhancedReviews =
           reviewsData?.map(review => ({
             ...review,
@@ -63,6 +72,20 @@ export default function ProductPage() {
 
     fetchProductData();
   }, [id]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        setCurrentUser(data.user || null);
+      } catch (err) {
+        setCurrentUser(null);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const calculateRatingBreakdown = () => {
     if (reviews.length === 0) return { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -86,6 +109,80 @@ export default function ProductPage() {
   }
 
   const averageRating = product?.rating || 0;
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!currentUser) {
+      alert('You must be logged in to submit a review.');
+      return;
+    }
+
+    const review: Review = {
+      id: Date.now().toString(),
+      product_id: id,
+      user_id: currentUser.id,
+      user_name: currentUser.name,
+      rating: newReview.rating,
+      comment: newReview.comment,
+      created_at: new Date(),
+      verified: false,
+    };
+
+    const handleReviewSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (!currentUser) {
+        alert('You must be logged in to submit a review.');
+        return;
+      }
+
+      try {
+        // Check if user already has a review for this product
+        const userReviewExists = reviews.some(
+          review => review.user_id === currentUser.id
+        );
+        if (userReviewExists) {
+          alert('You have already reviewed this product.');
+          return;
+        }
+
+        const createdReview = await createReview({
+          product_id: id,
+          user_id: currentUser.id,
+          user_name: currentUser.name,
+          rating: newReview.rating,
+          comment: newReview.comment,
+          verified: false,
+        });
+
+        // Refresh the reviews list after successful submission
+        const refreshedReviews = await getProductReviews(id);
+        const userIds = [
+          ...(new Set(refreshedReviews?.map(review => review.user_id)) || []),
+        ];
+        const usersMap = await getUsers(userIds);
+
+        const enhancedReviews =
+          refreshedReviews?.map(review => ({
+            ...review,
+            user_name:
+              usersMap[review.user_id]?.name || review.user_name || 'Anonymous',
+          })) || [];
+
+        setReviews(enhancedReviews);
+        setNewReview({ rating: 5, comment: '', userName: currentUser.name });
+        setShowReviewForm(false);
+      } catch (error) {
+        console.error('Failed to save review:', error);
+        alert(
+          error instanceof Error
+            ? error.message
+            : 'Failed to submit your review. Please try again.'
+        );
+      }
+    };
+  };
 
   if (loading) {
     return (
@@ -244,13 +341,22 @@ export default function ProductPage() {
       <div className="reviews-section">
         <div className="reviews-header">
           <h2>Customer Reviews</h2>
-          <button
+          {/* <button
             className="write-review-btn"
             onClick={() => setShowReviewForm(!showReviewForm)}
-            disabled={true}
           >
             Write a Review
-          </button>
+          </button> */}
+          {currentUser ? (
+            <button
+              className="write-review-btn"
+              onClick={() => setShowReviewForm(!showReviewForm)}
+            >
+              Write a Review
+            </button>
+          ) : (
+            <p className="login-prompt">Login to write a review.</p>
+          )}
         </div>
 
         <div className="rating-summary">
@@ -302,7 +408,72 @@ export default function ProductPage() {
             })}
           </div>
         </div>
+        {/* Review Form */}
+        {showReviewForm && (
+          <div className="review-form-container">
+            <h3>Write Your Review</h3>
+            <form onSubmit={handleReviewSubmit} className="review-form">
+              <div className="form-group">
+                <label htmlFor="reviewer-name">Name:</label>
+                <input
+                  type="text"
+                  id="reviewer-name"
+                  value={currentUser?.name}
+                  onChange={e =>
+                    setNewReview({ ...newReview, userName: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
+              <div className="form-group">
+                <label htmlFor="rating">Rating:</label>
+                <select
+                  id="rating"
+                  value={newReview.rating}
+                  onChange={e =>
+                    setNewReview({
+                      ...newReview,
+                      rating: parseInt(e.target.value),
+                    })
+                  }
+                >
+                  {[5, 4, 3, 2, 1].map(num => (
+                    <option key={num} value={num}>
+                      {num} stars
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="comment">Review:</label>
+                <textarea
+                  id="comment"
+                  value={newReview.comment}
+                  onChange={e =>
+                    setNewReview({ ...newReview, comment: e.target.value })
+                  }
+                  rows={4}
+                  required
+                ></textarea>
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="submit-review-btn">
+                  Submit Review
+                </button>
+                <button
+                  type="button"
+                  className="cancel-review-btn"
+                  onClick={() => setShowReviewForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
         {/* Reviews List */}
         <div className="reviews-list">
           {reviews.map(review => (
