@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { findUserByEmail, createUser } from '@/data/server-data';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from "next/server";
+import { findUserByEmail, createUser } from "@/data/server-data";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const MAX_AGE = 60 * 60 * 24 * 7; // 1 week
@@ -21,10 +21,10 @@ function createJwtToken(user: any) {
 
 export async function POST(req: NextRequest) {
   const { email, password, isLogin, name, role } = await req.json();
-  console.log('Auth POST received:', { email, isLogin, name, role });
+  console.log("Auth POST received:", { email, isLogin, name, role });
 
   if (!email || !password) {
-    return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
+    return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
   }
 
   if (isLogin) {
@@ -32,24 +32,24 @@ export async function POST(req: NextRequest) {
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    console.log('Login successful for user:', email);
+    console.log("Login successful for user:", email);
     const token = createJwtToken(user);
 
     const response = NextResponse.json({
-      message: 'Login successful',
+      message: "Login successful",
       user,
       token,
     });
 
-    response.cookies.set('token', token, {
+    response.cookies.set("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
       maxAge: MAX_AGE,
     });
 
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Email already exists' },
+        { error: "Email already exists" },
         { status: 409 }
       );
     }
@@ -72,24 +72,22 @@ export async function POST(req: NextRequest) {
       email,
       name,
       password: hashedPassword,
-      provider: 'local',
-      role: role || 'buyer',
-      created_at: new Date(),
-      updated_at: new Date(),
+      provider: "local",
+      role: role || "buyer",
     });
 
     const token = createJwtToken(newUser);
 
     const response = NextResponse.json({
-      message: 'Registered successfully',
+      message: "Registered successfully",
       user: newUser,
       token,
     });
 
-    response.cookies.set('token', token, {
+    response.cookies.set("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
       maxAge: MAX_AGE,
     });
 

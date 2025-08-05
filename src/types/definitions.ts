@@ -4,9 +4,7 @@ export interface User {
   name: string;
   password: string;
   provider: string;
-  role: 'buyer' | 'seller' | 'admin';
-  created_at: Date;
-  updated_at: Date;
+  role: "buyer" | "seller" | "admin";
 }
 export interface Product {
   id: string;
