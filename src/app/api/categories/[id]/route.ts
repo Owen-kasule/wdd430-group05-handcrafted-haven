@@ -1,18 +1,12 @@
 import { getCategoryById } from '@/data/server-data';
 import { NextResponse, NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const url = new URL(request.url);
-    const id = url.pathname.split('/').pop();
-
-    if (!id) {
-      return NextResponse.json(
-        { error: 'Missing category ID' },
-        { status: 400 }
-      );
-    }
-
+    const { id } = await params;
     const category = await getCategoryById(id);
     if (!category) {
       return NextResponse.json(

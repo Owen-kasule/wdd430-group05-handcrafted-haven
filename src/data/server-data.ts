@@ -6,19 +6,45 @@ import type {
   Category,
   User,
 } from '@/types/definitions';
+import { 
+  mockProducts, 
+  mockSellers, 
+  mockUsers, 
+  categories, 
+  mockReviews 
+} from './mockData';
 
-// Initialize Supabase client
-const supabase = createClient(
+// Check if Supabase environment variables are available
+const hasSupabaseConfig = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// Initialize Supabase client only if config is available
+const supabase = hasSupabaseConfig ? createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+) : null;
 
 // Helper function for error handling
 function handleDatabaseError(error: any, context: string): never {
   console.error(`Database Error (${context}):`, error);
   throw new Error(`Failed to ${context}`);
 }
+
+// Helper function to ensure supabase is available for operations that require it
+function requireSupabase() {
+  if (!supabase) {
+    throw new Error('Database not available - Supabase configuration missing');
+  }
+  return supabase;
+}
+
 export async function getUserById(id: string) {
+  if (!supabase) {
+    // Fallback to mock data
+    const user = mockUsers.find(u => u.id === id);
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -32,6 +58,11 @@ export async function getUserById(id: string) {
   return data;
 }
 export async function getAllUsers() {
+  if (!supabase) {
+    // Fallback to mock data
+    return mockUsers;
+  }
+
   const { data, error } = await supabase.from('users').select('*');
 
   if (error) {
@@ -46,6 +77,18 @@ export async function getUsers(
 ): Promise<Record<string, { name: string }>> {
   try {
     if (userIds.length === 0) return {};
+
+    if (!supabase) {
+      // Fallback to mock data
+      const result: Record<string, { name: string }> = {};
+      userIds.forEach(id => {
+        const user = mockUsers.find((u: any) => u.id === id);
+        if (user) {
+          result[id] = { name: user.name };
+        }
+      });
+      return result;
+    }
 
     const { data, error } = await supabase
       .from('users')
@@ -81,6 +124,36 @@ export async function getProducts(
   } = {}
 ): Promise<{ products: Product[]; totalCount: number }> {
   try {
+    if (!supabase) {
+      // Fallback to mock data with basic filtering
+      let products = [...mockProducts];
+      
+      if (options.query) {
+        products = products.filter(p => 
+          p.name.toLowerCase().includes(options.query!.toLowerCase()) ||
+          p.description.toLowerCase().includes(options.query!.toLowerCase())
+        );
+      }
+      
+      if (options.category && options.category !== 'all') {
+        products = products.filter(p => p.category_id === options.category);
+      }
+      
+      if (options.sellerId) {
+        products = products.filter(p => p.seller_id === options.sellerId);
+      }
+      
+      const itemsPerPage = options.itemsPerPage || 12;
+      const page = options.page || 1;
+      const startIndex = (page - 1) * itemsPerPage;
+      const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+      
+      return {
+        products: paginatedProducts,
+        totalCount: products.length
+      };
+    }
+
     const itemsPerPage = options.itemsPerPage || 12;
     const offset = options.page ? (options.page - 1) * itemsPerPage : 0;
 
@@ -176,6 +249,10 @@ export async function getProducts(
 // Get single product by ID
 export async function getProductById(id: string): Promise<Product | null> {
   try {
+    if (!supabase) {
+      return mockProducts.find((p: any) => p.id === id) || null;
+    }
+    
     const { data, error } = await supabase
       .from('products')
       .select(
@@ -210,6 +287,10 @@ export async function getProductById(id: string): Promise<Product | null> {
 // Get all categories
 export async function getCategories(): Promise<Category[]> {
   try {
+    if (!supabase) {
+      return categories;
+    }
+    
     const { data, error } = await supabase.from('categories').select('*');
 
     if (error) throw error;
@@ -222,6 +303,10 @@ export async function getCategories(): Promise<Category[]> {
 // Get single category by ID
 export async function getCategoryById(id: string): Promise<Category | null> {
   try {
+    if (!supabase) {
+      return categories.find((c: any) => c.id === id) || null;
+    }
+    
     const { data, error } = await supabase
       .from('categories')
       .select('*')
@@ -238,7 +323,11 @@ export async function getCategoryById(id: string): Promise<Category | null> {
 // Get product reviews
 export async function getProductReviews(productId: string): Promise<Review[]> {
   try {
-    const { data, error } = await supabase
+    if (!supabase) {
+      return mockReviews.filter((r: any) => r.product_id === productId);
+    }
+    
+    const { data, error } = await requireSupabase()
       .from('reviews')
       .select('*')
       .eq('product_id', productId)
@@ -258,7 +347,7 @@ export async function createReview(
 ): Promise<Review> {
   try {
     // Check if user already has a review for this product
-    const { data: existingReview, error: existingError } = await supabase
+    const { data: existingReview, error: existingError } = await requireSupabase()
       .from('reviews')
       .select('id')
       .eq('product_id', review.product_id)
@@ -269,7 +358,7 @@ export async function createReview(
       throw new Error('You have already reviewed this product');
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await requireSupabase()
       .from('reviews')
       .insert({
         product_id: review.product_id,
@@ -285,7 +374,7 @@ export async function createReview(
     if (error) throw error;
 
     // Update product rating
-    await supabase.rpc('update_product_rating', {
+    await requireSupabase().rpc('update_product_rating', {
       product_id: review.product_id,
     });
 
@@ -298,6 +387,10 @@ export async function createReview(
 // Sellers
 export async function getSellers(): Promise<Seller[]> {
   try {
+    if (!supabase) {
+      return mockSellers;
+    }
+    
     const { data, error } = await supabase.from('sellers').select(`
         id,
         name,
@@ -343,6 +436,10 @@ export async function getSellers(): Promise<Seller[]> {
 // Get single seller by ID
 export async function getSellerById(id: string): Promise<Seller | null> {
   try {
+    if (!supabase) {
+      return mockSellers.find((s: any) => s.id === id) || null;
+    }
+    
     const { data, error } = await supabase
       .from('sellers')
       .select(
@@ -394,6 +491,10 @@ export async function getSellerById(id: string): Promise<Seller | null> {
 
 export async function findUserByEmail(email: string): Promise<User | null> {
   try {
+    if (!supabase) {
+      return mockUsers.find((u: any) => u.email === email) || null;
+    }
+    
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -409,6 +510,12 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function createUser(user: Omit<User, 'id'>): Promise<User> {
+  if (!supabase) {
+    // For mock data, just return a user with a generated ID
+    const newUser = { ...user, id: Math.random().toString(36).substr(2, 9) };
+    return newUser;
+  }
+  
   const { data, error } = await supabase
     .from('users')
     .insert(user)
