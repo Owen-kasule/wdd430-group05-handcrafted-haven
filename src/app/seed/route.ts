@@ -19,7 +19,7 @@ async function seedUsers() {
       name TEXT NOT NULL,
       password TEXT NOT NULL,
       provider TEXT,
-      role TEXT NOT NULL CHECK (role IN ('buyer', 'seller, 'admin')),
+      role TEXT NOT NULL CHECK (role IN ('buyer', 'seller', 'admin')),
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     )
@@ -52,7 +52,7 @@ async function seedSellers() {
       bio TEXT,
       profile_image TEXT,
       location TEXT,
-      join_date DATE,
+      join_date TEXT,
       rating FLOAT,
       total_reviews INT,
       total_sales INT,
