@@ -5,6 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const id = url.pathname.split('/').pop();
+
     if (!id) {
       return NextResponse.json(
         { error: 'Missing category ID' },
