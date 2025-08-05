@@ -14,7 +14,9 @@ export const mockUsers: User[] = [
     name: 'User One',
     password: 'password1',
     provider: 'local',
-    role: 'user',
+    role: 'buyer',
+    created_at: new Date(),
+    updated_at: new Date(),
   },
   {
     id: uuidv4(),
@@ -22,7 +24,9 @@ export const mockUsers: User[] = [
     name: 'User Two',
     password: 'password2',
     provider: 'local',
-    role: 'user',
+    role: 'buyer',
+    created_at: new Date(),
+    updated_at: new Date(),
   },
   {
     id: uuidv4(),
@@ -31,6 +35,8 @@ export const mockUsers: User[] = [
     password: 'adminpassword',
     provider: 'local',
     role: 'admin',
+    created_at: new Date(),
+    updated_at: new Date(),
   },
 ];
 

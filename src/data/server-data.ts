@@ -252,10 +252,23 @@ export async function getProductReviews(productId: string): Promise<Review[]> {
 }
 
 // Create a new review
+
 export async function createReview(
   review: Omit<Review, 'id' | 'created_at'>
 ): Promise<Review> {
   try {
+    // Check if user already has a review for this product
+    const { data: existingReview, error: existingError } = await supabase
+      .from('reviews')
+      .select('id')
+      .eq('product_id', review.product_id)
+      .eq('user_id', review.user_id)
+      .single();
+
+    if (!existingError && existingReview) {
+      throw new Error('You have already reviewed this product');
+    }
+
     const { data, error } = await supabase
       .from('reviews')
       .insert({
@@ -266,26 +279,15 @@ export async function createReview(
         comment: review.comment,
         verified: review.verified,
       })
+      .select()
       .single();
 
     if (error) throw error;
 
     // Update product rating
-    const { data: productData } = await supabase
-      .from('products')
-      .select('id')
-      .eq('id', review.product_id);
-
-    if (productData && productData.length > 0) {
-      const { error: updateError } = await supabase.rpc(
-        'update_product_rating',
-        {
-          product_id: review.product_id,
-        }
-      );
-
-      if (updateError) throw updateError;
-    }
+    await supabase.rpc('update_product_rating', {
+      product_id: review.product_id,
+    });
 
     return data;
   } catch (error) {

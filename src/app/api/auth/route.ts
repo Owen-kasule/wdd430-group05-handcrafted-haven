@@ -73,9 +73,9 @@ export async function POST(req: NextRequest) {
       name,
       password: hashedPassword,
       provider: 'local',
-      role: role || 'user',
-      created_at: now,
-      updated_at: now,
+      role: role || 'buyer',
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     const token = createJwtToken(newUser);
