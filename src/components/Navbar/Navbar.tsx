@@ -1,68 +1,44 @@
-'use client';
+'use client'; // This component uses client-side hooks like useState and usePathname.
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import './Navbar.css';
+
+// CORRECT: Import the useCart hook (it's a function/value, so no 'type' keyword)
+import { useCart } from '@/hooks/useCart';
+
+// NEW: Import the BsCart4 icon from react-icons/bs
+import { BsCart4 } from 'react-icons/bs';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const [user, setUser] = useState<{ name: string } | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch('/api/me', { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        console.error('Failed to fetch user:', err);
-        setUser(null);
-      }
-    }
+  // Get cart details from the useCart hook
+  const { totalItems, totalPrice } = useCart();
 
-    fetchUser();
-  }, [pathname]); // <-- Re-fetch user info every time the route changes
-
-  const logout = async () => {
-    await fetch('/api/logout', { method: 'POST' });
-    setUser(null);
-    router.refresh(); // refresh server components (optional)
-    router.push('/');
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const closeMenu = () => setIsMenuOpen(false);
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   return (
     <>
       {/* Desktop/Tablet Navbar */}
       <nav className="navbar desktop-navbar">
         <div className="nav-container">
-          <Link href="/" className="nav-logo" onClick={closeMenu}>
+          <Link href="/" className="nav-logo">
             Handcrafted Haven
           </Link>
 
-          <button
-            className="hamburger"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <span
-              className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}
-            ></span>
-            <span
-              className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}
-            ></span>
-            <span
-              className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}
-            ></span>
+          <button className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
+            <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}></span>
+            <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}></span>
+            <span className={`hamburger-line ${isMenuOpen ? 'active' : ''}`}></span>
           </button>
 
           <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
@@ -94,41 +70,22 @@ export default function Navbar() {
             >
               About
             </Link>
-            {user ? (
-              <div className="nav-account-dropdown">
-                <button className="nav-link nav-account-button">
-                  Account ▾
-                </button>
-                <div className="nav-account-menu">
-                  <span className="nav-account-name">
-                    Signed in as <strong>{user.name}</strong>
-                  </span>
-                  <hr className="nav-account-divider" />
-                  <Link href="/account" className="nav-account-link">
-                    My Account
-                  </Link>
-                  <button className="nav-account-logout" onClick={logout}>
-                    Logout
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className={`nav-link nav-login ${pathname === '/login' ? 'active' : ''}`}
-                onClick={closeMenu}
-              >
-                <div className="nav-login-icon">
-                  <img
-                    src="/icons/login_icon.svg"
-                    alt="Login"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <span className="nav-login-label">Login</span>
-              </Link>
-            )}
+            {/* Add Cart Link to Desktop Navbar - NOW USING BsCart4 */}
+            <Link
+              href="/cart"
+              className={`nav-link nav-cart ${pathname === '/cart' ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              <BsCart4 size={20} style={{ marginRight: '5px' }} /> {/* Icon with a little spacing */}
+              Cart ({totalItems}) - ${totalPrice.toFixed(2)}
+            </Link>
+            <Link
+              href="/login"
+              className={`nav-link nav-login ${pathname === '/login' ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              Login
+            </Link>
           </div>
         </div>
       </nav>
@@ -136,113 +93,42 @@ export default function Navbar() {
       {/* Mobile Bottom Navbar */}
       <nav className="mobile-bottom-navbar">
         <div className="mobile-nav-container">
-          <Link
-            href="/"
-            className={`mobile-nav-item ${pathname === '/' ? 'active' : ''}`}
-          >
+          <Link href="/" className={`mobile-nav-item ${pathname === '/' ? 'active' : ''}`}>
             <div className="mobile-nav-icon">
-              <img
-                src="/icons/home_icon.svg"
-                alt="Home"
-                width="24"
-                height="24"
-              />
+              <img src="/icons/home_icon.svg" alt="Home" width="24" height="24" />
             </div>
             <span className="mobile-nav-label">Home</span>
           </Link>
 
-          <Link
-            href="/products"
-            className={`mobile-nav-item ${pathname === '/products' ? 'active' : ''}`}
-          >
+          <Link href="/products" className={`mobile-nav-item ${pathname === '/products' ? 'active' : ''}`}>
             <div className="mobile-nav-icon">
-              <img
-                src="/icons/product_icon.svg"
-                alt="Products"
-                width="24"
-                height="24"
-              />
+              <img src="/icons/product_icon.svg" alt="Products" width="24" height="24" />
             </div>
             <span className="mobile-nav-label">Products</span>
           </Link>
 
-          <Link
-            href="/sellers"
-            className={`mobile-nav-item ${pathname === '/sellers' ? 'active' : ''}`}
-          >
+          <Link href="/sellers" className={`mobile-nav-item ${pathname === '/sellers' ? 'active' : ''}`}>
             <div className="mobile-nav-icon">
-              <img
-                src="/icons/artisans_icon.svg"
-                alt="Artisans"
-                width="24"
-                height="24"
-              />
+              <img src="/icons/artisans_icon.svg" alt="Artisans" width="24" height="24" />
             </div>
             <span className="mobile-nav-label">Artisans</span>
           </Link>
 
-          <Link
-            href="/about"
-            className={`mobile-nav-item ${pathname === '/about' ? 'active' : ''}`}
-          >
+          {/* Add Cart Link to Mobile Navbar - NOW USING BsCart4 */}
+          <Link href="/cart" className={`mobile-nav-item mobile-nav-cart ${pathname === '/cart' ? 'active' : ''}`}>
             <div className="mobile-nav-icon">
-              <img
-                src="/icons/about_icon.svg"
-                alt="About"
-                width="24"
-                height="24"
-              />
+              <BsCart4 size={24} /> {/* Use the React icon here */}
             </div>
-            <span className="mobile-nav-label">About</span>
+            {/* Display total items. You might want to consider space limitations on mobile for totalPrice. */}
+            <span className="mobile-nav-label">Cart ({totalItems})</span>
           </Link>
-          {user ? (
-            <div className="mobile-nav-item mobile-account-wrapper">
-              <button
-                className="mobile-account-button"
-                onClick={() => setIsMenuOpen(prev => !prev)}
-              >
-                <div className="mobile-nav-icon">
-                  <img
-                    src="/icons/account_icon.svg"
-                    alt="Account"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <span className="mobile-nav-label">Account ▴</span>
-              </button>
 
-              {isMenuOpen && (
-                <div className="mobile-account-menu">
-                  <span className="mobile-account-name">
-                    Signed in as <strong>{user.name}</strong>
-                  </span>
-                  <hr className="mobile-account-divider" />
-                  <Link href="/account" className="mobile-account-link">
-                    My Account
-                  </Link>
-                  <button className="mobile-account-logout" onClick={logout}>
-                    Logout
-                  </button>
-                </div>
-              )}
+          <Link href="/login" className={`mobile-nav-item ${pathname === '/login' ? 'active' : ''}`}>
+            <div className="mobile-nav-icon">
+              <img src="/icons/login_icon.svg" alt="Login" width="24" height="24" />
             </div>
-          ) : (
-            <Link
-              href="/login"
-              className={`mobile-nav-item ${pathname === '/login' ? 'active' : ''}`}
-            >
-              <div className="mobile-nav-icon">
-                <img
-                  src="/icons/login_icon.svg"
-                  alt="Login"
-                  width="24"
-                  height="24"
-                />
-              </div>
-              <span className="mobile-nav-label">Login</span>
-            </Link>
-          )}
+            <span className="mobile-nav-label">Login</span>
+          </Link>
         </div>
       </nav>
     </>
