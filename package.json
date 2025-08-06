@@ -14,49 +14,28 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "pre-commit": "npm run lint:fix && npm run type-check && npm run format",
-    "db:migrate": "psql $POSTGRES_URL -f migrations/0001_initial_schema.sql",
-    "db:seed": "tsx scripts/seed.ts",
-    "db:reset": "npm run db:migrate && npm run db:seed"
+    "pre-commit": "npm run lint:fix && npm run type-check && npm run format"
   },
   "dependencies": {
-    "@auth/supabase-adapter": "^1.10.0",
-    "@supabase/supabase-js": "^2.53.0",
-    "axios": "^1.11.0",
-    "bcrypt": "^6.0.0",
-    "bcryptjs": "^3.0.2",
-    "dotenv": "^17.2.1",
-    "jsonwebtoken": "^9.0.2",
-    "next": "15.0.3",
-    "next-auth": "5.0.0-beta.25",
-    "postgres": "^3.4.7",
+    "next": "^15.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "use-debounce": "^10.0.5",
-    "uuid": "^11.1.0",
-    "zod": "^4.0.10"
+    "react-icons": "^5.5.0",
+    "sharp": "^0.34.3",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4.1.11",
-    "@types/bcrypt": "^6.0.0",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.0.14",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.4.1",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.11",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
-  },
-  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
-}
+  }
