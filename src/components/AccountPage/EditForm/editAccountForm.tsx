@@ -15,7 +15,9 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
   const router = useRouter();
 
   const [formData, setFormData] = useState(initialData);
-  const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>(
+    'idle'
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {

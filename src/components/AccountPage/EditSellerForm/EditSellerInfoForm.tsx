@@ -1,182 +1,267 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+export interface Seller {
+  id: string;
+  name: string;
+  bio: string;
+  profileImage: string;
+  location: string;
+  joinDate: string;
+  rating: number;
+  totalReviews: number;
+  totalSales: number;
+  specialties: string[];
+  story: string;
+  contact: {
+    email: string;
+    phone: string;
+    website: string;
+  };
+  socialMedia: {
+    instagram: string;
+    facebook: string;
+  };
+}
 
 interface EditSellerInfoFormProps {
-  email: string; // user's email to fetch seller info
+  email: string;
 }
 
 export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    bio: '',
-    profileImage: '',
-    location: '',
-    specialties: '',
-    story: '',
-    contactEmail: '',
-    phone: '',
-    website: '',
-    instagram: '',
-    facebook: '',
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Seller | null>(null);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
   useEffect(() => {
-    async function fetchSellerInfo() {
-      try {
-        const res = await fetch(`/api/sellers?email=${encodeURIComponent(email)}`);
-        if (!res.ok) {
-          throw new Error(`Failed to fetch seller info (status: ${res.status})`);
-        }
-        const seller = await res.json();
+    async function fetchSeller() {
+  try {
+    const res = await fetch(`/api/sellers/byEmail?email=${encodeURIComponent(email)}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    
+    console.log('Fetched seller data:', data);  // <-- Add this to inspect data shape
 
-        if (seller) {
-          setFormData({
-            name: seller.name || '',
-            bio: seller.bio || '',
-            profileImage: seller.profile_image || '',
-            location: seller.location || '',
-            specialties: Array.isArray(seller.specialties) ? seller.specialties.join(', ') : '',
-            story: seller.story || '',
-            contactEmail: seller.contact_email || '',
-            phone: seller.contact_phone || '',
-            website: seller.contact_website || '',
-            instagram: seller.instagram_handle || '',
-            facebook: seller.facebook_page || '',
-          });
-        }
-      } catch (err: any) {
-        console.error('Error loading seller info:', err);
-        setError(err.message || 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (email) {
-      fetchSellerInfo();
-    }
-  }, [email]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload = {
-      ...formData,
-      specialties: formData.specialties.split(',').map((s) => s.trim()),
+    setFormData({
+      ...data,
       contact: {
-        email: formData.contactEmail,
-        phone: formData.phone,
-        website: formData.website,
+        email: data.contact_email || '',
+        phone: data.contact_phone || '',
+        website: data.contact_website || '',
       },
       socialMedia: {
-        instagram: formData.instagram,
-        facebook: formData.facebook,
+        instagram: data.instagram_handle || '',
+        facebook: data.facebook_page || '',
       },
-      userEmail: email,
-    };
+    });
+    setStatus('ready');
+  } catch (error) {
+    console.error(error);
+    setStatus('error');
+  }
+}
 
-    try {
-      const res = await fetch('/api/sellers/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
 
-      if (!res.ok) throw new Error('Failed to save seller info');
+    fetchSeller();
+  }, [email]);
 
-      alert('Seller info saved!');
-    } catch (err: any) {
-      alert(err.message || 'Failed to save seller info');
-    }
+  if (status === 'loading') return <p>Loading seller info...</p>;
+  if (status === 'error' || !formData) return <p>Failed to load seller info.</p>;
+
+  function handleNestedChange(parentKey: 'contact' | 'socialMedia', childKey: string, value: string) {
+    setFormData((prev) => ({
+      ...prev!,
+      [parentKey]: {
+        ...prev?.[parentKey],
+        [childKey]: value,
+      },
+    }));
+  }
+
+  const handleInputChange = (field: keyof Seller, value: any) => {
+    setFormData((d) => (d ? { ...d, [field]: value } : d));
   };
 
-  if (loading) return <p>Loading seller info...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+  const handleSpecialtiesChange = (value: string) => {
+    const specialtiesArray = value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    handleInputChange('specialties', specialtiesArray);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Add API call here to save updated seller info
+    console.log('Saving seller info:', formData);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Edit Seller Info</h3>
+      <label>
+        Name:
+        <input
+          type='text'
+          value={formData.name}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          required
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Seller Name"
-        value={formData.name}
-        onChange={(e) => setFormData((d) => ({ ...d, name: e.target.value }))}
-        required
-      />
+      <label>
+        Bio:
+        <textarea
+          value={formData.bio}
+          onChange={(e) => handleInputChange('bio', e.target.value)}
+        />
+      </label>
 
-      <textarea
-        placeholder="Bio"
-        value={formData.bio}
-        onChange={(e) => setFormData((d) => ({ ...d, bio: e.target.value }))}
-      />
+      <label>
+        Profile Image URL:
+        <input
+          type='text'
+          value={formData.profileImage}
+          onChange={(e) => handleInputChange('profileImage', e.target.value)}
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Profile Image URL"
-        value={formData.profileImage}
-        onChange={(e) => setFormData((d) => ({ ...d, profileImage: e.target.value }))}
-      />
+      <label>
+        Location:
+        <input
+          type='text'
+          value={formData.location}
+          onChange={(e) => handleInputChange('location', e.target.value)}
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Location"
-        value={formData.location}
-        onChange={(e) => setFormData((d) => ({ ...d, location: e.target.value }))}
-      />
+      <label>
+        Join Date:
+        <input
+          type='date'
+          value={formData.joinDate ? formData.joinDate.slice(0, 10) : ''}
+          onChange={(e) => handleInputChange('joinDate', e.target.value)}
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Specialties (comma separated)"
-        value={formData.specialties}
-        onChange={(e) => setFormData((d) => ({ ...d, specialties: e.target.value }))}
-      />
+      <label>
+        Rating:
+        <input
+          type='number'
+          min={0}
+          max={5}
+          step={0.1}
+          value={formData.rating}
+          onChange={(e) =>
+            handleInputChange('rating', parseFloat(e.target.value))
+          }
+        />
+      </label>
 
-      <textarea
-        placeholder="Your Story"
-        value={formData.story}
-        onChange={(e) => setFormData((d) => ({ ...d, story: e.target.value }))}
-      />
+      <label>
+        Total Reviews:
+        <input
+          type='number'
+          min={0}
+          value={formData.totalReviews}
+          onChange={(e) =>
+            handleInputChange('totalReviews', parseInt(e.target.value, 10))
+          }
+        />
+      </label>
 
-      <input
-        type="email"
-        placeholder="Contact Email"
-        value={formData.contactEmail}
-        onChange={(e) => setFormData((d) => ({ ...d, contactEmail: e.target.value }))}
-      />
+      <label>
+        Total Sales:
+        <input
+          type='number'
+          min={0}
+          value={formData.totalSales}
+          onChange={(e) =>
+            handleInputChange('totalSales', parseInt(e.target.value, 10))
+          }
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Phone"
-        value={formData.phone}
-        onChange={(e) => setFormData((d) => ({ ...d, phone: e.target.value }))}
-      />
+      <label>
+        Specialties (comma separated):
+        <input
+          type='text'
+          value={formData.specialties.join(', ')}
+          onChange={(e) => handleSpecialtiesChange(e.target.value)}
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Website"
-        value={formData.website}
-        onChange={(e) => setFormData((d) => ({ ...d, website: e.target.value }))}
-      />
+      <label>
+        Story:
+        <textarea
+          value={formData.story}
+          onChange={(e) => handleInputChange('story', e.target.value)}
+        />
+      </label>
 
-      <input
-        type="text"
-        placeholder="Instagram"
-        value={formData.instagram}
-        onChange={(e) => setFormData((d) => ({ ...d, instagram: e.target.value }))}
-      />
+      <fieldset>
+        <legend>Contact Info</legend>
 
-      <input
-        type="text"
-        placeholder="Facebook"
-        value={formData.facebook}
-        onChange={(e) => setFormData((d) => ({ ...d, facebook: e.target.value }))}
-      />
+        <label>
+          Email:
+          <input
+            type='email'
+            value={formData.contact.email ?? ''}
+            onChange={(e) =>
+              handleNestedChange('contact', 'email', e.target.value)
+            }
+            required
+          />
+        </label>
 
-      <button type="submit">Save Seller Info</button>
+        <label>
+          Phone:
+          <input
+            type='tel'
+            value={formData.contact.phone ?? ''}
+            onChange={(e) =>
+              handleNestedChange('contact', 'phone', e.target.value)
+            }
+          />
+        </label>
+
+        <label>
+          Website:
+          <input
+            type='url'
+            value={formData.contact.website ?? ''}
+            onChange={(e) =>
+              handleNestedChange('contact', 'website', e.target.value)
+            }
+          />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Social Media</legend>
+
+        <label>
+          Instagram:
+          <input
+            type='text'
+            value={formData.socialMedia.instagram ?? ''}
+            onChange={(e) =>
+              handleNestedChange('socialMedia', 'instagram', e.target.value)
+            }
+          />
+        </label>
+
+        <label>
+          Facebook:
+          <input
+            type='text'
+            value={formData.socialMedia.facebook ?? ''}
+            onChange={(e) =>
+              handleNestedChange('socialMedia', 'facebook', e.target.value)
+            }
+          />
+        </label>
+      </fieldset>
+
+      <button type='submit'>Save Seller Info</button>
     </form>
   );
 }

@@ -58,7 +58,7 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
         </section>
 
         {/* 3. Create Product — Only for sellers */}
-        {/* {(user.role === 'seller') && (
+        {(user.role === 'seller') && (
           <section className='account-section'>
             <h2>Create Product</h2>
             <button onClick={handleToggleCreateProduct}>
@@ -68,7 +68,7 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
               <CreateProductForm sellerId={user.id} sellerName={user.name} />
             )}
           </section>
-        )} */}
+        )}
       </div>
     </div>
   );

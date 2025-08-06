@@ -59,3 +59,27 @@ const upsertData = {
 
   return data?.[0];
 }
+
+export async function getSellerByEmail(email: string) {
+  console.log('[DB] Searching seller by email:', email);
+
+  const { data, error } = await supabase
+    .from('sellers')
+    .select('*')
+    .eq('contact_email', email)
+    .limit(1);
+
+  if (error) {
+    console.error('[DB] Supabase Fetch Error:', error);
+    throw new Error('Failed to fetch seller by email');
+  }
+
+  if (!data || data.length === 0) {
+    console.warn('[DB] No seller found for email:', email);
+    return null;
+  }
+
+  console.log('[DB] Seller found:', data[0]);
+  return data[0];
+}
+
