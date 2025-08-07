@@ -185,14 +185,6 @@ export default function Navbar() {
             href="/about"
             className={`mobile-nav-item ${pathname === '/about' ? 'active' : ''}`}
           >
-            <div className="mobile-nav-icon">
-              <img
-                src="/icons/about_icon.svg"
-                alt="About"
-                width="24"
-                height="24"
-              />
-            </div>
             <span className="mobile-nav-label">About</span>
           </Link>
           {user ? (
@@ -201,14 +193,6 @@ export default function Navbar() {
                 className="mobile-account-button"
                 onClick={() => setIsMenuOpen(prev => !prev)}
               >
-                <div className="mobile-nav-icon">
-                  <img
-                    src="/icons/account_icon.svg"
-                    alt="Account"
-                    width="24"
-                    height="24"
-                  />
-                </div>
                 <span className="mobile-nav-label">Account ▴</span>
               </button>
 

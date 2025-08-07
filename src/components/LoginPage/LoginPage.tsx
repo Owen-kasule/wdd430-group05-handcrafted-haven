@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './LoginPage.css';
@@ -34,19 +34,40 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  // Clear old auth tokens when the component first loads
+  useEffect(() => {
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('jwt');
+    // Also clear cookie on server
+  const logout = async () => {
+    try {
+      const res = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include', 
+      });
+
+      const result = await res.json();
+      console.log('Server-side logout response:', result);
+    } catch (error) {
+      console.error('Error calling logout API:', error);
+    }
+  };
+
+  logout();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         [name]: '',
       }));
@@ -157,14 +178,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
+    <div className='login-page'>
       {/* Header Section */}
-      <div className="login-header">
-        <div className="section-header">
-          <h1 className="section-title">
+      <div className='login-header'>
+        <div className='section-header'>
+          <h1 className='section-title'>
             {isLogin ? 'Welcome Back' : 'Join Handcrafted Haven'}
           </h1>
-          <p className="section-subtitle">
+          <p className='section-subtitle'>
             {isLogin
               ? 'Sign in to your account to continue shopping'
               : 'Create an account to start buying or selling handcrafted items'}
@@ -172,96 +193,96 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="login-container">
-        <div className="login-form-container">
-          <form onSubmit={handleSubmit} className="login-form">
+      <div className='login-container'>
+        <div className='login-form-container'>
+          <form onSubmit={handleSubmit} className='login-form'>
             {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="name">Full Name</label>
+              <div className='form-group'>
+                <label htmlFor='name'>Full Name</label>
                 <input
-                  type="text"
-                  id="name"
-                  name="name"
+                  type='text'
+                  id='name'
+                  name='name'
                   value={formData.name}
                   onChange={handleInputChange}
                   className={errors.name ? 'error' : ''}
-                  placeholder="Enter your full name"
+                  placeholder='Enter your full name'
                 />
                 {errors.name && (
-                  <span className="error-message">{errors.name}</span>
+                  <span className='error-message'>{errors.name}</span>
                 )}
               </div>
             )}
 
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+            <div className='form-group'>
+              <label htmlFor='email'>Email Address</label>
               <input
-                type="email"
-                id="email"
-                name="email"
+                type='email'
+                id='email'
+                name='email'
                 value={formData.email}
                 onChange={handleInputChange}
                 className={errors.email ? 'error' : ''}
-                placeholder="Enter your email"
+                placeholder='Enter your email'
               />
               {errors.email && (
-                <span className="error-message">{errors.email}</span>
+                <span className='error-message'>{errors.email}</span>
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
+            <div className='form-group'>
+              <label htmlFor='password'>Password</label>
               <input
-                type="password"
-                id="password"
-                name="password"
+                type='password'
+                id='password'
+                name='password'
                 value={formData.password}
                 onChange={handleInputChange}
                 className={errors.password ? 'error' : ''}
-                placeholder="Enter your password"
+                placeholder='Enter your password'
               />
               {errors.password && (
-                <span className="error-message">{errors.password}</span>
+                <span className='error-message'>{errors.password}</span>
               )}
             </div>
 
             {!isLogin && (
               <>
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm Password</label>
+                <div className='form-group'>
+                  <label htmlFor='confirmPassword'>Confirm Password</label>
                   <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
+                    type='password'
+                    id='confirmPassword'
+                    name='confirmPassword'
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className={errors.confirmPassword ? 'error' : ''}
-                    placeholder="Confirm your password"
+                    placeholder='Confirm your password'
                   />
                   {errors.confirmPassword && (
-                    <span className="error-message">
+                    <span className='error-message'>
                       {errors.confirmPassword}
                     </span>
                   )}
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="role">Account Type</label>
+                <div className='form-group'>
+                  <label htmlFor='role'>Account Type</label>
                   <select
-                    id="role"
-                    name="role"
+                    id='role'
+                    name='role'
                     value={formData.role}
                     onChange={handleInputChange}
-                    className="role-select"
+                    className='role-select'
                   >
-                    <option value="buyer">Buyer</option>
-                    <option value="seller">Seller</option>
+                    <option value='buyer'>Buyer</option>
+                    <option value='seller'>Seller</option>
                   </select>
                 </div>
               </>
             )}
 
-            <button type="submit" className="login-btn" disabled={isLoading}>
+            <button type='submit' className='login-btn' disabled={isLoading}>
               {isLoading
                 ? 'Please wait...'
                 : isLogin
@@ -270,15 +291,15 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="login-footer">
+          <div className='login-footer'>
             <p>
               {isLogin
                 ? "Don't have an account? "
                 : 'Already have an account? '}
               <button
-                type="button"
+                type='button'
                 onClick={toggleMode}
-                className="toggle-mode-btn"
+                className='toggle-mode-btn'
               >
                 {isLogin ? 'Sign Up' : 'Sign In'}
               </button>
@@ -286,7 +307,7 @@ export default function LoginPage() {
 
             {isLogin && (
               <p>
-                <Link href="/forgot-password" className="forgot-password-link">
+                <Link href='/forgot-password' className='forgot-password-link'>
                   Forgot your password?
                 </Link>
               </p>
@@ -294,25 +315,25 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="login-features">
-          <div className="feature">
-            <div className="feature-icon">🛍️</div>
+        <div className='login-features'>
+          <div className='feature'>
+            <div className='feature-icon'>🛍️</div>
             <h3>Shop Unique Items</h3>
             <p>
               Discover one-of-a-kind handcrafted pieces from talented artisans
               around the world
             </p>
           </div>
-          <div className="feature">
-            <div className="feature-icon">🎨</div>
+          <div className='feature'>
+            <div className='feature-icon'>🎨</div>
             <h3>Support Artisans</h3>
             <p>
               Directly support independent creators and help preserve
               traditional craftsmanship
             </p>
           </div>
-          <div className="feature">
-            <div className="feature-icon">🌟</div>
+          <div className='feature'>
+            <div className='feature-icon'>🌟</div>
             <h3>Quality Guaranteed</h3>
             <p>
               Every item is handmade with care, attention to detail, and premium

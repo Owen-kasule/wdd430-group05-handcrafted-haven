@@ -20,6 +20,7 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
 
   const handleToggleEdit = () => setShowEdit((prev) => !prev);
   const handleToggleCreateProduct = () => setShowCreateProduct((prev) => !prev);
+  // console.log('User data:', user); // Debugging line to check user data
 
   return (
     <div className='account-page'>
@@ -49,6 +50,7 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
           {showEdit && (
             <EditAccountForm
               initialData={{
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role,

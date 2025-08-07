@@ -5,6 +5,7 @@ import EditSellerInfoForm from '../EditSellerForm/EditSellerInfoForm';
 
 interface EditAccountFormProps {
   initialData: {
+    id: string;
     name: string;
     email: string;
     role: string;
@@ -19,6 +20,7 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
     'idle'
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // console.log('Initial data:', initialData); // Debugging line to check initial data
 
   useEffect(() => {
     setFormData(initialData);
@@ -71,7 +73,7 @@ export default function EditAccountForm({ initialData }: EditAccountFormProps) {
         </label>
 
         <label>
-          Email:
+          Email: (This email is used to find your seller Information so keep it the same)
           <input
             name='email'
             type='email'
