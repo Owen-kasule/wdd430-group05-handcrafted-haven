@@ -53,3 +53,68 @@
     font-size: 1.1rem;
   }
 }
+
+.account-section {
+  margin-top: 2.5rem;
+  text-align: left;
+  border-top: 1px solid #ddd;
+  padding-top: 1.5rem;
+}
+
+.account-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  color: #4B8F29;
+  margin-bottom: 1rem;
+}
+
+.account-section p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  background-color: #4B8F29;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+button:hover {
+  background-color: #3a6b20;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+form button[type="submit"] {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .account-section h2 {
+    font-size: 1.5rem;
+  }
+}
