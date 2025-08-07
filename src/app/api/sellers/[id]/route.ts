@@ -4,9 +4,9 @@ import { createOrUpdateSeller } from '@/data/accountData/sellerData';
 
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params;
+  const { id } = params;
 
   try {
     const seller = await getSellerById(id);
@@ -26,13 +26,12 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = params;
   const updatedData = await req.json();
-  console.log('PUT /api/sellers/[id] - ID:', id, 'Data:', updatedData); // Debugging
+  console.log('PUT /api/sellers/[id] - ID:', id, 'Data:', updatedData);
 
-  // Ensure the structure matches what createOrUpdateSeller expects
   const sellerInput = {
     id,
     name: updatedData.name,
@@ -69,5 +68,3 @@ export async function PUT(
     );
   }
 }
-
-
