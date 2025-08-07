@@ -4,9 +4,9 @@ import { createOrUpdateSeller } from '@/data/accountData/sellerData';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params; // <-- await params here
 
   try {
     const seller = await getSellerById(id);
@@ -26,9 +26,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params; // <-- await params here
   const updatedData = await req.json();
   console.log('PUT /api/sellers/[id] - ID:', id, 'Data:', updatedData);
 
@@ -52,8 +52,7 @@ export async function PUT(
     socialMedia: {
       instagram:
         updatedData.socialMedia?.instagram || updatedData.instagram_handle,
-      facebook:
-        updatedData.socialMedia?.facebook || updatedData.facebook_page,
+      facebook: updatedData.socialMedia?.facebook || updatedData.facebook_page,
     },
   };
 
