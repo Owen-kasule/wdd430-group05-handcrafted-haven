@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import EditAccountForm from './EditForm/editAccountForm';
-import CreateProductForm from './CreateForm/createProductForm'; // assume you will create this component
-import './AccountPage.css';
+import { useState } from "react";
+import EditAccountForm from "./EditForm/editAccountForm";
+import CreateProductForm from "./CreateForm/createProductForm"; // assume you will create this component
+import "./AccountPage.css";
+import UserReviewsTable from "@/components/reviewList/reviewList"; // Import the UserReviewsTable component
 
 interface AccountPageProps {
   user: {
@@ -23,12 +24,12 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
   // console.log('User data:', user); // Debugging line to check user data
 
   return (
-    <div className='account-page'>
-      <div className='account-container'>
-        <h1 className='account-title'>My Account</h1>
+    <div className="account-page">
+      <div className="account-container">
+        <h1 className="account-title">My Account</h1>
 
         {/* 1. Current Information */}
-        <section className='account-section'>
+        <section className="account-section">
           <h2>Current Information</h2>
           <p>
             <strong>Name:</strong> {user.name}
@@ -37,15 +38,16 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
             <strong>Email:</strong> {user.email}
           </p>
           <p>
-            <strong>Role:</strong> {user.role.toUpperCase(). slice(0, 1) + user.role.slice(1)}
+            <strong>Role:</strong>{" "}
+            {user.role.toUpperCase().slice(0, 1) + user.role.slice(1)}
           </p>
         </section>
 
         {/* 2. Edit Account Info */}
-        <section className='account-section'>
+        <section className="account-section">
           <h2>Edit Your Info</h2>
           <button onClick={handleToggleEdit}>
-            {showEdit ? 'Cancel' : 'Edit Account Info'}
+            {showEdit ? "Cancel" : "Edit Account Info"}
           </button>
           {showEdit && (
             <EditAccountForm
@@ -60,17 +62,23 @@ export default function ClientAccountPage({ user }: AccountPageProps) {
         </section>
 
         {/* 3. Create Product — Only for sellers */}
-        {(user.role === 'seller') && (
-          <section className='account-section'>
+        {user.role === "seller" && (
+          <section className="account-section">
             <h2>Create Product</h2>
             <button onClick={handleToggleCreateProduct}>
-              {showCreateProduct ? 'Cancel' : 'Add New Product'}
+              {showCreateProduct ? "Cancel" : "Add New Product"}
             </button>
             {showCreateProduct && (
               <CreateProductForm sellerId={user.id} sellerName={user.name} />
             )}
           </section>
         )}
+
+        {/* 4. User Reviews */}
+        <section className="account-section">
+          <h2>Your Reviews</h2>
+          <UserReviewsTable userId={user.id} />
+        </section>
       </div>
     </div>
   );

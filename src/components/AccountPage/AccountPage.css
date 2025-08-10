@@ -2,11 +2,11 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   padding: 4rem 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .account-container {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
   background: white;
   padding: 3rem;
@@ -16,9 +16,9 @@
 }
 
 .account-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 2.5rem;
-  color: #4B8F29;
+  color: #4b8f29;
   margin-bottom: 1rem;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .account-name {
-  color: #A52A2A;
+  color: #a52a2a;
   font-weight: bold;
 }
 
@@ -62,9 +62,9 @@
 }
 
 .account-section h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.75rem;
-  color: #4B8F29;
+  color: #4b8f29;
   margin-bottom: 1rem;
 }
 
@@ -75,7 +75,7 @@
 }
 
 button {
-  background-color: #4B8F29;
+  background-color: #4b8f29;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
