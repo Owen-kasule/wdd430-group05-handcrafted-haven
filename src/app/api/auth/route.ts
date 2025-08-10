@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { findUserByEmail, createUser } from "@/data/server-data";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { LoginSchema, RegisterSchema } from "@/data/authSchema";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-const MAX_AGE = 60 * 60 * 24 * 7; // 1 week
+const MAX_AGE = 60 * 60 * 24 * 7;
 
 function createJwtToken(user: any) {
   return jwt.sign(
@@ -20,77 +21,105 @@ function createJwtToken(user: any) {
 }
 
 export async function POST(req: NextRequest) {
-  const { email, password, isLogin, name, role } = await req.json();
-  console.log("Auth POST received:", { email, isLogin, name, role });
+  try {
+    const rawData = await req.json();
+    console.log("Auth POST received:", rawData);
 
-  if (!email || !password) {
-    return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
-  }
+    // Validate based on isLogin flag
+    let validationResult;
+    if (rawData.isLogin) {
+      validationResult = LoginSchema.safeParse(rawData);
+    } else {
+      validationResult = RegisterSchema.safeParse(rawData);
+    }
 
-  if (isLogin) {
-    const user = await findUserByEmail(email);
-
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    // Handle validation errors
+    if (!validationResult.success) {
+      const errors = validationResult.error.issues.map((err) => ({
+        field: err.path.join("."),
+        message: err.message,
+      }));
       return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
+        { error: "Validation failed", details: errors },
+        { status: 400 }
       );
     }
 
-    console.log("Login successful for user:", email);
-    const token = createJwtToken(user);
+    const { email, password, isLogin } = validationResult.data;
 
-    const response = NextResponse.json({
-      message: "Login successful",
-      user,
-      token,
-    });
+    if (isLogin) {
+      // Login flow
+      const user = await findUserByEmail(email);
 
-    response.cookies.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      maxAge: MAX_AGE,
-    });
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        return NextResponse.json(
+          { error: "Invalid credentials" },
+          { status: 401 }
+        );
+      }
 
-    return response;
-  } else {
-    // Register flow
-    const existingUser = await findUserByEmail(email);
+      // console.log("Login successful for user:", email);
+      const token = createJwtToken(user);
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already exists" },
-        { status: 409 }
-      );
+      const response = NextResponse.json({
+        message: "Login successful",
+        user,
+        token,
+      });
+
+      response.cookies.set("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: MAX_AGE,
+        sameSite: "lax",
+      });
+
+      return response;
+    } else {
+      // Registration flow
+      const { name, role } = validationResult.data;
+
+      const existingUser = await findUserByEmail(email);
+      if (existingUser) {
+        return NextResponse.json(
+          { error: "Email already exists" },
+          { status: 409 }
+        );
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await createUser({
+        email,
+        name,
+        password: hashedPassword,
+        provider: "local",
+        role: role || "buyer",
+      });
+
+      const token = createJwtToken(newUser);
+
+      const response = NextResponse.json({
+        message: "Registered successfully",
+        user: newUser,
+        token,
+      });
+
+      response.cookies.set("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: MAX_AGE,
+        sameSite: "lax",
+      });
+
+      return response;
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const now = new Date().toISOString();
-
-    const newUser = await createUser({
-      email,
-      name,
-      password: hashedPassword,
-      provider: "local",
-      role: role || "buyer",
-    });
-
-    const token = createJwtToken(newUser);
-
-    const response = NextResponse.json({
-      message: "Registered successfully",
-      user: newUser,
-      token,
-    });
-
-    response.cookies.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      maxAge: MAX_AGE,
-    });
-
-    return response;
+  } catch (error) {
+    console.error("Server error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
