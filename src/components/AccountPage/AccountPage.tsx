@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import EditAccountForm from "./EditForm/editAccountForm";
-import CreateProductForm from "./CreateForm/createProductForm"; // assume you will create this component
+import CreateProductForm from "./CreateForm/createProductForm";
+import UserReviewsTable from "@/components/reviewList/reviewList";
 import "./AccountPage.css";
-import UserReviewsTable from "@/components/reviewList/reviewList"; // Import the UserReviewsTable component
 
 interface AccountPageProps {
   user: {
