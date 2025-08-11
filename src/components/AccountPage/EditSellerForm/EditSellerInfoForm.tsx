@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import SellerInfoForm from './sellerInfoForm';
+import { useEffect, useState } from "react";
+import SellerInfoForm from "./sellerInfoForm";
 
 export interface Seller {
   id: string;
@@ -30,13 +30,17 @@ interface EditSellerInfoFormProps {
 
 export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
   const [formData, setFormData] = useState<Seller | null>(null);
-  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading"
+  );
 
   useEffect(() => {
     async function fetchSeller() {
       try {
-        const res = await fetch(`/api/sellers/byEmail?email=${encodeURIComponent(email)}`);
-        if (!res.ok) throw new Error('Failed to fetch');
+        const res = await fetch(
+          `/api/sellers/byEmail?email=${encodeURIComponent(email)}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
 
         setFormData({
@@ -52,20 +56,20 @@ export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
           specialties: data.specialties,
           story: data.story,
           contact: {
-            email: data.contact_email || '',
-            phone: data.contact_phone || '',
-            website: data.contact_website || '',
+            email: data.contact_email || "",
+            phone: data.contact_phone || "",
+            website: data.contact_website || "",
           },
           socialMedia: {
-            instagram: data.instagram_handle || '',
-            facebook: data.facebook_page || '',
+            instagram: data.instagram_handle || "",
+            facebook: data.facebook_page || "",
           },
         });
 
-        setStatus('ready');
+        setStatus("ready");
       } catch (error) {
         console.error(error);
-        setStatus('error');
+        setStatus("error");
       }
     }
 
@@ -73,7 +77,7 @@ export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
   }, [email]);
 
   const handleNestedChange = (
-    parentKey: 'contact' | 'socialMedia',
+    parentKey: "contact" | "socialMedia",
     childKey: string,
     value: string
   ) => {
@@ -92,10 +96,10 @@ export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
 
   const handleSpecialtiesChange = (value: string) => {
     const specialtiesArray = value
-      .split(',')
+      .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
-    handleInputChange('specialties', specialtiesArray);
+    handleInputChange("specialties", specialtiesArray);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,20 +120,21 @@ export default function EditSellerInfoForm({ email }: EditSellerInfoFormProps) {
 
     try {
       const res = await fetch(`/api/sellers/${formData.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(flattenedData),
       });
 
-      if (!res.ok) throw new Error('Update failed');
+      if (!res.ok) throw new Error("Update failed");
       await res.json();
     } catch (err) {
-      console.error('Error updating seller:', err);
+      console.error("Error updating seller:", err);
     }
   };
 
-  if (status === 'loading') return <p>Loading seller info...</p>;
-  if (status === 'error' || !formData) return <p>Failed to load seller info.</p>;
+  if (status === "loading") return <p>Loading seller info...</p>;
+  if (status === "error" || !formData)
+    return <p>Failed to load seller info.</p>;
 
   return (
     <SellerInfoForm

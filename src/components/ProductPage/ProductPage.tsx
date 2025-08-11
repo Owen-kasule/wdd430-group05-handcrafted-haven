@@ -322,12 +322,16 @@ export default function ProductPage() {
         <div className="reviews-header">
           <h2>Customer Reviews</h2>
           {currentUser ? (
-            <button
-              className="write-review-btn"
-              onClick={() => setShowReviewForm(!showReviewForm)}
-            >
-              Write a Review
-            </button>
+            currentUser.role === "seller" ? (
+              <p className="login-prompt">Sellers cannot write reviews.</p>
+            ) : (
+              <button
+                className="write-review-btn"
+                onClick={() => setShowReviewForm(!showReviewForm)}
+              >
+                Write a Review
+              </button>
+            )
           ) : (
             <p className="login-prompt">Login to write a review.</p>
           )}
@@ -383,7 +387,7 @@ export default function ProductPage() {
           </div>
         </div>
         {/* Review Form */}
-        {showReviewForm && (
+        {showReviewForm && currentUser?.role !== "seller" && (
           <div className="review-form-container">
             <h3>Write Your Review</h3>
             <form onSubmit={handleReviewSubmit} className="review-form">
