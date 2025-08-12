@@ -1,0 +1,121 @@
+.checkout-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 1px 1px 6px var(--light-grey);
+  font-family: var(--font-body);
+  font-size: var(--font-base);
+  color: var(--dark-grey);
+}
+
+.checkout-page h2 {
+  font-family: var(--font-headline);
+  font-size: 2rem;
+  color: var(--secondary-color);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Fieldset styling */
+fieldset {
+  border: 1px solid var(--light-grey);
+  border-radius: 6px;
+  padding: 1.5rem;
+}
+
+legend {
+  font-weight: bold;
+  font-family: var(--font-headline);
+  color: var(--tertiary-color);
+  font-size: var(--large-font);
+}
+
+/* Grid layout for inputs */
+.checkout__name,
+.checkout__address,
+.checkout__payment {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+label {
+  font-size: var(--small-font);
+  color: var(--secondary-color);
+}
+
+input {
+  padding: 0.5rem;
+  border: 1px solid var(--light-grey);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Order Summary */
+.checkout-summary .order__summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 1rem;
+}
+
+.checkout-summary .order__summary div {
+  padding: 0.25rem 0;
+}
+
+.checkout-summary .order__summary div:nth-child(odd) {
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.checkout-summary .order__summary div:last-child {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--tertiary-color);
+}
+
+/* Submit Button */
+#checkoutSubmit {
+  padding: 0.5em 2em;
+  background-color: var(--secondary-color);
+  color: white;
+  display: block;
+  border: none;
+  font-size: var(--large-font);
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+#checkoutSubmit:hover {
+  background-color: var(--tertiary-color);
+}
+
+#checkoutSubmit:disabled {
+  background-color: var(--light-grey);
+  cursor: not-allowed;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .checkout-page {
+    padding: 1rem;
+  }
+
+  .checkout__name,
+  .checkout__address,
+  .checkout__payment {
+    grid-template-columns: 1fr;
+  }
+}
