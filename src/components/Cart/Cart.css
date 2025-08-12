@@ -1,0 +1,89 @@
+.cart-container {
+  max-width: 600px;       /* Limits width on big screens */
+  margin: 2rem auto;      /* Centers horizontally and adds vertical spacing */
+  padding: 1.5rem 2rem;   /* Comfortable padding inside */
+  background: #fff;       /* White background */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);  /* subtle shadow */
+  border-radius: 8px;     /* Rounded corners */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.cart-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cart-container li {
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-container li:last-child {
+  border-bottom: none;
+}
+
+.cart-container button {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.cart-container button:hover {
+  background: #d9363e;
+}
+
+.cart-container input[type="number"] {
+  width: 50px;
+  padding: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.cart-total {
+  margin-top: 1.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: right;
+}
+
+.checkout-summary {
+  margin-top: 2rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fafafa;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  font-size: 1.1rem;
+  color: #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkout-summary .total-label {
+  font-weight: 600;
+}
+
+.checkout-summary .checkout-button {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: default; /* No pointer since it doesn't do anything */
+  opacity: 0.6;
+}

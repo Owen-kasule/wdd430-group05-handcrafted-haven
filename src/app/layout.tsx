@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary';
+import { CartProvider } from '@/context/CartContext';
 import './globals.css';
 
 export const experimental_ppr = true;
@@ -24,14 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
         <ErrorBoundary>
-          <div className="app-container">
-            <Navbar />
-            <main className="main-content">{children}</main>
-            <Footer />
-          </div>
+          <CartProvider>
+            <div className='app-container'>
+              <Navbar />
+              <main className='main-content'>{children}</main>
+              <Footer />
+            </div>
+          </CartProvider>
         </ErrorBoundary>
       </body>
     </html>
