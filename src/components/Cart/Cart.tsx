@@ -3,10 +3,12 @@
 import React from 'react';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import './Cart.css';
 
 export default function Cart() {
   const { cartItems, removeFromCart, addToCart } = useCart();
+    const router = useRouter();
 
   // Function to update item quantity in the cart
   const updateQuantity = (id: string, newQty: number) => {
@@ -80,7 +82,12 @@ export default function Cart() {
           <div className="checkout-summary">
             <span className="total-label">Order Total:</span>
             <span className="total-amount">${totalPrice.toFixed(2)}</span>
-            <button className="checkout-button">Proceed to Checkout</button>
+            <button
+              className="checkout-button"
+              onClick={() => router.push('/checkout')}
+            >
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}
