@@ -1,5 +1,5 @@
 .footer {
-  background: var(--primary-green);
+  background: var(--primary-color);
   color: white;
   margin-top: 0;
   padding: 2.5rem 0 1.5rem;
@@ -73,7 +73,7 @@
 @media (max-width: 768px) {
   .footer {
     padding: 2rem 0 5rem;
-    background: var(--primary-green);
+    background: var(--primary-color);
   }
 
   .footer-links {
@@ -88,7 +88,7 @@
 
   .footer {
     padding: 1.8rem 0 5.5rem;
-    background: var(--primary-green);
+    background: var(--primary-color);
   }
 
   .footer-links {

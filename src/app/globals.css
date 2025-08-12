@@ -1,14 +1,14 @@
 :root {
-  --primary-brown: #8B4513;
-  --light-brown: #D2B48C;
-  --primary-green: #4B8F29;
-  --light-green: #8FBC8F;
-  --accent-yellow: #DAA520;
-  --background-cream: #F5F5DC;
-  --text-dark: #2F2F2F;
+  --primary-brown: #ed6809;
+  --light-brown: #d2b48c;
+  --primary-green: #4b8f29;
+  --light-green: #8fbc8f;
+  --accent-yellow: #daa520;
+  --background-cream: #f5f5dc;
+  --text-dark: #2f2f2f;
   --text-light: #666666;
-  --border-light: #E0E0E0;
-  --white: #FFFFFF;
+  --border-light: #e0e0e0;
+  --white: #ffffff;
 }
 
 * {
@@ -18,12 +18,17 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-cream);
+
+  background: linear-gradient(135deg, var(--primary-color), #000);
+
+  filter: 'blur(80px)';
+  background-repeat: 'no-repeat';
+
   color: var(--text-dark);
   line-height: 1.6;
   margin: 0;
@@ -139,7 +144,8 @@ button {
   margin-top: 1.5rem;
 }
 
-.retry-button, .home-button {
+.retry-button,
+.home-button {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
@@ -172,7 +178,7 @@ button {
     padding-top: 0; /* Remove top padding on mobile */
     padding-bottom: 80px; /* Add bottom padding for mobile navbar */
   }
-  
+
   .container {
     padding: 0 15px;
   }
@@ -182,7 +188,7 @@ button {
   .main-content {
     padding-bottom: 85px; /* Slightly more padding on smaller screens */
   }
-  
+
   .container {
     padding: 0 10px;
   }
