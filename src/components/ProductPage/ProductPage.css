@@ -154,12 +154,13 @@
 }
 
 .purchase-section {
-  background-color: #f8f9fa;
+  background-color: transparent;
   padding: 1.5rem;
   border-radius: 8px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1rem;
+  width: 23rem;
 }
 
 .quantity-selector {
@@ -182,7 +183,7 @@
   padding: 1rem 2rem;
   font-size: 1.1rem;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 36px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
