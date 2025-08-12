@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import { CardsSkeleton } from '@/components/skeletonLoader/skeleton';
 import Link from 'next/link';
 
-
 export default function Homepage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +38,7 @@ export default function Homepage() {
         const { products } = await getProducts({ itemsPerPage: 100 });
         //Featured products filter
         const featured = products
-          .filter(product => product.featured)
+          .filter((product) => product.featured)
           .slice(0, 4);
         setFeaturedProducts(featured);
       } catch (err) {
@@ -63,7 +62,7 @@ export default function Homepage() {
   // Categories for dropdown
   const categoryOptions = [
     { value: 'all', label: 'All Categories' },
-    ...categories.map(category => ({
+    ...categories.map((category) => ({
       value: category.id.toString(),
       label: category.name,
     })),
@@ -73,6 +72,16 @@ export default function Homepage() {
     <div className="homepage">
       {/* Hero Section */}
       <section className="hero">
+        <video
+          className="hero-video"
+          src="https://res.cloudinary.com/dhcfxb9dn/video/upload/v1754978251/1164962_Close_up_Hobby_1280x720_taeix2.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        ></video>
+
+        <div className="hero-overlay"></div>
         <div className="hero-content">
           <h1 className="hero-title">Discover Unique Handcrafted Treasures</h1>
           <p className="hero-subtitle">
@@ -87,12 +96,6 @@ export default function Homepage() {
               <button className="cta-button secondary">Become a Seller</button>
             </Link>
           </div>
-        </div>
-        <div className="hero-image">
-          <img
-            src="/homepage-image/jug-porter.webp"
-            alt="Handcrafted pottery"
-          />
         </div>
       </section>
 
@@ -149,7 +152,7 @@ export default function Homepage() {
           </div>
         ) : featuredProducts.length > 0 ? (
           <div className="products-grid">
-            {featuredProducts.map(product => (
+            {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -167,7 +170,7 @@ export default function Homepage() {
         <div className="categories-grid">
           <div className="category-card">
             <img
-              src="https://images.unsplash.com/photo-1571864358655-eda1b38b2549?w=300"
+              src="https://res.cloudinary.com/dhcfxb9dn/image/upload/v1754980105/2151538261_vubnyi.jpg"
               alt="Ceramics"
             />
             <div className="category-overlay">
@@ -197,7 +200,7 @@ export default function Homepage() {
           </div>
           <div className="category-card">
             <img
-              src="https://images.unsplash.com/photo-1544966503-7cc5ac882d5e?w=300"
+              src="https://res.cloudinary.com/dhcfxb9dn/image/upload/v1754980045/26129_gn1a3b.jpg"
               alt="Woodwork"
             />
             <div className="category-overlay">

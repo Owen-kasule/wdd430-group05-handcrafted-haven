@@ -1,8 +1,11 @@
 .footer {
-  background: linear-gradient(to bottom, var(--primary-green) 0%, var(--primary-green) 70%, var(--accent-yellow) 100%);
+  background: var(--primary-green);
   color: white;
   margin-top: 0;
-  padding: 2rem 0 1rem;
+  padding: 2.5rem 0 1.5rem;
+  border-top: 3px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+  border-radius: 16px 16px 0 0;
 }
 
 .footer-container {
@@ -14,7 +17,7 @@
 .footer-content {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .footer-links {
@@ -27,34 +30,52 @@
 .footer-links a {
   color: white;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+  padding: 0.3rem 0;
   transition: color 0.3s ease;
-  padding: 0.5rem;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0%;
+  height: 2px;
+  background-color: var(--accent-yellow);
+  transition: width 0.3s ease;
 }
 
 .footer-links a:hover {
   color: var(--accent-yellow);
 }
 
+.footer-links a:hover::after {
+  width: 100%;
+}
+
 .footer-bottom {
-  padding-top: 1rem;
+  padding-top: 1.2rem;
   text-align: center;
   margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .footer-bottom p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: white;
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .footer {
-    padding: 1.5rem 0 5rem; /* Add bottom padding to clear mobile navbar */
-    background: linear-gradient(to bottom, var(--primary-green) 0%, var(--primary-green) 60%, var(--accent-yellow) 100%);
+    padding: 2rem 0 5rem;
+    background: var(--primary-green);
   }
-  
+
   .footer-links {
     gap: 1.5rem;
   }
@@ -64,18 +85,18 @@
   .footer-container {
     padding: 0 1rem;
   }
-  
+
   .footer {
-    padding: 1.5rem 0 5.5rem; /* Extra padding for smaller screens */
-    background: linear-gradient(to bottom, var(--primary-green) 0%, var(--primary-green) 50%, var(--accent-yellow) 100%);
+    padding: 1.8rem 0 5.5rem;
+    background: var(--primary-green);
   }
-  
+
   .footer-links {
     gap: 1rem;
     flex-direction: column;
     align-items: center;
   }
-  
+
   .footer-links a {
     padding: 0.25rem;
   }

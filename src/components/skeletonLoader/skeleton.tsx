@@ -1,8 +1,8 @@
-import React from 'react';
-import './skeletonLoader.css';
+import React from "react";
+import "./skeletonLoader.css";
 
 const shimmer =
-  'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
+  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
 
 export function CardSkeleton() {
   return (
@@ -41,7 +41,7 @@ export function SellerProfileSkeleton() {
             <div className="skeleton-element skeleton-title"></div>
             <div className="skeleton-element skeleton-text"></div>
             <div className="seller-stats">
-              {[1, 2, 3].map(item => (
+              {[1, 2, 3].map((item) => (
                 <div key={item} className="stat">
                   <div className="skeleton-element skeleton-stat-number"></div>
                   <div className="skeleton-element skeleton-stat-label"></div>
@@ -62,7 +62,7 @@ export function SellerProfileSkeleton() {
           <div className="seller-specialties">
             <div className="skeleton-element skeleton-subtitle"></div>
             <div className="specialty-tags">
-              {[1, 2, 3].map(item => (
+              {[1, 2, 3].map((item) => (
                 <div key={item} className="skeleton-element skeleton-tag"></div>
               ))}
             </div>
@@ -71,7 +71,7 @@ export function SellerProfileSkeleton() {
           <div className="seller-contact">
             <div className="skeleton-element skeleton-subtitle"></div>
             <div className="contact-info">
-              {[1, 2, 3].map(item => (
+              {[1, 2, 3].map((item) => (
                 <div
                   key={item}
                   className="skeleton-element skeleton-text"
@@ -84,7 +84,7 @@ export function SellerProfileSkeleton() {
         <div className="seller-products">
           <div className="skeleton-element skeleton-subtitle"></div>
           <div className="products-grid">
-            {[1, 2, 3, 4].map(item => (
+            {[1, 2, 3, 4].map((item) => (
               <div key={item} className="product-card-skeleton">
                 <div className="skeleton-element skeleton-product-image"></div>
                 <div className="skeleton-element skeleton-product-title"></div>
@@ -101,7 +101,7 @@ export function SellerProfileSkeleton() {
 export function CardsSkeleton() {
   return (
     <>
-      {[1, 2, 3, 4, 5, 6].map(item => (
+      {[1, 2, 3, 4, 5, 6].map((item) => (
         <div key={item} className="seller-card-skeleton">
           <div className="seller-image-skeleton skeleton-shimmer"></div>
           <div className="seller-info-skeleton">
