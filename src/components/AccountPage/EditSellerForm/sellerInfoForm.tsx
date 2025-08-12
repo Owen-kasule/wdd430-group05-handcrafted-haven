@@ -76,9 +76,7 @@ export default function SellerInfoForm({
           max={5}
           step={0.1}
           value={formData.rating}
-          onChange={(e) =>
-            onInputChange('rating', parseFloat(e.target.value))
-          }
+          onChange={(e) => onInputChange('rating', parseFloat(e.target.value))}
         />
       </label>
 
@@ -131,10 +129,9 @@ export default function SellerInfoForm({
           <input
             type='email'
             value={formData.contact.email ?? ''}
-            onChange={(e) =>
-              onNestedChange('contact', 'email', e.target.value)
-            }
+            onChange={(e) => onNestedChange('contact', 'email', e.target.value)}
             required
+            disabled={!!formData.contact.email} // Disable if email exists (non-empty)
           />
         </label>
 
@@ -143,9 +140,7 @@ export default function SellerInfoForm({
           <input
             type='tel'
             value={formData.contact.phone ?? ''}
-            onChange={(e) =>
-              onNestedChange('contact', 'phone', e.target.value)
-            }
+            onChange={(e) => onNestedChange('contact', 'phone', e.target.value)}
           />
         </label>
 
