@@ -1,6 +1,6 @@
 :root {
-  --primary-green: #4B8F29;
-  --primary-yellow: #F4A300;
+  --primary-green: #4b8f29;
+  --primary-yellow: #f4a300;
   --light-gray: #f8f9fa;
   --dark-gray: #6c757d;
   --white: #ffffff;
@@ -12,6 +12,7 @@
   background-color: var(--primary-green);
   padding: 1rem 0;
   box-shadow: 0 1px 3px var(--shadow);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   position: fixed;
   top: 0;
@@ -84,25 +85,29 @@
 
 .nav-login {
   background-color: var(--primary-yellow);
-  color: #2F2F2F;
+  color: #2f2f2f;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   transition: all 0.2s ease;
   margin-left: 0.5rem;
   font-size: 0.95rem;
+  display: flex;
+  gap: 0.5rem;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 }
 
 .nav-login:hover {
-  background-color: #FFB84D;
-  color: #2F2F2F;
+  background-color: #ffb84d;
+  color: #2f2f2f;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(244, 163, 0, 0.3);
 }
 
 .nav-login.active {
   background-color: var(--primary-yellow);
-  color: #2F2F2F;
+  color: #2f2f2f;
 }
 
 .nav-login.active::after {
@@ -191,7 +196,7 @@
   top: 100%;
   right: 0;
   background: var(--white);
-  color: #2F2F2F;
+  color: #2f2f2f;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   padding: 0.75rem 1rem;
@@ -331,11 +336,13 @@
 }
 
 .mobile-nav-item.active .mobile-nav-icon img {
-  filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%) hue-rotate(15deg) brightness(100%) contrast(90%); /* Makes images yellow when active */
+  filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%)
+    hue-rotate(15deg) brightness(100%) contrast(90%); /* Makes images yellow when active */
 }
 
 .mobile-nav-item:hover .mobile-nav-icon img {
-  filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%) hue-rotate(15deg) brightness(100%) contrast(90%); /* Makes images yellow on hover */
+  filter: brightness(0) saturate(100%) invert(75%) sepia(80%) saturate(1200%)
+    hue-rotate(15deg) brightness(100%) contrast(90%); /* Makes images yellow on hover */
 }
 
 .mobile-nav-label {
@@ -373,7 +380,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--white);
-  color: #2F2F2F;
+  color: #2f2f2f;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   padding: 0.75rem 1rem;
@@ -425,21 +432,20 @@
   text-decoration: underline;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar.desktop-navbar {
     display: none;
   }
-  
+
   .mobile-bottom-navbar {
     display: block;
   }
-  
+
   .hamburger {
     display: flex;
   }
-  
+
   .nav-menu {
     position: fixed;
     top: 100%;
@@ -455,13 +461,13 @@
     transition: all 0.3s ease;
     z-index: 1000;
   }
-  
+
   .nav-menu.active {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
   }
-  
+
   .nav-link {
     padding: 1rem 2rem;
     width: 100%;
@@ -469,15 +475,15 @@
     border-radius: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-link:last-child {
     border-bottom: none;
   }
-  
+
   .nav-link.active::after {
     display: none;
   }
-  
+
   .nav-login {
     margin: 0.5rem 2rem;
     border-radius: 8px;
@@ -489,7 +495,7 @@
   .hamburger {
     display: none;
   }
-  
+
   .nav-menu {
     position: static;
     flex-direction: row;
@@ -505,25 +511,25 @@
   .nav-container {
     padding: 0 1rem;
   }
-  
+
   .nav-logo {
     font-size: 1.5rem;
   }
-  
+
   .nav-link {
     padding: 0.875rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .nav-login {
     margin: 0.5rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .mobile-nav-label {
     font-size: 0.7rem;
   }
-  
+
   .mobile-nav-icon svg {
     width: 20px;
     height: 20px;
@@ -545,19 +551,21 @@
   position: absolute;
   top: -6px;
   right: -10px;
-  background-color: #e63946;
+  background-color: #1b1a1a;
   color: white;
   font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 9999px;
+  padding: 5px;
+  border-radius: 50%;
   font-weight: bold;
+  text-align: center;
+  width: 30%;
 }
 
 .cart-count-mobile {
   position: absolute;
   top: 2px;
   right: 10px;
-  background-color: #e63946;
+  background-color: #1b1a1a;
   color: white;
   font-size: 0.65rem;
   padding: 2px 5px;

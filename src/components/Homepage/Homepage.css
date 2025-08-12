@@ -4,44 +4,76 @@
 
 /* Hero Section */
 .hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  max-width: 1200px;
-  margin: 0 auto;
+  min-height: 90vh;
   padding: 2rem;
-  gap: 3rem;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+  z-index: -1;
 }
 
 .hero-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: bold;
-  color: #A52A2A;
+  animation: fadeInUp 1s ease-out;
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
   line-height: 1.2;
   margin: 0;
 }
 
 .hero-subtitle {
   font-size: 1.3rem;
-  color: #666;
-  line-height: 1.6;
-  margin: 0;
+  margin-top: 1rem;
+  animation: fadeInUp 1.2s ease-out;
 }
 
 .hero-cta {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
+  margin-top: 2rem;
+  animation: fadeInUp 1.4s ease-out;
+  justify-content: center;
 }
-
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .cta-button {
   padding: 1rem 2rem;
   font-size: 1.1rem;
@@ -55,23 +87,23 @@
 }
 
 .cta-button.primary {
-  background-color: #4B8F29;
+  background-color: #4b8f29;
   color: white;
 }
 
 .cta-button.primary:hover {
-  background-color: #3A6F1F;
+  background-color: #3a6f1f;
   transform: translateY(-2px);
 }
 
 .cta-button.secondary {
   background-color: transparent;
-  color: #4B8F29;
-  border: 2px solid #4B8F29;
+  color: #4b8f29;
+  border: 2px solid #4b8f29;
 }
 
 .cta-button.secondary:hover {
-  background-color: #4B8F29;
+  background-color: #4b8f29;
   color: white;
   transform: translateY(-2px);
 }
@@ -124,7 +156,7 @@
 }
 
 .search-button {
-  background-color: #4B8F29;
+  background-color: #4b8f29;
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -134,7 +166,7 @@
 }
 
 .search-button:hover {
-  background-color: #3A6F1F;
+  background-color: #3a6f1f;
 }
 
 .filter-container {
@@ -154,7 +186,7 @@
 
 .category-filter:focus {
   outline: none;
-  border-color: #4B8F29;
+  border-color: #4b8f29;
 }
 
 /* Section Styling */
@@ -174,7 +206,11 @@
 .section-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.5rem;
-  color: #A52A2A;
+  background: linear-gradient(90deg, #3a6f1f, #e26003);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
   margin: 0 0 1rem 0;
 }
 
@@ -186,11 +222,22 @@
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 2rem;
-  justify-items: center;
+}
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
+.product-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
 /* Categories Section */
 .categories-grid {
   display: grid;
@@ -201,54 +248,51 @@
 
 .category-card {
   position: relative;
-  height: 300px;
-  border-radius: 12px;
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
-
 .category-card:hover {
   transform: translateY(-5px);
 }
 
 .category-card img {
-  width: 100%;
-  height: 100%;
+  transition: transform 0.4s ease;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  height: 12rem;
+  width: 100%;
 }
 
 .category-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .category-overlay {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  padding: 2rem;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  color: white;
-  padding: 2rem 1.5rem 1.5rem;
-  text-align: center;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
 }
 
 .category-overlay h3 {
   font-size: 1.5rem;
   margin: 0 0 0.5rem 0;
-  color: #F4A300;
+  color: #f4a300;
 }
-
+.category-card:hover .category-overlay {
+  transform: translateY(0);
+}
 .category-overlay p {
   margin: 0;
   opacity: 0.9;
+  color: #fff;
 }
 
 /* Benefits Section */
 .benefits-section {
-  background-color: #f8f9fa;
+  background-color: none;
 }
 
 .benefits-grid {
@@ -277,7 +321,7 @@
 }
 
 .benefit-card h3 {
-  color: #A52A2A;
+  color: #a52a2a;
   margin: 0 0 1rem 0;
   font-size: 1.3rem;
 }
@@ -290,15 +334,16 @@
 
 /* Newsletter Section */
 .newsletter-section {
-  background: linear-gradient(135deg, #4B8F29, #3A6F1F);
-  color: white;
+  background: none;
   padding: 4rem 2rem;
-  text-align: center;
 }
 
 .newsletter-content {
-  max-width: 600px;
-  margin: 0 auto;
+  background: linear-gradient(135deg, #4b8f29, #3a6f1f);
+  padding: 3rem;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .newsletter-content h2 {
@@ -332,8 +377,8 @@
 }
 
 .newsletter-form button {
-  background-color: #F4A300;
-  color: #A52A2A;
+  background-color: #f4a300;
+  color: #a52a2a;
   border: none;
   padding: 1rem 1.5rem;
   font-weight: bold;
@@ -342,7 +387,7 @@
 }
 
 .newsletter-form button:hover {
-  background-color: #FFB84D;
+  background-color: #ffb84d;
 }
 
 /* Responsive Design */
@@ -353,54 +398,57 @@
     padding: 1rem;
     gap: 2rem;
   }
-  
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .cta-button {
     min-width: 120px;
     padding: 0.8rem 1.5rem;
   }
-  
+  .products-grid {
+    justify-self: center;
+  }
+
   .search-container {
     padding: 0 1rem;
   }
-  
+
   .search-bar {
     flex-direction: column;
     border-radius: 12px;
   }
-  
+
   .search-input {
     border-bottom: 1px solid #eee;
   }
-  
+
   .search-button {
     border-radius: 0 0 12px 12px;
   }
-  
+
   .categories-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .benefits-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .newsletter-form {
     flex-direction: column;
     border-radius: 12px;
   }
-  
+
   .newsletter-form input {
     border-bottom: 1px solid #eee;
   }
-  
+
   .newsletter-form button {
     border-radius: 0 0 12px 12px;
   }
